@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity()
     private fun stopBroadcast() {
 
         val nearby = Nearby.getConnectionsClient(this@MainActivity)
+            nearby.stopAdvertising()
             nearby.stopAllEndpoints()
             for (id in endpointID) {
                 nearby.disconnectFromEndpoint(id)
