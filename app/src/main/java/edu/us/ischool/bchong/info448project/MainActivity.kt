@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity()
                 stopAdvertising()
             else if (mode == "discovery")
                 stopDiscovery()
+            else if (mode == "broadcast")
+                stopBroadcast()
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
@@ -76,12 +78,22 @@ class MainActivity : AppCompatActivity()
             buttonAdvertise.visibility = View.VISIBLE
         }
         buttonBroadcast.setOnClickListener {
+            mode = "broadcast"
             broadcastMessage = "Hello, world!"
             val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
             for (id in endpointID) {
                 Nearby.getConnectionsClient(this@MainActivity).sendPayload(id, bytesPayload)
             }
         }
+    }
+
+    private fun stopBroadcast() {
+
+        val nearby = Nearby.getConnectionsClient(this@MainActivity)
+            nearby.stopAllEndpoints()
+            for (id in endpointID) {
+                nearby.disconnectFromEndpoint(id)
+            }
     }
 
     private fun startAdvertising()
@@ -113,13 +125,13 @@ class MainActivity : AppCompatActivity()
         // Only one of these permissions is required (Fine location for Q and upwards)
         if (ContextCompat.checkSelfPermission(this@MainActivity,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this@MainActivity,
                 arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
                 8034)
         } else if (ContextCompat.checkSelfPermission(this@MainActivity,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this@MainActivity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 8035)
@@ -168,6 +180,7 @@ class MainActivity : AppCompatActivity()
             }
         }
     }
+
     private fun stopDiscovery()
     {
         Nearby.getConnectionsClient(this@MainActivity).stopDiscovery()
@@ -208,7 +221,6 @@ class MainActivity : AppCompatActivity()
             Log.d("INFO_448_DEBUG", "Endpoint Lost")
         }
     }
-
 
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback()
     {
