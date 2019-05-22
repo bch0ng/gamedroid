@@ -2,6 +2,7 @@ package edu.us.ischool.bchong.info448project
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
@@ -18,17 +19,22 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 
 
-
-
-
-
-
-
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var buttonAdvertise: Button
+    private  lateinit var buttonDiscover : Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        buttonAdvertise = findViewById<Button>(R.id.button)
+        buttonDiscover = findViewById(R.id.button2)
+        buttonAdvertise.setOnClickListener {
+            startAdvertising()
+            buttonDiscover.isEnabled = false;
+        }
+        buttonDiscover.setOnClickListener {
+            startDiscovery()
+            buttonAdvertise.isEnabled=false;
+        }
     }
 
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
@@ -85,6 +91,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this@MainActivity,"Disconnected",Toast.LENGTH_LONG).show()
         }
     }
+
     private fun startAdvertising() {
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_CLUSTER).build()
         Nearby.getConnectionsClient(this@MainActivity)
