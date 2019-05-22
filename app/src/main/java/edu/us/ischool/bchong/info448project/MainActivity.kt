@@ -2,8 +2,6 @@ package edu.us.ischool.bchong.info448project
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -26,18 +24,18 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 
+const val USER_NICKNAME: String = "info448project"
+const val SERVICE_ID: String    = "edu.us.ischool.bchong.info448project"
 
 class MainActivity : AppCompatActivity()
 {
-    private lateinit var buttonAdvertise : Button
-    private lateinit var buttonDiscover : Button
-    private lateinit var buttonStop : Button
-    private lateinit var buttonBroadcast : Button
+    private lateinit var buttonAdvertise:   Button
+    private lateinit var buttonDiscover:    Button
+    private lateinit var buttonStop:        Button
+    private lateinit var buttonBroadcast:   Button
+
     private var endpointID: ArrayList<String> = ArrayList()
     private var broadcastMessage: String = ""
-
-    private val USER_NICKNAME: String = "info448project"
-    private val SERVICE_ID: String = "edu.us.ischool.bchong.info448project"
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -164,14 +162,9 @@ class MainActivity : AppCompatActivity()
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    this.finishAffinity()
                 }
                 return
-            }
-
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
-            else -> {
-                // Ignore all other requests.
             }
         }
     }
@@ -186,6 +179,7 @@ class MainActivity : AppCompatActivity()
         override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo)
         {
             // An endpoint was found. We request a connection to it.
+            Log.d("INFO_448_DEBUG", "Endpoint Found")
             Nearby.getConnectionsClient(this@MainActivity)
                 .requestConnection(USER_NICKNAME, endpointId, connectionLifecycleCallback)
                 .addOnSuccessListener { unused: Void? ->
@@ -211,6 +205,7 @@ class MainActivity : AppCompatActivity()
         override fun onEndpointLost(endpointId: String)
         {
             // A previously discovered endpoint has gone away.
+            Log.d("INFO_448_DEBUG", "Endpoint Lost")
         }
     }
 
@@ -260,17 +255,17 @@ class MainActivity : AppCompatActivity()
 
     inner class ReceiveBytesPayloadListener : PayloadCallback()
     {
+        var message = broadcastMessage
         override fun onPayloadReceived(endpointId: String, payload: Payload)
         {
             // This always gets the full data of the payload. Will be null if it's not a BYTES
             // payload. You can check the payload type with payload.getType().
             val receivedBytes = payload.asBytes()
-            var message = ""
             if (receivedBytes != null) {
                 message = String(receivedBytes, Charsets.UTF_8)
             }
-            Log.d("INFO_448_DEBUG", "Payload Received: " + message + " from " + endpointId)
-            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+            Log.d("INFO_448_DEBUG", "Payload Received: " + message)
+            //Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
         }
 
         override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate)
@@ -278,7 +273,7 @@ class MainActivity : AppCompatActivity()
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
             if (update.status == PayloadTransferUpdate.Status.SUCCESS) {
-                Toast.makeText(this@MainActivity, broadcastMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
             }
         }
     }
