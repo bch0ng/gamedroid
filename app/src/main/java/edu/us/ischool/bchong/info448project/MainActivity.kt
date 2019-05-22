@@ -1,7 +1,12 @@
 package edu.us.ischool.bchong.info448project
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
@@ -23,24 +28,125 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonAdvertise: Button
     private  lateinit var buttonDiscover : Button
     private  lateinit var buttonStop : Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         buttonAdvertise = findViewById(R.id.button)
         buttonDiscover = findViewById(R.id.button2)
         buttonStop = findViewById(R.id.button3)
+        var mode = "none"
         buttonAdvertise.setOnClickListener {
+            mode = "advertising"
             startAdvertising()
             buttonDiscover.isEnabled = false
+            buttonAdvertise.isEnabled = false
+            buttonStop.isEnabled = true
         }
         buttonDiscover.setOnClickListener {
+            mode = "discovery"
             startDiscovery()
-            buttonAdvertise.isEnabled=false
+            buttonDiscover.isEnabled = false
+            buttonAdvertise.isEnabled = false
+            buttonStop.isEnabled = true
         }
         buttonStop.setOnClickListener {
+            if (mode == "advertising")
+                stopAdvertising()
+            else if (mode == "discovery")
+                stopDiscovery()
+            mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
         }
+    }
+
+    private fun startAdvertising() {
+        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_CLUSTER).build()
+
+        Nearby.getConnectionsClient(this@MainActivity)
+            .startAdvertising(
+                "info448project", "edu.us.ischool.bchong.info448project", connectionLifecycleCallback, advertisingOptions
+            )
+            .addOnSuccessListener { unused: Void? ->
+                // We're advertising!
+                Log.d("INFO_448_DEBUG", "Advertised!")
+            }
+            .addOnFailureListener { e: Exception ->
+                // We were unable to start advertising.
+                Log.d("INFO_448_DEBUG", "Not Advertising\n" + e.message)
+            }
+    }
+    private fun stopAdvertising() {
+        Nearby.getConnectionsClient(this@MainActivity).stopAdvertising()
+        Log.d("INFO_448_DEBUG", "Stopped Advertising")
+    }
+
+    private fun startDiscovery() {
+        // Only one of these permissions is required (Fine location for Q and upwards)
+        if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@MainActivity,
+                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                8034)
+        } else if (ContextCompat.checkSelfPermission(this@MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@MainActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                8035)
+        } else {
+            val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_CLUSTER).build()
+            Nearby.getConnectionsClient(this@MainActivity)
+                .startDiscovery("1234", endpointDiscoveryCallback, discoveryOptions)
+                .addOnSuccessListener { unused: Void? ->
+                    // We're discovering!
+                    Log.d("INFO_448_DEBUG", "Discovered")
+                }
+                .addOnFailureListener { e: Exception ->
+                    // We're unable to start discovering.
+                    Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
+                }
+        }
+    }
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            8034, 8035 -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_CLUSTER).build()
+                    Nearby.getConnectionsClient(this@MainActivity)
+                        .startDiscovery("1234", endpointDiscoveryCallback, discoveryOptions)
+                        .addOnSuccessListener { unused: Void? ->
+                            // We're discovering!
+                            Log.d("INFO_448_DEBUG", "Discovered")
+                        }
+                        .addOnFailureListener { e: Exception ->
+                            // We're unable to start discovering.
+                            Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
+                        }
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+    private fun stopDiscovery() {
+        Nearby.getConnectionsClient(this@MainActivity).stopDiscovery()
+        Log.d("INFO_448_DEBUG", "Stopped Discovering")
     }
 
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
@@ -48,14 +154,14 @@ class MainActivity : AppCompatActivity() {
             // An endpoint was found. We request a connection to it.
             Nearby.getConnectionsClient(this@MainActivity)
                 .requestConnection("boya", endpointId, connectionLifecycleCallback)
-                .addOnSuccessListener { unused: Void ->
+                .addOnSuccessListener { unused: Void? ->
                     // We successfully requested a connection. Now both sides
                     // must accept before the connection is established.
-                    Toast.makeText(this@MainActivity,"Connection success",Toast.LENGTH_LONG).show()
+                    Log.d("INFO_448_DEBUG", "Connection success")
                 }
                 .addOnFailureListener { e: Exception ->
                     // Nearby Connections failed to request the connection.
-                    Toast.makeText(this@MainActivity,"Connection Failed",Toast.LENGTH_LONG).show()
+                    Log.d("INFO_448_DEBUG", "Connection Failed\n" + e.message)
                 }
         }
 
@@ -68,7 +174,7 @@ class MainActivity : AppCompatActivity() {
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
         override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
             val bytesPayload :Payload = Payload.fromBytes(byteArrayOf(0xa,0xb, 0xc,0xd))
-           // Nearby.getConnectionsClient(this@MainActivity).sendPayload(toEndpointId, bytesPayload)
+            // Nearby.getConnectionsClient(this@MainActivity).sendPayload(toEndpointId, bytesPayload)
             // Automatically accept the connection on both sides.
             Nearby.getConnectionsClient(this@MainActivity).acceptConnection(endpointId, ReceiveBytesPayloadListener())
         }
@@ -76,56 +182,26 @@ class MainActivity : AppCompatActivity() {
         override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    Toast.makeText(this@MainActivity,"Status ok",Toast.LENGTH_LONG).show()
+                    Log.d("INFO_448_DEBUG", "Status ok")
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
-                    Toast.makeText(this@MainActivity,"Connection rejected",Toast.LENGTH_LONG).show()
+                    Log.d("INFO_448_DEBUG", "Connection rejected")
                 }
                 ConnectionsStatusCodes.STATUS_ERROR -> {
-                    Toast.makeText(this@MainActivity,"Error",Toast.LENGTH_LONG).show()
+                    Log.d("INFO_448_DEBUG", "Error")
                 }
             }// We're connected! Can now start sending and receiving data.
             // The connection was rejected by one or both sides.
             // The connection broke before it was able to be accepted.
             // Unknown status code
-            Toast.makeText(this@MainActivity,"Connected",Toast.LENGTH_LONG).show()
+            Log.d("INFO_448_DEBUG", "Connected")
         }
 
         override fun onDisconnected(endpointId: String) {
             // We've been disconnected from this endpoint. No more data can be
             // sent or received.
-            Toast.makeText(this@MainActivity,"Disconnected",Toast.LENGTH_LONG).show()
+            Log.d("INFO_448_DEBUG", "Disconnected")
         }
-    }
-
-    private fun startAdvertising() {
-        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_CLUSTER).build()
-        Nearby.getConnectionsClient(this@MainActivity)
-            .startAdvertising(
-                "boya", "1234", connectionLifecycleCallback, advertisingOptions
-            )
-            .addOnSuccessListener { unused: Void ->
-                // We're advertising!
-                Toast.makeText(this@MainActivity,"Advertised!",Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener { e: Exception ->
-                // We were unable to start advertising.
-                Toast.makeText(this@MainActivity,"Not Advertising",Toast.LENGTH_LONG).show()
-            }
-    }
-
-    private fun startDiscovery() {
-        val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_CLUSTER).build()
-        Nearby.getConnectionsClient(this@MainActivity)
-            .startDiscovery("1234", endpointDiscoveryCallback, discoveryOptions)
-            .addOnSuccessListener { unused: Void ->
-                // We're discovering!
-                Toast.makeText(this@MainActivity,"Discovered",Toast.LENGTH_LONG).show()
-            }
-            .addOnFailureListener { e: Exception ->
-                // We're unable to start discovering.
-                Toast.makeText(this@MainActivity,"Not Discovering",Toast.LENGTH_LONG).show()
-            }
     }
 
     internal class ReceiveBytesPayloadListener : PayloadCallback() {
