@@ -2,6 +2,7 @@ package edu.us.ischool.bchong.info448project
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -36,6 +37,38 @@ class MainActivity : AppCompatActivity()
 
     private var endpointID: ArrayList<String> = ArrayList()
     private var broadcastMessage: String = ""
+
+    override fun onStart()
+    {
+        super.onStart()
+        if (Build.VERSION.SDK_INT < 28) {
+            if (ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    8034
+                )
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    8035
+                )
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -88,7 +121,6 @@ class MainActivity : AppCompatActivity()
     }
 
     private fun stopBroadcast() {
-
         val nearby = Nearby.getConnectionsClient(this@MainActivity)
             nearby.stopAdvertising()
             nearby.stopAllEndpoints()
@@ -123,63 +155,17 @@ class MainActivity : AppCompatActivity()
 
     private fun startDiscovery()
     {
-        // Only one of these permissions is required (Fine location for Q and upwards)
-        if (ContextCompat.checkSelfPermission(this@MainActivity,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                8034)
-        } else if (ContextCompat.checkSelfPermission(this@MainActivity,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                8035)
-        } else {
-            val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
-            Nearby.getConnectionsClient(this@MainActivity)
-                .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
-                .addOnSuccessListener { unused: Void? ->
-                    // We're discovering!
-                    Log.d("INFO_448_DEBUG", "Discovered")
-                }
-                .addOnFailureListener { e: Exception ->
-                    // We're unable to start discovering.
-                    Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
-                }
-        }
-    }
-
-    // Runs after permission is granted/not granted
-    override fun onRequestPermissionsResult(requestCode: Int,
-            permissions: Array<String>, grantResults: IntArray)
-    {
-        when (requestCode) {
-            8034, 8035 -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
-                    Nearby.getConnectionsClient(this@MainActivity)
-                        .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
-                        .addOnSuccessListener { unused: Void? ->
-                            // We're discovering!
-                            Log.d("INFO_448_DEBUG", "Discovered")
-                        }
-                        .addOnFailureListener { e: Exception ->
-                            // We're unable to start discovering.
-                            Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
-                        }
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    this.finishAffinity()
-                }
-                return
+        val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
+        Nearby.getConnectionsClient(this@MainActivity)
+            .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
+            .addOnSuccessListener { unused: Void? ->
+                // We're discovering!
+                Log.d("INFO_448_DEBUG", "Discovered")
             }
-        }
+            .addOnFailureListener { e: Exception ->
+                // We're unable to start discovering.
+                Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
+            }
     }
 
     private fun stopDiscovery()
