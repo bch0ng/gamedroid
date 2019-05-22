@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var buttonStop : Button
     private lateinit var buttonBroadcast : Button
     private var endpointID: ArrayList<String> = ArrayList()
+    private var broadcastMessage: String = ""
 
     private val USER_NICKNAME: String = "info448project"
     private val SERVICE_ID: String = "edu.us.ischool.bchong.info448project"
@@ -77,8 +78,7 @@ class MainActivity : AppCompatActivity()
             buttonAdvertise.visibility = View.VISIBLE
         }
         buttonBroadcast.setOnClickListener {
-            val broadcastMessage = "Hello, world!"
-            Toast.makeText(this@MainActivity, broadcastMessage, Toast.LENGTH_SHORT).show()
+            broadcastMessage = "Hello, world!"
             val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
             for (id in endpointID) {
                 Nearby.getConnectionsClient(this@MainActivity).sendPayload(id, bytesPayload)
@@ -277,7 +277,9 @@ class MainActivity : AppCompatActivity()
         {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
-
+            if (update.status == PayloadTransferUpdate.Status.SUCCESS) {
+                Toast.makeText(this@MainActivity, broadcastMessage, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
