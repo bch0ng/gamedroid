@@ -187,12 +187,11 @@ class MainActivity : AppCompatActivity()
                     // must accept before the connection is established.
                     endpointID.add(endpointId)
                     stopDiscovery()
-                    buttonStop.isEnabled = false
+                    buttonStop.isEnabled = true
                     buttonBroadcast.isEnabled = true
                     buttonBroadcast.visibility = View.VISIBLE
                     buttonAdvertise.visibility = View.GONE
                     buttonDiscover.visibility = View.GONE
-                    buttonStop.visibility = View.GONE
 
                     Log.d("INFO_448_DEBUG", "Connection success (join)")
                 }
@@ -222,12 +221,11 @@ class MainActivity : AppCompatActivity()
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
                     endpointID.add(endpointId)
-                    buttonStop.isEnabled = false
+                    buttonStop.isEnabled = true
                     buttonBroadcast.isEnabled = true
                     buttonBroadcast.visibility = View.VISIBLE
                     buttonAdvertise.visibility = View.GONE
                     buttonDiscover.visibility = View.GONE
-                    buttonStop.visibility = View.GONE
 
                     Log.d("INFO_448_DEBUG", "Connection success")
                 }
