@@ -23,6 +23,15 @@
             android:layout_margin="16dp"
             android:background="@android:color/holo_orange_light"/>
     <Button
+            android:text="Broadcast"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/button4"
+            android:layout_margin="16dp"
+            android:enabled="false"
+            android:visibility="gone"
+            android:background="@android:color/holo_blue_light"/>
+    <Button
             android:text="Stop"
             android:layout_width="match_parent"
             android:layout_height="100dp"

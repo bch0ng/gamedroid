@@ -2,17 +2,20 @@ package edu.us.ischool.bchong.info448project
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.opengl.Visibility
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
 import com.google.android.gms.nearby.connection.DiscoveryOptions
-import com.google.android.gms.nearby.connection.Strategy.P2P_CLUSTER
+import com.google.android.gms.nearby.connection.Strategy.P2P_STAR
 import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback
 import com.google.android.gms.nearby.connection.ConnectionsStatusCodes
@@ -24,23 +27,33 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var buttonAdvertise: Button
-    private  lateinit var buttonDiscover : Button
-    private  lateinit var buttonStop : Button
+class MainActivity : AppCompatActivity()
+{
+    private lateinit var buttonAdvertise : Button
+    private lateinit var buttonDiscover : Button
+    private lateinit var buttonStop : Button
+    private lateinit var buttonBroadcast : Button
+    private var endpointID: ArrayList<String> = ArrayList()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private val USER_NICKNAME: String = "info448project"
+    private val SERVICE_ID: String = "edu.us.ischool.bchong.info448project"
+
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         buttonAdvertise = findViewById(R.id.button)
         buttonDiscover = findViewById(R.id.button2)
         buttonStop = findViewById(R.id.button3)
+        buttonBroadcast = findViewById(R.id.button4)
+
         var mode = "none"
         buttonAdvertise.setOnClickListener {
             mode = "advertising"
             startAdvertising()
             buttonDiscover.isEnabled = false
+            buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
             buttonStop.isEnabled = true
         }
@@ -49,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             startDiscovery()
             buttonDiscover.isEnabled = false
             buttonAdvertise.isEnabled = false
+            buttonAdvertise.visibility = View.GONE
             buttonStop.isEnabled = true
         }
         buttonStop.setOnClickListener {
@@ -59,15 +73,26 @@ class MainActivity : AppCompatActivity() {
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
+            buttonDiscover.visibility = View.VISIBLE
+            buttonAdvertise.visibility = View.VISIBLE
+        }
+        buttonBroadcast.setOnClickListener {
+            val broadcastMessage = "Hello, world!"
+            Toast.makeText(this@MainActivity, broadcastMessage, Toast.LENGTH_SHORT).show()
+            val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
+            for (id in endpointID) {
+                Nearby.getConnectionsClient(this@MainActivity).sendPayload(id, bytesPayload)
+            }
         }
     }
 
-    private fun startAdvertising() {
-        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_CLUSTER).build()
+    private fun startAdvertising()
+    {
+        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_STAR).build()
 
         Nearby.getConnectionsClient(this@MainActivity)
             .startAdvertising(
-                "info448project", "edu.us.ischool.bchong.info448project", connectionLifecycleCallback, advertisingOptions
+                USER_NICKNAME, SERVICE_ID, connectionLifecycleCallback, advertisingOptions
             )
             .addOnSuccessListener { unused: Void? ->
                 // We're advertising!
@@ -78,12 +103,15 @@ class MainActivity : AppCompatActivity() {
                 Log.d("INFO_448_DEBUG", "Not Advertising\n" + e.message)
             }
     }
-    private fun stopAdvertising() {
+
+    private fun stopAdvertising()
+    {
         Nearby.getConnectionsClient(this@MainActivity).stopAdvertising()
         Log.d("INFO_448_DEBUG", "Stopped Advertising")
     }
 
-    private fun startDiscovery() {
+    private fun startDiscovery()
+    {
         // Only one of these permissions is required (Fine location for Q and upwards)
         if (ContextCompat.checkSelfPermission(this@MainActivity,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -98,9 +126,9 @@ class MainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 8035)
         } else {
-            val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_CLUSTER).build()
+            val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
             Nearby.getConnectionsClient(this@MainActivity)
-                .startDiscovery("1234", endpointDiscoveryCallback, discoveryOptions)
+                .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
                 .addOnSuccessListener { unused: Void? ->
                     // We're discovering!
                     Log.d("INFO_448_DEBUG", "Discovered")
@@ -111,17 +139,20 @@ class MainActivity : AppCompatActivity() {
                 }
         }
     }
+
+    // Runs after permission is granted/not granted
     override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+            permissions: Array<String>, grantResults: IntArray)
+    {
         when (requestCode) {
             8034, 8035 -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_CLUSTER).build()
+                    val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
                     Nearby.getConnectionsClient(this@MainActivity)
-                        .startDiscovery("1234", endpointDiscoveryCallback, discoveryOptions)
+                        .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
                         .addOnSuccessListener { unused: Void? ->
                             // We're discovering!
                             Log.d("INFO_448_DEBUG", "Discovered")
@@ -144,20 +175,32 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun stopDiscovery() {
+    private fun stopDiscovery()
+    {
         Nearby.getConnectionsClient(this@MainActivity).stopDiscovery()
         Log.d("INFO_448_DEBUG", "Stopped Discovering")
     }
 
-    private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
-        override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo) {
+    private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback()
+    {
+        override fun onEndpointFound(endpointId: String, info: DiscoveredEndpointInfo)
+        {
             // An endpoint was found. We request a connection to it.
             Nearby.getConnectionsClient(this@MainActivity)
-                .requestConnection("boya", endpointId, connectionLifecycleCallback)
+                .requestConnection(USER_NICKNAME, endpointId, connectionLifecycleCallback)
                 .addOnSuccessListener { unused: Void? ->
                     // We successfully requested a connection. Now both sides
                     // must accept before the connection is established.
-                    Log.d("INFO_448_DEBUG", "Connection success")
+                    endpointID.add(endpointId)
+                    stopDiscovery()
+                    buttonStop.isEnabled = false
+                    buttonBroadcast.isEnabled = true
+                    buttonBroadcast.visibility = View.VISIBLE
+                    buttonAdvertise.visibility = View.GONE
+                    buttonDiscover.visibility = View.GONE
+                    buttonStop.visibility = View.GONE
+
+                    Log.d("INFO_448_DEBUG", "Connection success (join)")
                 }
                 .addOnFailureListener { e: Exception ->
                     // Nearby Connections failed to request the connection.
@@ -165,24 +208,34 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
-        override fun onEndpointLost(endpointId: String) {
+        override fun onEndpointLost(endpointId: String)
+        {
             // A previously discovered endpoint has gone away.
         }
     }
 
 
-    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback() {
-        override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
-            val bytesPayload :Payload = Payload.fromBytes(byteArrayOf(0xa,0xb, 0xc,0xd))
-            // Nearby.getConnectionsClient(this@MainActivity).sendPayload(toEndpointId, bytesPayload)
+    private val connectionLifecycleCallback = object : ConnectionLifecycleCallback()
+    {
+        override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo)
+        {
             // Automatically accept the connection on both sides.
             Nearby.getConnectionsClient(this@MainActivity).acceptConnection(endpointId, ReceiveBytesPayloadListener())
         }
 
-        override fun onConnectionResult(endpointId: String, result: ConnectionResolution) {
+        override fun onConnectionResult(endpointId: String, result: ConnectionResolution)
+        {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    Log.d("INFO_448_DEBUG", "Status ok")
+                    endpointID.add(endpointId)
+                    buttonStop.isEnabled = false
+                    buttonBroadcast.isEnabled = true
+                    buttonBroadcast.visibility = View.VISIBLE
+                    buttonAdvertise.visibility = View.GONE
+                    buttonDiscover.visibility = View.GONE
+                    buttonStop.visibility = View.GONE
+
+                    Log.d("INFO_448_DEBUG", "Connection success")
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.d("INFO_448_DEBUG", "Connection rejected")
@@ -197,24 +250,34 @@ class MainActivity : AppCompatActivity() {
             Log.d("INFO_448_DEBUG", "Connected")
         }
 
-        override fun onDisconnected(endpointId: String) {
+        override fun onDisconnected(endpointId: String)
+        {
             // We've been disconnected from this endpoint. No more data can be
             // sent or received.
             Log.d("INFO_448_DEBUG", "Disconnected")
         }
     }
 
-    internal class ReceiveBytesPayloadListener : PayloadCallback() {
-
-        override fun onPayloadReceived(endpointId: String, payload: Payload) {
+    inner class ReceiveBytesPayloadListener : PayloadCallback()
+    {
+        override fun onPayloadReceived(endpointId: String, payload: Payload)
+        {
             // This always gets the full data of the payload. Will be null if it's not a BYTES
             // payload. You can check the payload type with payload.getType().
             val receivedBytes = payload.asBytes()
+            var message = ""
+            if (receivedBytes != null) {
+                message = String(receivedBytes, Charsets.UTF_8)
+            }
+            Log.d("INFO_448_DEBUG", "Payload Received: " + message + " from " + endpointId)
+            Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
         }
 
-        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate) {
+        override fun onPayloadTransferUpdate(endpointId: String, update: PayloadTransferUpdate)
+        {
             // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
             // after the call to onPayloadReceived().
+
         }
     }
 }
