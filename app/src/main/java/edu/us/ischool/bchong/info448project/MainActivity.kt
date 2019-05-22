@@ -22,18 +22,24 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 class MainActivity : AppCompatActivity() {
     private lateinit var buttonAdvertise: Button
     private  lateinit var buttonDiscover : Button
+    private  lateinit var buttonStop : Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        buttonAdvertise = findViewById<Button>(R.id.button)
+        buttonAdvertise = findViewById(R.id.button)
         buttonDiscover = findViewById(R.id.button2)
+        buttonStop = findViewById(R.id.button3)
         buttonAdvertise.setOnClickListener {
             startAdvertising()
-            buttonDiscover.isEnabled = false;
+            buttonDiscover.isEnabled = false
         }
         buttonDiscover.setOnClickListener {
             startDiscovery()
-            buttonAdvertise.isEnabled=false;
+            buttonAdvertise.isEnabled=false
+        }
+        buttonStop.setOnClickListener {
+            buttonAdvertise.isEnabled = true
+            buttonDiscover.isEnabled = true
         }
     }
 
