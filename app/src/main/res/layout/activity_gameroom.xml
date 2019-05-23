@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Button
+            android:text="Host"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonHost"
+            android:gravity="center" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="70dp"
+            app:layout_constraintLeft_toLeftOf="parent" android:layout_marginLeft="70dp"/>
+    <Button
+            android:text="Guest1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonGuest1" tools:layout_editor_absoluteY="70dp"
+            app:layout_constraintLeft_toRightOf="@+id/buttonHost"
+            android:layout_marginLeft="76dp"/>
+
+    <Button
+            android:text="Guest2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonGuest2" tools:layout_editor_absoluteY="271dp"
+            tools:layout_editor_absoluteX="77dp"/>
+
+    <Button
+            android:text="Guest3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonGuest3" tools:layout_editor_absoluteY="271dp"
+            tools:layout_editor_absoluteX="236dp"/>
+
+    <Button
+            android:text="Guest4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonGuest4" tools:layout_editor_absoluteY="445dp"
+            tools:layout_editor_absoluteX="77dp"/>
+
+
+    <Button
+            android:text="Guest5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonGuest5" tools:layout_editor_absoluteY="445dp"
+            tools:layout_editor_absoluteX="236dp"/>
+
+    <Button
+            android:text="Start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonStartGame" tools:layout_editor_absoluteY="591dp"
+            tools:layout_editor_absoluteX="165dp"/>
+
+</android.support.constraint.ConstraintLayout>
