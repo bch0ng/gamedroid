@@ -26,7 +26,7 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
         }
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.game_fragment, gameFragment!!, "game_fragment")
+            .add(R.id.game_frame, gameFragment!!, "game_fragment")
             .commit()
         game.OnStart()
     }

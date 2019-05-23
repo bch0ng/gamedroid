@@ -34,36 +34,14 @@ class Flip : Game {
     }
     private fun accelerationEvent(event: SensorEvent?){
         val gz = event!!.values[2]
-        Log.v("test", "$gz")
-        /*if (mGZ === 0.0f) {
+        //Log.v("test", "$gz")
+        if (mGZ === 0.0f) {
             mGZ = gz
         }else{
             var delta=gz-lastGZ
-            if(rotationAccumulation>10f){
-                OnFlip()
-                rotationAccumulation=0f
-            }
-            else if(mGZ*gz>0){
-                rotationAccumulation+=delta
-
-            }
-            lastGZ=mGZ
-        }*/
-        if (mGZ === 0.0f) {
-            mGZ = gz
-        } else {
-            if (mGZ * gz < 0) {
-                mEventCountSinceGZChanged++
-                if (mEventCountSinceGZChanged === MAX_COUNT_GZ_CHANGE) {
-                    mGZ = gz
-                    mEventCountSinceGZChanged = 0
-                    OnFlip()
-                }
-            } else {
-                if (mEventCountSinceGZChanged > 0) {
-                    mGZ = gz
-                    mEventCountSinceGZChanged = 0
-                }
+            if(gz*mGZ>0){
+                //Log.v("event","happened")
+                score+=Math.pow(gz*(mGZ)*0.006,2.0)
             }
         }
     }
@@ -71,7 +49,7 @@ class Flip : Game {
         Log.i("test","${event.values[0]}")
         score+=(Math.pow((previousRotations[0]-event.values[0]).toDouble(),2.0)+
                 Math.pow((previousRotations[1]-event.values[1]).toDouble(),2.0)+
-                Math.pow((previousRotations[2]-event.values[2]).toDouble(),2.0)*0.165)
+                Math.pow((previousRotations[2]-event.values[2]).toDouble(),2.0))*0.0095
         previousRotations[0]=event.values[0]
         previousRotations[1]=event.values[1]
         previousRotations[2]=event.values[2]
@@ -82,7 +60,7 @@ class Flip : Game {
         //Log.v("test", "sensorchanged")
         val type = event!!.sensor.type
         if (type == Sensor.TYPE_ACCELEROMETER) {
-            //accelerationEvent(event)
+            accelerationEvent(event)
         }else if(type==Sensor.TYPE_GYROSCOPE){
             gyroEvent(event)
         }

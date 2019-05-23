@@ -24,12 +24,10 @@
                     android:layout_width="wrap_content"
             />
         </LinearLayout>
-        <fragment
-                class="edu.us.ischool.bchong.info448project.FlipFragment"
+        <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:name="edu.us.ischool.bchong.info448project.FlipFragment"
-                android:id="@+id/game_fragment"
+                android:id="@+id/game_frame"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
     </LinearLayout>
