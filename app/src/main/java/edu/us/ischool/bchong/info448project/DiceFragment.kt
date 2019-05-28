@@ -1,32 +1,37 @@
 package edu.us.ischool.bchong.info448project
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.ShapeDrawable
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.net.Network
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import kotlinx.android.synthetic.main.dice.*
 import kotlinx.android.synthetic.main.flip.*
+import kotlinx.android.synthetic.main.postgame_buttons.*
+import android.os.Build
+
+
 
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [FlipFragment.OnFragmentInteractionListener] interface
+ * [DiceFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [FlipFragment.newInstance] factory method to
+ * Use the [DiceFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class FlipFragment : Fragment(),GameFragment {
+class DiceFragment : Fragment(),GameFragment {
+
+
+    lateinit var canvas:ImageView
     override fun newInstance(game: Game): GameFragment {
         gameObj=game
         return this
@@ -43,6 +48,18 @@ class FlipFragment : Fragment(),GameFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+        }
+        restart_button.setOnClickListener {
+            val ft = fragmentManager!!.beginTransaction()
+            if (Build.VERSION.SDK_INT >= 26) {
+                ft.setReorderingAllowed(false)
+            }
+            postgame_buttons.visibility=View.GONE
+            ft.detach(this).attach(this).commit()
+        }
+        end_game_button.setOnClickListener {
+            postgame_buttons.visibility=View.GONE
+            activity!!.finish()
         }
     }
 
@@ -87,8 +104,18 @@ class FlipFragment : Fragment(),GameFragment {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
     }
-    fun OnFlip(score:Int){
-        flip_counter.text="score: $score"
+    //Do the visuals for when a dice is rolled
+    fun diceRoll(force1:Float,force2:Float, currentRollEnergy:Double){
+        // TODO:
+
+    }
+    //Do the visuals for when a opponents dice is rolled
+    fun opponentRolled(strength:Double){
+        // TODO:
+
+    }
+    fun displayRestart(yourScore:Int,winnerScore:Int, isWin:Boolean){
+        postgame_buttons.visibility=View.VISIBLE
     }
 
     override fun onResume() {
@@ -122,8 +149,8 @@ class FlipFragment : Fragment(),GameFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        override fun newInstance(game:Game):FlipFragment =
-            FlipFragment().apply {
+        override fun newInstance(game:Game):DiceFragment =
+            DiceFragment().apply {
                 gameObj=game
             }
     }
