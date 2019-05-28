@@ -3,6 +3,7 @@ package edu.us.ischool.bchong.info448project
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,4 +18,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    fun startSodaShake(view: View?) {
+        val intent = Intent(this, GameActivity::class.java)
+        var game = SodaShake()
+        intent.putExtra("game", game)
+        startActivity(intent)
+    }
+
+
 }
