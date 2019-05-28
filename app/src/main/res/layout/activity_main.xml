@@ -15,6 +15,13 @@
             android:id="@+id/button"
             android:layout_margin="16dp"
             android:background="@android:color/holo_green_light"/>
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Room Code"
+            android:id="@+id/roomCodeText"
+            android:maxLength="4"
+            android:digits="abcdefghijklmnopqrstuvwxyz1234567890"/>
     <Button
             android:text="Discover"
             android:layout_width="match_parent"

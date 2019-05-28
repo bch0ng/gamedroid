@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
@@ -26,7 +27,8 @@ import com.google.android.gms.nearby.connection.Payload
 import com.google.android.gms.nearby.connection.PayloadCallback
 
 const val USER_NICKNAME: String = "info448project"
-const val SERVICE_ID: String    = "edu.us.ischool.bchong.info448project"
+const val SERVICE_ID_BASE: String    = "edu.us.ischool.bchong.info448project_"
+private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 class MainActivity : AppCompatActivity()
 {
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var buttonDiscover:    Button
     private lateinit var buttonStop:        Button
     private lateinit var buttonBroadcast:   Button
+    private lateinit var roomCodeField:     EditText
 
     private var endpointID: ArrayList<String> = ArrayList()
     private var broadcastMessage: String = ""
@@ -79,6 +82,7 @@ class MainActivity : AppCompatActivity()
         buttonDiscover = findViewById(R.id.button2)
         buttonStop = findViewById(R.id.button3)
         buttonBroadcast = findViewById(R.id.button4)
+        roomCodeField = findViewById(R.id.roomCodeText)
 
         var mode = "none"
         buttonAdvertise.setOnClickListener {
@@ -88,14 +92,16 @@ class MainActivity : AppCompatActivity()
             buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
             buttonStop.isEnabled = true
+            roomCodeField.visibility = View.GONE
         }
         buttonDiscover.setOnClickListener {
             mode = "discovery"
-            startDiscovery()
+            startDiscovery(roomCodeField.text.toString())
             buttonDiscover.isEnabled = false
             buttonAdvertise.isEnabled = false
             buttonAdvertise.visibility = View.GONE
             buttonStop.isEnabled = true
+            roomCodeField.isEnabled = false
         }
         buttonStop.setOnClickListener {
             if (mode == "advertising")
@@ -108,7 +114,10 @@ class MainActivity : AppCompatActivity()
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
             buttonDiscover.visibility = View.VISIBLE
+            buttonStop.isEnabled = false
             buttonAdvertise.visibility = View.VISIBLE
+            roomCodeField.visibility = View.VISIBLE
+            roomCodeField.isEnabled = true
         }
         buttonBroadcast.setOnClickListener {
             mode = "broadcast"
@@ -133,9 +142,15 @@ class MainActivity : AppCompatActivity()
     {
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_STAR).build()
 
+        val roomCode = (1..4)
+            .map { kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
+        Log.d("INFO_448_DEBUG", roomCode)
+
         Nearby.getConnectionsClient(this@MainActivity)
             .startAdvertising(
-                USER_NICKNAME, SERVICE_ID, connectionLifecycleCallback, advertisingOptions
+                USER_NICKNAME, SERVICE_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
             )
             .addOnSuccessListener { unused: Void? ->
                 // We're advertising!
@@ -153,12 +168,13 @@ class MainActivity : AppCompatActivity()
         Log.d("INFO_448_DEBUG", "Stopped Advertising")
     }
 
-    private fun startDiscovery()
+    private fun startDiscovery(roomCode: String)
     {
+        Log.d("INFO_448_DEBUG", roomCode)
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(P2P_STAR).build()
         Nearby.getConnectionsClient(this@MainActivity)
-            .startDiscovery(SERVICE_ID, endpointDiscoveryCallback, discoveryOptions)
-            .addOnSuccessListener { unused: Void? ->
+            .startDiscovery(SERVICE_ID_BASE + roomCode, endpointDiscoveryCallback, discoveryOptions)
+            .addOnSuccessListener {
                 // We're discovering!
                 Log.d("INFO_448_DEBUG", "Discovered")
             }
@@ -182,7 +198,7 @@ class MainActivity : AppCompatActivity()
             Log.d("INFO_448_DEBUG", "Endpoint Found")
             Nearby.getConnectionsClient(this@MainActivity)
                 .requestConnection(USER_NICKNAME, endpointId, connectionLifecycleCallback)
-                .addOnSuccessListener { unused: Void? ->
+                .addOnSuccessListener {
                     // We successfully requested a connection. Now both sides
                     // must accept before the connection is established.
                     endpointID.add(endpointId)
