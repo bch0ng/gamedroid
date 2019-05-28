@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
+    <TextView
+            android:text="@string/txtCodeHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtCodeHint" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp" android:layout_marginTop="32dp"
+            android:textSize="24sp"/>
+    <TextView
+            android:text="0148"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textCode" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/txtCodeHint" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp" android:textSize="24sp" android:lineSpacingExtra="14sp"/>
+    <Button
+            android:text="@string/btnEnterRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnEnterRoom" android:layout_marginTop="64dp"
+            app:layout_constraintTop_toBottomOf="@+id/textCode" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp" android:textSize="18sp"
+            android:background="@android:color/holo_blue_light"/>
+</android.support.constraint.ConstraintLayout>
