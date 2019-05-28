@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Info448 Project</string>
+    <string name="txtWelcome">Welcome</string>
+    <string name="txtName">Please enter your name:</string>
+    <string name="btnStartGame">Start</string>
+    <string name="btnSingle">Single Player</string>
+    <string name="btnMutiple">Multi-Player</string>
+    <string name="txtCodeHint">Here is Your Code:</string>
+    <string name="btnEnterRoom">Enter</string>
+    <string name="btnCodeHintGuest">Please Enter Your Code:</string>
+    <string name="txtHost">Host</string>
+    <string name="txtGuest">Guest</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
