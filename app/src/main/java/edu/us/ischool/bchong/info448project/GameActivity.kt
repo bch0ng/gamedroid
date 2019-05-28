@@ -1,5 +1,6 @@
 package edu.us.ischool.bchong.info448project
 
+import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import android.widget.Button
 import kotlinx.android.synthetic.main.activity_game.*
 
 class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListener {
@@ -21,8 +23,9 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
         game = intent.extras.getSerializable("game") as Game
 
         var gameFragment = game.gameFragment as Fragment
-        back_button.setOnClickListener {
-
+        findViewById<Button>(R.id.back_button).setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
         supportFragmentManager
             .beginTransaction()
