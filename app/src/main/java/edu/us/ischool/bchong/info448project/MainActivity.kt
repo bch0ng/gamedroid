@@ -7,10 +7,13 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.AdvertisingOptions
@@ -28,6 +31,7 @@ import com.google.android.gms.nearby.connection.PayloadCallback
 
 const val USER_NICKNAME: String = "info448project"
 const val SERVICE_ID_BASE: String    = "edu.us.ischool.bchong.info448project_"
+const val ROOM_CODE_LENGTH: Int = 4
 private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 class MainActivity : AppCompatActivity()
@@ -37,6 +41,7 @@ class MainActivity : AppCompatActivity()
     private lateinit var buttonStop:        Button
     private lateinit var buttonBroadcast:   Button
     private lateinit var roomCodeField:     EditText
+    private lateinit var roomCodeShow: TextView
 
     private var endpointID: ArrayList<String> = ArrayList()
     private var broadcastMessage: String = ""
@@ -83,17 +88,27 @@ class MainActivity : AppCompatActivity()
         buttonStop = findViewById(R.id.button3)
         buttonBroadcast = findViewById(R.id.button4)
         roomCodeField = findViewById(R.id.roomCodeText)
+        roomCodeShow = findViewById(R.id.roomCodeShow)
 
         var mode = "none"
         buttonAdvertise.setOnClickListener {
             mode = "advertising"
-            startAdvertising()
+            val roomCode = startAdvertising()
             buttonDiscover.isEnabled = false
             buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
             buttonStop.isEnabled = true
             roomCodeField.visibility = View.GONE
+            roomCodeShow.visibility = View.VISIBLE
+            roomCodeShow.text = roomCode
         }
+        roomCodeField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                buttonDiscover.isEnabled = (s.toString().length == 4)
+            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
         buttonDiscover.setOnClickListener {
             mode = "discovery"
             startDiscovery(roomCodeField.text.toString())
@@ -118,6 +133,7 @@ class MainActivity : AppCompatActivity()
             buttonAdvertise.visibility = View.VISIBLE
             roomCodeField.visibility = View.VISIBLE
             roomCodeField.isEnabled = true
+            roomCodeShow.visibility = View.GONE
         }
         buttonBroadcast.setOnClickListener {
             mode = "broadcast"
@@ -138,11 +154,11 @@ class MainActivity : AppCompatActivity()
             }
     }
 
-    private fun startAdvertising()
+    private fun startAdvertising(): String
     {
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(P2P_STAR).build()
 
-        val roomCode = (1..4)
+        val roomCode = (1..ROOM_CODE_LENGTH)
             .map { kotlin.random.Random.nextInt(0, charPool.size) }
             .map(charPool::get)
             .joinToString("")
@@ -154,12 +170,13 @@ class MainActivity : AppCompatActivity()
             )
             .addOnSuccessListener { unused: Void? ->
                 // We're advertising!
-                Log.d("INFO_448_DEBUG", "Advertised!")
+                Log.d("INFO_448_DEBUG", "Advertising!")
             }
             .addOnFailureListener { e: Exception ->
                 // We were unable to start advertising.
                 Log.d("INFO_448_DEBUG", "Not Advertising\n" + e.message)
             }
+        return roomCode
     }
 
     private fun stopAdvertising()
@@ -176,7 +193,7 @@ class MainActivity : AppCompatActivity()
             .startDiscovery(SERVICE_ID_BASE + roomCode, endpointDiscoveryCallback, discoveryOptions)
             .addOnSuccessListener {
                 // We're discovering!
-                Log.d("INFO_448_DEBUG", "Discovered")
+                Log.d("INFO_448_DEBUG", "Discovering")
             }
             .addOnFailureListener { e: Exception ->
                 // We're unable to start discovering.
