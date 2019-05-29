@@ -1,6 +1,7 @@
 package edu.us.ischool.bchong.info448project
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -11,6 +12,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -129,6 +131,8 @@ class MainActivity : AppCompatActivity()
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
             buttonDiscover.visibility = View.VISIBLE
+            buttonBroadcast.isEnabled = false
+            buttonBroadcast.visibility = View.GONE
             buttonStop.isEnabled = false
             buttonAdvertise.visibility = View.VISIBLE
             roomCodeField.visibility = View.VISIBLE
