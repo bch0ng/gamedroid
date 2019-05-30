@@ -1,5 +1,6 @@
 package edu.us.ischool.bchong.info448project
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -15,23 +16,15 @@ import kotlinx.android.synthetic.main.dice.*
 import kotlinx.android.synthetic.main.flip.*
 import kotlinx.android.synthetic.main.postgame_buttons.*
 import android.os.Build
+import android.support.v7.content.res.AppCompatResources
+import android.text.Layout
+import android.util.Log
+import android.widget.TextView
+import java.util.*
+import kotlin.math.roundToInt
 
-
-
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [DiceFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [DiceFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class DiceFragment : Fragment(),GameFragment {
 
-
-    lateinit var canvas:ImageView
     override fun newInstance(game: Game): GameFragment {
         gameObj=game
         return this
@@ -45,9 +38,72 @@ class DiceFragment : Fragment(),GameFragment {
     //lateinit var linearAccelerometer:SensorManager
     lateinit var motionSensorController: SensorManager
     //lateinit var accelerometer:Sensor
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
+
+
+
+    val PLAYER_KEY="player"
+    val PLAYERS_KEY="players"
+    val ID_SUFFIX="Dice"
+    lateinit var player:Pair<String,String>
+    lateinit var players:Array<Pair<String,String>>
+    private lateinit var playerDiceVisual:ImageView
+
+    fun ShowWinner(winner:Pair<String,Int>){
+        val scoreString="${winner.first} won with ${winner.second}"
+        Log.v("dice",scoreString)
+    }
+    fun StartGame(myId:Pair<String,String>,allPlayers:Array<Pair<String,String>>){
+        var index=0
+        allPlayers.map {
+            players[index]=it
+            index++
+        }
+        player=myId
+        val inflater=context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        opponent_dice.removeAllViews()
+        redrawPlayers(inflater)
+    }
+    private fun getIdString(id:String):String{
+        return "$id$ID_SUFFIX"
+    }
+    private fun redrawPlayers(inflater: LayoutInflater){
+        players.map { thisPlayer:Pair<String,String>->
+            val newDiceObj= inflater.inflate(R.layout.dice_opponent,null)
+            newDiceObj.tag=getIdString(thisPlayer.first)
+            newDiceObj.findViewWithTag<TextView>("player_name").setText(thisPlayer.second)
+            opponent_dice.addView(newDiceObj)
+        }
+    }
+    private fun drawPlayers(savedInstanceState: Bundle){
+        val playerNameTag:TextView=player_dice.findViewWithTag("player_name") as TextView
+        val inflater=context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        if(savedInstanceState.containsKey(PLAYERS_KEY)){
+            players=savedInstanceState.get(PLAYERS_KEY) as Array<Pair<String,String>>
+            redrawPlayers(inflater)
+        }
+        if(savedInstanceState.containsKey(PLAYER_KEY)){
+            player=savedInstanceState.get(PLAYER_KEY) as Pair<String,String>
+            playerNameTag.text=player.second
+        }else{
+            playerNameTag.text=getString(R.string.default_player_name)
+        }
+        playerDiceVisual=player_dice.findViewWithTag("dice_img") as ImageView
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(players!=null){
+            outState.putSerializable("players",players)
+        }
+        if(player!=null) {
+            outState.putSerializable("player", player)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if(savedInstanceState!=null) {
+            drawPlayers(savedInstanceState)
         }
         restart_button.setOnClickListener {
             val ft = fragmentManager!!.beginTransaction()
@@ -62,12 +118,17 @@ class DiceFragment : Fragment(),GameFragment {
             activity!!.finish()
         }
     }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.flip, container, false)
+        return inflater.inflate(R.layout.dice, container, false)
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -75,6 +136,7 @@ class DiceFragment : Fragment(),GameFragment {
         listener?.onFragmentInteraction(uri)
     }
 
+    /*
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
@@ -82,7 +144,7 @@ class DiceFragment : Fragment(),GameFragment {
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
-    }
+    }*/
 
     override fun onDetach() {
         super.onDetach()
@@ -104,14 +166,40 @@ class DiceFragment : Fragment(),GameFragment {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
     }
-    //Do the visuals for when a dice is rolled
-    fun diceRoll(force1:Float,force2:Float, currentRollEnergy:Double){
-        // TODO:
+    //Starts the rolling animation with the given force
+    //Eat unit of force equals 1 radian of rotation per second
+    fun diceRoll(force1:Float,force2:Float, currentRollEnergy:Double, duration:Long){
+        // TODO: test visuals
+        val dimensionAnimator=ValueAnimator.ofFloat(0f,(Math.PI*duration).toFloat())
+        dimensionAnimator.duration=duration
+        dimensionAnimator.addUpdateListener(dimAnimator(player_dice,force1,force2))
 
     }
+
+    //Changes the size of dice
+    private fun dimAnimator(element:View,force1:Float, force2:Float)=object : ValueAnimator.AnimatorUpdateListener {
+        override fun onAnimationUpdate(animation: ValueAnimator) {
+            val animatedValue:Float = animation.animatedValue as Float
+            element.layoutParams.height = (force1*Math.cos(animatedValue.toDouble())).toInt()
+            element.layoutParams.width = (force2*Math.cos(animatedValue.toDouble())).toInt()
+        }
+    }
+
+
+    fun revealRoll(id:String,rollValue:Int){
+        val parentElement=root_dice_layout.findViewWithTag<TextView>("${id}Dice")
+        parentElement.findViewWithTag<TextView>("dice_text").text="$rollValue"
+    }
     //Do the visuals for when a opponents dice is rolled
-    fun opponentRolled(strength:Double){
+    fun opponentRolled(tag:String,strength:Double,duration:Long){
         // TODO:
+        val element:View=opponent_dice.findViewWithTag(tag)
+        val dimensionAnimator=ValueAnimator.ofFloat(0f,(Math.PI*duration).toFloat())
+        dimensionAnimator.duration=duration
+        dimensionAnimator.addUpdateListener(dimAnimator(
+            element,
+            (strength*Math.random().roundToInt()*-1.0).toFloat(),
+            (strength*Math.random().roundToInt()*-1.0).toFloat()))
 
     }
     fun displayRestart(yourScore:Int,winnerScore:Int, isWin:Boolean){

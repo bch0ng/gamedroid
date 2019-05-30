@@ -21,41 +21,75 @@ class RollTheDice : NetworkGame {
     enum class gameStates() {
             PREGAME(), INGAME(), POSTGAME()
     }
+    enum class messageStates(val code: String) {
+        START_GAME("startGame"),
+        OPPONENT_SHAKE("shake"),
+        OPPONENT_SCORE("opponentScore"),
+        GAME_OVER("gameOver")
+    }
     private var pregameDuration=R.integer.dice_pregame_duration.toLong()
-    private var gameDuration=R.integer.dice_game_duration.toLong()
+    var gameDuration=R.integer.dice_game_duration.toLong()
     private var postgameDuration=R.integer.dice_postgame_duration.toLong()
 
     var gameState=gameStates.PREGAME
     override var gameFragment: GameFragment? = null
-    private lateinit var frag: DiceFragment
+    private var frag: DiceFragment
     private var accumulatedRollEnergy:Double=0.0
 
     var score: Double = 0.0
     var prevAccelerations= arrayOf(0f,0f,0f)
-    val OPPONENT_SHAKE="shake"
+    lateinit var myId:String
+    lateinit var players:Array<Pair<String,String>>       //ID and name
+
+
     lateinit var vibrator: Vibrator
     val vibrationStrength=(R.integer.dice_vibration_strength).toLong()
 
+    //When the game gets the starting signal from the server
+    private fun StartGame(message: Bundle){
+        players=message.getSerializable("players") as Array<Pair<String,String>>
+        myId=message.getString("playerId")
+        val myName=message.getString("playerName") as String
+        frag.StartGame(Pair(myId,myName),players)
+    }
     override fun newMessage(message: Bundle) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        if(message.get("type")==OPPONENT_SHAKE){
-            vibrate(message.get("strength") as Double)
+        val type=message.get("type")
+        when(type){
+            messageStates.START_GAME -> StartGame(message)
+            messageStates.OPPONENT_SHAKE -> vibrate(message.get("id") as String,message.get("strength") as Double)
+            messageStates.OPPONENT_SCORE -> newOpponentScore(message.get("id") as String,message.get("score") as Int)
+            messageStates.GAME_OVER -> gameOver(message.get("scores") as Array<Pair<String,Int>>)
+            else -> Log.e("dice","Invalid message $type")
         }
+    }
+    private fun gameOver(playerScores:Array<Pair<String,Int>>){
+        var highestScore=Pair<String,Int>(myId,score.toInt())
+        playerScores.map {
+            pair ->
+            newOpponentScore(pair.first,pair.second)
+            if(pair.second>highestScore.second){
+                highestScore=pair
+            }
+        }
+        frag.ShowWinner(highestScore)
+    }
+    private fun newOpponentScore(id:String, playerScore:Int){
+        frag.revealRoll(id,playerScore)
     }
 
     override fun sendMessage(message: Bundle) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun vibrate(strength:Double){
+    fun vibrate(tag:String,strength:Double){
         vibrator.vibrate(vibrationStrength)
-        frag.opponentRolled(strength)
+        frag.opponentRolled(tag,strength,gameDuration)
     }
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
     constructor() {
-        gameFragment = FlipFragment().newInstance(this)
+        gameFragment = DiceFragment().newInstance(this)
         this.frag=gameFragment as DiceFragment
     }
     //When the player attempts to roll before the game starts
@@ -64,12 +98,12 @@ class RollTheDice : NetworkGame {
     }
     //When the player attempts to roll
     private fun inGameRoll(event: SensorEvent){
-        frag.diceRoll(event.values[0],event.values[1],accumulatedRollEnergy)
+        frag.diceRoll(event.values[0],event.values[1],accumulatedRollEnergy, this.gameDuration)
         sendOpponentRollData(accumulatedRollEnergy*(Random().nextDouble()+0.5))
     }
     private fun sendOpponentRollData(strength:Double){
         var message:Bundle= Bundle.EMPTY
-        message.putString("type",OPPONENT_SHAKE)
+        message.putString("type",messageStates.OPPONENT_SHAKE.code)
         message.putDouble("strength",strength)
         sendMessage(message)
     }
@@ -117,7 +151,7 @@ class RollTheDice : NetworkGame {
 
     override fun OnStart() {
         score = 0.0
-        vibrator = frag.context!!.getSystemService(VIBRATOR_SERVICE) as Vibrator
+        vibrator = GameApp.applicationContext().getSystemService(VIBRATOR_SERVICE) as Vibrator
         //This timer is for the games pregame
         Timer().schedule(object : TimerTask() {
             override fun run() {
