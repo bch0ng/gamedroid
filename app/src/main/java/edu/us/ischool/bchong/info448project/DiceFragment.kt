@@ -53,6 +53,7 @@ class DiceFragment : Fragment(),GameFragment {
         Log.v("dice",scoreString)
     }
     fun StartGame(myId:Pair<String,String>,allPlayers:Array<Pair<String,String>>){
+        Log.v("dice","Start game called by server")
         var index=0
         allPlayers.map {
             players[index]=it

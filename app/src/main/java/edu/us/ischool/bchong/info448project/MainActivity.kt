@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         }
         roll_dice.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
-            var game=RollTheDice()
+            var game=RollTheDiceClient()
             intent.putExtra("game", game)
             startActivity(intent)
         }

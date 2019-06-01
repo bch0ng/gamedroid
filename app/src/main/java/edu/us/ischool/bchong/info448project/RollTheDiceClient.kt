@@ -17,15 +17,9 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 //TODO Everything
-class RollTheDice : NetworkGame {
+class RollTheDiceClient : NetworkGame {
     enum class gameStates() {
             PREGAME(), INGAME(), POSTGAME()
-    }
-    enum class messageStates(val code: String) {
-        START_GAME("startGame"),
-        OPPONENT_SHAKE("shake"),
-        OPPONENT_SCORE("opponentScore"),
-        GAME_OVER("gameOver")
     }
     private var pregameDuration=R.integer.dice_pregame_duration.toLong()
     var gameDuration=R.integer.dice_game_duration.toLong()
@@ -65,12 +59,16 @@ class RollTheDice : NetworkGame {
     override fun newMessage(message: Bundle) {
         val type=message.get("type")
         when(type){
-            messageStates.START_GAME -> StartGame(message)
-            messageStates.OPPONENT_SHAKE -> vibrate(message.get("id") as String,message.get("strength") as Double)
-            messageStates.OPPONENT_SCORE -> newOpponentScore(message.get("id") as String,message.get("score") as Int)
-            messageStates.GAME_OVER -> gameOver(message.get("scores") as Array<Pair<String,Int>>)
+            DiceNetworkMessages.START_GAME -> StartGame(message)
+            DiceNetworkMessages.OPPONENT_SHAKE -> vibrate(message.get("id") as String,message.get("strength") as Double)
+            DiceNetworkMessages.OPPONENT_SCORE -> newOpponentScore(message.get("id") as String,message.get("score") as Int)
+            DiceNetworkMessages.OPPONENT_DISCONNECT -> opponentDisconnect(message.getString("id"))
+            DiceNetworkMessages.GAME_OVER -> gameOver(message.get("scores") as Array<Pair<String,Int>>)
             else -> Log.e("dice","Invalid message $type")
         }
+    }
+    private fun opponentDisconnect(id:String){
+        //frag.opponentDisconnected(id)
     }
     private fun gameOver(playerScores:Array<Pair<String,Int>>){
         var highestScore=Pair<String,Int>(myId,score.toInt())
@@ -116,7 +114,7 @@ class RollTheDice : NetworkGame {
     }
     private fun sendOpponentRollData(strength:Double){
         var message:Bundle= Bundle.EMPTY
-        message.putString("type",messageStates.OPPONENT_SHAKE.code)
+        message.putString("type",DiceNetworkMessages.OPPONENT_SHAKE.code)
         message.putDouble("strength",strength)
         sendMessage(message)
     }
@@ -169,7 +167,7 @@ class RollTheDice : NetworkGame {
             Log.v("dice","offline testing started.")
             var newBundle:Bundle= Bundle.EMPTY
             var testPlayers= arrayOf(Pair("Player","me"),Pair("p2","Ted"),Pair("p3","NotTed"))
-            newBundle.putString("type",messageStates.START_GAME.code)
+            newBundle.putString("type",DiceNetworkMessages.START_GAME.code)
             newBundle.putSerializable("players",testPlayers)
             newBundle.putSerializable("playerId","Player")
             newBundle.putSerializable("playerName","Player")
