@@ -45,12 +45,22 @@ class RollTheDice : NetworkGame {
     lateinit var vibrator: Vibrator
     val vibrationStrength=(R.integer.dice_vibration_strength).toLong()
 
+    //If this value is true then constants will be used to initialize the game
+    //And shakes of your phone will trigger opponent shakes as well
+    private val offlineTesting=true
+
     //When the game gets the starting signal from the server
     private fun StartGame(message: Bundle){
         players=message.getSerializable("players") as Array<Pair<String,String>>
         myId=message.getString("playerId")
         val myName=message.getString("playerName") as String
         frag.StartGame(Pair(myId,myName),players)
+        //This timer is for ending the game's pregame
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                endPregame()
+            }
+        }, pregameDuration)
     }
     override fun newMessage(message: Bundle) {
         val type=message.get("type")
@@ -100,6 +110,9 @@ class RollTheDice : NetworkGame {
     private fun inGameRoll(event: SensorEvent){
         frag.diceRoll(event.values[0],event.values[1],accumulatedRollEnergy, this.gameDuration)
         sendOpponentRollData(accumulatedRollEnergy*(Random().nextDouble()+0.5))
+
+        //Remove later
+
     }
     private fun sendOpponentRollData(strength:Double){
         var message:Bundle= Bundle.EMPTY
@@ -148,16 +161,20 @@ class RollTheDice : NetworkGame {
 
     }
 
-
+    //When everything is initialized
     override fun OnStart() {
         score = 0.0
         vibrator = GameApp.applicationContext().getSystemService(VIBRATOR_SERVICE) as Vibrator
-        //This timer is for the games pregame
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                endPregame()
-            }
-        }, pregameDuration)
+        if(offlineTesting){
+            Log.v("dice","offline testing started.")
+            var newBundle:Bundle= Bundle.EMPTY
+            var testPlayers= arrayOf(Pair("Player","me"),Pair("p2","Ted"),Pair("p3","NotTed"))
+            newBundle.putString("type",messageStates.START_GAME.code)
+            newBundle.putSerializable("players",testPlayers)
+            newBundle.putSerializable("playerId","Player")
+            newBundle.putSerializable("playerName","Player")
+            newMessage(newBundle)
+        }
         Log.v("test", "Dice Listener Started")
     }
     private fun endPregame(){
@@ -169,6 +186,7 @@ class RollTheDice : NetworkGame {
     }
     private fun startPostgame(){
         frag.displayRestart(score.toInt(),0,false)
+
     }
 
     override fun OnEnd(): Int {
