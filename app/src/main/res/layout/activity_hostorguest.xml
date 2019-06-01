@@ -14,12 +14,12 @@
         <Button
                 android:text="@string/txtHost"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/btnSingle" android:layout_margin="64dp"
+                android:layout_height="wrap_content" android:id="@+id/btnHost" android:layout_margin="64dp"
                 android:background="@android:color/holo_blue_bright" android:textSize="18sp"/>
         <Button
                 android:text="@string/txtGuest"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/btnMultiPlayer" android:layout_margin="64dp"
+                android:layout_height="wrap_content" android:id="@+id/btnGuest" android:layout_margin="64dp"
                 android:background="@android:color/holo_orange_light" android:textSize="18sp"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

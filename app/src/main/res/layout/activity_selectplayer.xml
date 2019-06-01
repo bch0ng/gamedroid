@@ -19,7 +19,7 @@
         <Button
                 android:text="@string/btnMutiple"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/btnMultiPlayer" android:layout_margin="64dp"
+                android:layout_height="wrap_content" android:id="@+id/btnMulti" android:layout_margin="64dp"
                 android:background="@android:color/holo_orange_light" android:textSize="18sp"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
