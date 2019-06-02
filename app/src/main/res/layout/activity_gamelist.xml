@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:tools="http://schemas.android.com/tools"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -15,15 +14,15 @@
         <Button
                 android:text="Roll the Dice"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/button5"/>
+                android:layout_height="wrap_content" android:id="@+id/buttonRollTheDice"/>
         <Button
                 android:text="Shake the Soda"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/button6"/>
+                android:layout_height="wrap_content" android:id="@+id/buttonShaketheSoda"/>
         <Button
                 android:text="Answer the Phone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/button7"/>
+                android:layout_height="wrap_content" android:id="@+id/buttonAnswerthePhone"/>
     </LinearLayout>
 
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
