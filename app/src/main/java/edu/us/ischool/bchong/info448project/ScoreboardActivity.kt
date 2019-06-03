@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 
-class Scoreboard_Activity: AppCompatActivity() {
+class ScoreboardActivity : AppCompatActivity() {
     private lateinit var gamechoice: String
     private lateinit var identity: String
     private lateinit var restartButton: Button
@@ -38,7 +38,7 @@ class Scoreboard_Activity: AppCompatActivity() {
             with another listener that listens to the string on
 
             */
-            val intent = Intent(this@Scoreboard_Activity, GamelistActivity::class.java)
+            val intent = Intent(this@ScoreboardActivity, GameSelectionActivity::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
             startActivity(intent)
@@ -46,7 +46,7 @@ class Scoreboard_Activity: AppCompatActivity() {
         newGameButton.setOnClickListener {
             restartButton.isEnabled = false
             // What if the player wants to switch between single mode and multi mode?
-            val intent = Intent(this@Scoreboard_Activity, GamelistActivity::class.java)
+            val intent = Intent(this@ScoreboardActivity, GameSelectionActivity::class.java)
             intent.putExtra("IDENTITY", identity)
             startActivity(intent)
         }

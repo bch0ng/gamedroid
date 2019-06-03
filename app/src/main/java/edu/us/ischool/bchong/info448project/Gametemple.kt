@@ -21,7 +21,7 @@ class Gametemple : AppCompatActivity() {
             Toast.makeText(this@Gametemple, "Gaming!", Toast.LENGTH_LONG).show()
         }
         endGame.setOnClickListener {
-            val intent = Intent(this@Gametemple, Scoreboard_Activity::class.java)
+            val intent = Intent(this@Gametemple, ScoreboardActivity::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
             startActivity(intent)
