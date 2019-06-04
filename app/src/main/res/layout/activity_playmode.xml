@@ -11,12 +11,12 @@
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
         <Button
-                android:text="@string/btnSingle"
+                android:text="Single Player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/btnSingle" android:layout_margin="64dp"
                 android:background="@android:color/holo_blue_bright" android:textSize="18sp"/>
         <Button
-                android:text="@string/btnMutiple"
+                android:text="Mutiple Player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/btnMulti" android:layout_margin="64dp"
                 android:background="@android:color/holo_orange_light" android:textSize="18sp"/>

@@ -3,12 +3,12 @@ package edu.us.ischool.bchong.info448project
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 
 class ScoreboardActivity : AppCompatActivity() {
+    private lateinit var playmode: String
     private lateinit var gamechoice: String
     private lateinit var identity: String
     private lateinit var restartButton: Button
@@ -20,13 +20,14 @@ class ScoreboardActivity : AppCompatActivity() {
         "Roll the Dice" to Gametemple()
     )
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scoreboard)
         restartButton = findViewById(R.id.buttonRestart)
         newGameButton = findViewById(R.id.buttonNew)
         gamechoice = this.intent.getStringExtra("GAME")
         identity = this.intent.getStringExtra("IDENTITY")
+        playmode = this.intent.getStringExtra("PLAYMODE")
         if (identity == "Host") {
             restartButton.isEnabled = true
             newGameButton.isEnabled = true
@@ -44,6 +45,7 @@ class ScoreboardActivity : AppCompatActivity() {
             val intent = Intent(this@ScoreboardActivity, gameMap.get(gamechoice)!!::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
+            playmode = this.intent.getStringExtra("PLAYMODE")
             startActivity(intent)
         }
         newGameButton.setOnClickListener {
@@ -51,12 +53,10 @@ class ScoreboardActivity : AppCompatActivity() {
             // What if the player wants to switch between single mode and multi mode?
             val intent = Intent(this@ScoreboardActivity, GameSelectionActivity::class.java)
             intent.putExtra("IDENTITY", identity)
+            playmode = this.intent.getStringExtra("PLAYMODE")
             startActivity(intent)
         }
     }
 
-    private fun winnerCounter() {
-
-    }
 
 }

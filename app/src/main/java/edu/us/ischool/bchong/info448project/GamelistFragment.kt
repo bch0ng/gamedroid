@@ -1,8 +1,10 @@
 package edu.us.ischool.bchong.info448project
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,7 @@ import org.json.JSONObject
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val playmode = "param1"
 private const val useridentity = "param2"
+private lateinit var view: View
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +42,7 @@ class GamelistFragment : Fragment() {
         |"Multi" :{
         |   "NumberOfGame":"3",
         |   "GameName" : ["Shake the Soda", "Answer the Phone", "Roll the Dice"]
-        |}
+        |}}
     """.trimMargin()
     )
     private var listener: OnFragmentInteractionListener? = null
@@ -51,23 +54,29 @@ class GamelistFragment : Fragment() {
             mode = it.getString(playmode)
             identity = it.getString(useridentity)
         }
+        Log.d("GameSystem", "I am in oncreate")
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var view: View? = null
+        Log.d("GameSystem", "I am in oncreateview")
         // Inflate the layout for this fragment
-        if (mode == "simple") {
-            val view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
+        if (mode == "Single") {
+
+            view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
 
             val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
             //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
 
             var game1sbtn = view.findViewById<Button>(R.id.buttongame1s)
             var game2sbtn = view.findViewById<Button>(R.id.buttongame2s)
+            startgamebtn = view.findViewById<Button>(R.id.buttonsinglestart)
+            startgamebtn.isEnabled = false
 
-
+            Log.d("GameSystem", "I am in singlelayout")
 
             game1sbtn.setText(games[0].toString())
             game2sbtn.setText(games[1].toString())
@@ -81,9 +90,16 @@ class GamelistFragment : Fragment() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
             }
+            startgamebtn.setOnClickListener() {
+                val intent = Intent(activity, Gametemple::class.java)
+                intent.putExtra("IDENTITY", identity)
+                intent.putExtra("GAME", gamechoice)
+                startActivity(intent)
+            }
+
 
         } else {
-            val view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
+            view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
 
             val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
             //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
@@ -91,7 +107,8 @@ class GamelistFragment : Fragment() {
             var game1btn = view.findViewById<Button>(R.id.buttongame1)
             var game2btn = view.findViewById<Button>(R.id.buttongame2)
             var game3btn = view.findViewById<Button>(R.id.buttongame3)
-
+            startgamebtn = view.findViewById<Button>(R.id.buttonmultistart)
+            startgamebtn.isEnabled = false
 
             game1btn.setText(games[0].toString())
             game2btn.setText(games[1].toString())
@@ -110,9 +127,16 @@ class GamelistFragment : Fragment() {
                 gamechoice = game3btn.text.toString()
                 startgamebtn.isEnabled = true
             }
+            startgamebtn.setOnClickListener() {
+                val intent = Intent(activity, Gametemple::class.java)
+                intent.putExtra("IDENTITY", identity)
+                intent.putExtra("GAME", gamechoice)
+                startActivity(intent)
+            }
         }
-
+        Log.d("GameSystem", "I should be returned")
         //Different layout?
+
         return view
     }
 

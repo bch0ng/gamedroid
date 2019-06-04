@@ -5,27 +5,23 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent" android:layout_height="match_parent"
         tools:context=".GamelistFragment">
-
-    <Button
-            android:text="Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/buttonsinglestart"
-            app:layout_constraintTop_toBottomOf="@+id/linearsingle"
-    />
-    <buttongroup
+    <LinearLayout
             android:orientation="vertical"
-            android:layout_width="397dp"
-            android:layout_height="281dp"
-            android:id="@+id/linearsingle">
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/singlelinearlayout">
         <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
+                android:text="game2s"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/buttongame1s"/>
         <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/buttongame2s"
-        />
-    </buttongroup>
+                android:text="game1s"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/buttongame2s"/>
+    </LinearLayout>
+    <Button
+            android:text="Start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/buttonsinglestart"
+            app:layout_constraintTop_toBottomOf="@+id/singlelinearlayout"/>
 </android.support.constraint.ConstraintLayout>

@@ -13,17 +13,21 @@ class Gametemple : AppCompatActivity() {
     private lateinit var endGame: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activty_gametemple)
         gamechoice = this.intent.getStringExtra("GAME")
         identity = this.intent.getStringExtra("IDENTITY")
         beginGame = findViewById(R.id.buttonTest1)
         endGame = findViewById(R.id.buttonTest2)
+        endGame.isEnabled = false
         beginGame.setOnClickListener {
             Toast.makeText(this@Gametemple, "Gaming!", Toast.LENGTH_LONG).show()
+            endGame.isEnabled = true
         }
         endGame.setOnClickListener {
             val intent = Intent(this@Gametemple, ScoreboardActivity::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
+            intent.putExtra("PLAYMODE", "Single")
             startActivity(intent)
         }
     }
