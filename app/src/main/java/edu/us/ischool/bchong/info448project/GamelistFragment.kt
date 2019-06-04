@@ -1,7 +1,6 @@
 package edu.us.ischool.bchong.info448project
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -118,9 +117,9 @@ class GamelistFragment : Fragment() {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
+    /*fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
-    }
+    }*/
 
 
     override fun onAttach(context: Context) {
@@ -151,7 +150,7 @@ class GamelistFragment : Fragment() {
 
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onGameSelect(param1: String, param2: String) {}
     }
 
     companion object {
