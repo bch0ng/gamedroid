@@ -14,11 +14,21 @@ import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import android.view.View
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
 
 //Game controller for roll the dice
 //WARNING: Use newInstance to set this phone's local gameclient
 class RollTheDiceHost : GameHost {
+    lateinit var players: Array<Pair<String, String>>       //ID and name
+    override fun setPlayers(playerData: ArrayList<Pair<String,String>>) {
+        players= (playerData.toArray() as Array<Pair<String, String>>)
+    }
+
+    override fun kickPlayer(id: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     enum class gameStates() {
         PREGAME(), INGAME(), POSTGAME()
     }
@@ -36,7 +46,6 @@ class RollTheDiceHost : GameHost {
     var gameState = gameStates.PREGAME
 
     lateinit var myId: String
-    lateinit var players: Array<Pair<String, String>>       //ID and name
     lateinit var playerScores: MutableMap<String, Int>
 
     //Sets the local client to the given game and returns this instance
@@ -52,8 +61,8 @@ class RollTheDiceHost : GameHost {
     override fun newMessage(message: Bundle) {
         val type = message.get("type")
         when (type) {
-            messageStates.NEW_SHAKE -> newShake(message)
-            messageStates.PLAYER_DISCONNECT -> playerDisconnect(message)
+            messageStates.NEW_SHAKE.code -> newShake(message)
+            messageStates.PLAYER_DISCONNECT.code -> playerDisconnect(message)
         }
     }
 
@@ -65,7 +74,7 @@ class RollTheDiceHost : GameHost {
         val sender = message.getString("id")
         players.map {
             if (it.first != sender) {
-                var newMessage: Bundle = Bundle.EMPTY
+                var newMessage: Bundle = Bundle()
                 newMessage.putString("type", DiceNetworkMessages.OPPONENT_DISCONNECT.code)
                 newMessage.putString("id", sender)
                 newMessage.putInt("strength", randomDiceRoll())
@@ -80,7 +89,7 @@ class RollTheDiceHost : GameHost {
         this.playerScores.put(sender, roll)
         players.map {
             if (it.first != sender) {
-                var newMessage: Bundle = Bundle.EMPTY
+                var newMessage: Bundle = Bundle()
                 newMessage.putString("type", DiceNetworkMessages.OPPONENT_SHAKE.code)
                 newMessage.putString("id", sender)
                 newMessage.putInt("strength", roll)
@@ -92,7 +101,7 @@ class RollTheDiceHost : GameHost {
     //When the game is over send a message to all players with everyone's id and score
     private fun gameOver() {
         var scores = playerScores.keys.iterator()
-        var baseMessage: Bundle = Bundle.EMPTY
+        var baseMessage: Bundle = Bundle()
         baseMessage.putString("type", DiceNetworkMessages.GAME_OVER.code)
         var scoresArray: Array<Pair<String, Int>> = arrayOf<Pair<String, Int>>()
         var count=0

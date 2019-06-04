@@ -5,4 +5,6 @@ import android.os.Bundle
 interface NetworkGame:Game {
     fun newMessage(message:Bundle)
     fun sendMessage(message: Bundle)
+    fun onDisconnect()
+    fun setId(id:String)
 }

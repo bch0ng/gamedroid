@@ -1,12 +1,10 @@
 package edu.us.ischool.bchong.info448project
 
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import android.util.Log
 import kotlinx.android.synthetic.main.activity_game.*
 
 class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListener {
@@ -15,6 +13,8 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
     }
 
     lateinit var game:Game
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -28,7 +28,7 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
             .beginTransaction()
             .add(R.id.game_frame, gameFragment!!, "game_fragment")
             .commit()
-        game.OnStart()
+        game.onStart(getString(R.string.default_player_name))
     }
 
 

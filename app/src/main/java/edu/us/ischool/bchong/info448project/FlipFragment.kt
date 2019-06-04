@@ -31,6 +31,10 @@ class FlipFragment : Fragment(),GameFragment {
         gameObj=game
         return this
     }
+    override fun onStart(){
+        super.onStart()
+        this.gameObj!!.onFragmentStart()
+    }
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
@@ -110,6 +114,7 @@ class FlipFragment : Fragment(),GameFragment {
 
     override fun onPause() {
         super.onPause()
+        this.gameObj!!.onPause()
         this.motionSensorController.unregisterListener(gameObj)
     }
 

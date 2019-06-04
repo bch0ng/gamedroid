@@ -6,8 +6,9 @@ import java.io.Serializable
 
 interface Game :Serializable,SensorEventListener{
     var gameFragment: GameFragment?
-    fun OnStart()
+    fun onStart(name:String)
     fun OnRegisterMotionListener()
     fun OnEnd():Int
-
+    fun onFragmentStart()
+    fun onPause()
 }

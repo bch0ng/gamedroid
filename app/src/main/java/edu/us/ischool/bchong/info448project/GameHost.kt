@@ -8,6 +8,8 @@ interface GameHost: Serializable {
     fun newInstance(game:NetworkGame):GameHost
     fun newMessage(message:Bundle)
     fun sendMessage(message: Bundle)
+    fun setPlayers(players:ArrayList<Pair<String,String>>)
+    fun kickPlayer(id:String)
     fun onStart()
     fun onEnd()
 }

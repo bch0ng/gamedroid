@@ -13,7 +13,21 @@ import android.view.View
 
 
 class Flip : Game {
+    override fun onPause() {
+        //
+    }
 
+    override fun onFragmentStart() {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onStart(name: String) {
+        this.name=name
+        score = 0.0
+        Log.v("test", "Listener Started")
+        //this.linearAccelerometer = GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+    lateinit var name: String
     override var gameFragment: GameFragment? = null
     private lateinit var frag: FlipFragment
 
@@ -75,14 +89,6 @@ class Flip : Game {
         frag.OnFlip(score.toInt())
         Log.v("test", "$score")
     }
-
-    override fun OnStart() {
-        score = 0.0
-
-        Log.v("test", "Listener Started")
-        //this.linearAccelerometer = GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    }
-
     override fun OnEnd(): Int {
         return score.toInt()
     }
