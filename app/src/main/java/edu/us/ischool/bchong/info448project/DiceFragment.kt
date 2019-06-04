@@ -19,8 +19,10 @@ import android.os.Build
 import android.support.v7.content.res.AppCompatResources
 import android.text.Layout
 import android.util.Log
+import android.view.animation.LinearInterpolator
 import android.widget.TextView
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 class DiceFragment : Fragment(), GameFragment {
@@ -47,6 +49,12 @@ class DiceFragment : Fragment(), GameFragment {
     lateinit var players: Array<Pair<String, String>>
     private lateinit var playerDiceVisual: ImageView
 
+    //Animation variables
+    var baseHeight = 100
+    var baseWidth = 100
+    lateinit var dimensionAnimators:HashMap<String,ValueAnimator>
+    lateinit var playerDiceDimAnimator:ValueAnimator
+
     fun ShowWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
         Log.v("dice", scoreString)
@@ -61,6 +69,8 @@ class DiceFragment : Fragment(), GameFragment {
             players[index]=it
             index++
         }*/
+        playerDiceDimAnimator=ValueAnimator()
+        dimensionAnimators= hashMapOf<String,ValueAnimator>()
         player = myId
         val fragMananager = fragmentManager
         val fragTransaction = fragMananager!!.beginTransaction()
@@ -185,25 +195,30 @@ class DiceFragment : Fragment(), GameFragment {
         fun onFragmentInteraction(uri: Uri)
     }
 
-    //Starts the rolling animation with the given force
+    //Starts the player rolling animation with the given force
     //Eat unit of force equals 1 radian of rotation per second
     fun diceRoll(force1: Float, force2: Float, currentRollEnergy: Double, duration: Long) {
         // TODO: test visuals
-        val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
-        dimensionAnimator.duration = duration
-        dimensionAnimator.addUpdateListener(dimAnimator(player_dice, force1, force2))
-
+        if(playerDiceDimAnimator.isRunning){
+            playerDiceDimAnimator.end()
+        }
+        playerDiceDimAnimator=setDimAnimator(player_dice,duration)
+        //val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
+        //dimensionAnimator.duration = duration
+        //dimensionAnimator.addUpdateListener(dimAnimator(player_dice, force1, force2))
     }
 
+    /*
     //Changes the size of dice
     private fun dimAnimator(element: View, force1: Float, force2: Float) =
         object : ValueAnimator.AnimatorUpdateListener {
             override fun onAnimationUpdate(animation: ValueAnimator) {
+                Log.v("dice", "Animation Update")
                 val animatedValue: Float = animation.animatedValue as Float
-                element.layoutParams.height = (force1 * Math.cos(animatedValue.toDouble())).toInt()
-                element.layoutParams.width = (force2 * Math.cos(animatedValue.toDouble())).toInt()
+                element.layoutParams.height = baseHeight * (Math.cos(force1 * animatedValue.toDouble())).toInt()
+                element.layoutParams.width = baseWidth * (Math.cos(force2 * animatedValue.toDouble())).toInt()
             }
-        }
+        }*/
 
 
     fun revealRoll(id: String, rollValue: Int) {
@@ -215,21 +230,49 @@ class DiceFragment : Fragment(), GameFragment {
     fun opponentRolled(id: String, strength: Double, duration: Long) {
         // TODO:
         try {
+            Log.v("dice", "Opponent Rolled Fragment listener started")
             val element: View = opponent_dice.findViewWithTag(getIdString(id))
-            val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
+            /*val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
             dimensionAnimator.duration = duration
+            val animator = /*dimAnimator(
+                element,
+                (strength * Math.random().roundToInt() * -1.0).toFloat(),
+                (strength * Math.random().roundToInt() * -1.0).toFloat()
+            )*/
             dimensionAnimator.addUpdateListener(
-                dimAnimator(
-                    element,
-                    (strength * Math.random().roundToInt() * -1.0).toFloat(),
-                    (strength * Math.random().roundToInt() * -1.0).toFloat()
-                )
-            )
-        }catch (err:Exception){
-            Log.e("dice","Error finding opponent roll view")
+                animator
+            )*/
+            if(dimensionAnimators.containsKey(id)){
+                val dimensionAnimator=dimensionAnimators.get(id)
+            }else{
+                val element: View = opponent_dice.findViewWithTag(getIdString(id))
+                dimensionAnimators.put(id,setDimAnimator(element,duration))
+            }
+        } catch (err: Exception) {
+            Log.e("dice", "Error finding opponent roll view")
         }
     }
 
+    fun dpToPx(dp: Int): Int {
+        val density = context!!.resources.displayMetrics.density
+        return Math.round(dp.toFloat() * density)
+    }
+    fun setDimAnimator( targetView:View, milliDuration:Long):ValueAnimator{
+        var valueAnimator:ValueAnimator=ValueAnimator.ofFloat(0f,Math.PI.toFloat()*6f)
+        valueAnimator.addUpdateListener {
+            val animatedVal = it.animatedValue as Float
+            var cosinedDimension=Math.cos(animatedVal.toDouble())
+            Log.v("dice","value changed to $animatedVal :$cosinedDimension");
+            var params=targetView.layoutParams
+            params.height=dpToPx((baseHeight*cosinedDimension).toInt())
+            params.width=dpToPx((baseWidth*cosinedDimension).toInt())
+            targetView.layoutParams=params
+        }
+        valueAnimator.interpolator = LinearInterpolator()
+        valueAnimator.duration = milliDuration
+        valueAnimator.start()
+        return valueAnimator
+    }
     fun displayRestart(yourScore: Int, winnerScore: Int, isWin: Boolean) {
         postgame_buttons.visibility = View.VISIBLE
     }

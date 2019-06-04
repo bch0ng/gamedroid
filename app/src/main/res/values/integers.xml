@@ -3,6 +3,7 @@
     <integer name="dice_pregame_duration">1000</integer>
     <integer name="dice_game_duration">3000</integer>
     <integer name="dice_postgame_duration">1000</integer>
+    <integer name="dice_roll_visual_duration">600</integer>
     <integer name="dice_vibration_strength">100</integer>
     <integer name="dice_max_value">6</integer>
     <integer name="dice_dice_used">1</integer>

@@ -25,7 +25,8 @@ class RollTheDiceClient : NetworkGame {
         PREGAME(), INGAME(), POSTGAME()
     }
 
-    private var pregameDuration = R.integer.dice_pregame_duration.toLong()
+    private val diceRollVisualDuration=GameApp.applicationContext().getResources().getInteger(R.integer.dice_roll_visual_duration).toLong()
+    private var pregameDuration = GameApp.applicationContext().getResources().getInteger(R.integer.dice_pregame_duration).toLong()
     var gameDuration = R.integer.dice_game_duration.toLong()
     private var postgameDuration = R.integer.dice_postgame_duration.toLong()
 
@@ -135,7 +136,7 @@ class RollTheDiceClient : NetworkGame {
     fun vibrate(id: String, strength: Double) {
         Log.v("dice", "Vibrator strength $strength")
         vibrator.vibrate(vibrationStrength)
-        frag.opponentRolled(id, strength, gameDuration)
+        frag.opponentRolled(id, strength, diceRollVisualDuration)
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -153,7 +154,6 @@ class RollTheDiceClient : NetworkGame {
 
     //When the player attempts to roll
     private fun inGameRoll(event: SensorEvent) {
-        Log.v("dice", "Ingame roll")
         val strength = accumulatedRollEnergy * (Random().nextDouble() + 0.5)
         frag.diceRoll(event.values[0], event.values[1], accumulatedRollEnergy, this.gameDuration)
         sendOpponentRollData(strength)
@@ -182,7 +182,7 @@ class RollTheDiceClient : NetworkGame {
 
     //Was the dice rolled? based on an acceleration change
     private fun isRoll(values: FloatArray): Boolean {
-        values[0] + values[1] + values[2] > .5
+        values[0] + values[1] + values[2] > 100.0
         return true
     }
 
