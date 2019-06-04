@@ -12,11 +12,12 @@
             android:layout_height="wrap_content" android:id="@+id/buttonsinglestart"
             app:layout_constraintTop_toBottomOf="@+id/linearsingle"
     />
-    <LinearLayout
+    <buttongroup
             android:orientation="vertical"
             android:layout_width="397dp"
             android:layout_height="281dp"
             android:id="@+id/linearsingle">
+
         <Button
                 android:text="Button"
                 android:layout_width="wrap_content"
@@ -24,7 +25,7 @@
         <Button
                 android:text="Button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/button2s"
+                android:layout_height="wrap_content" android:id="@+id/buttongame2s"
         />
-    </LinearLayout>
+    </buttongroup>
 </android.support.constraint.ConstraintLayout>

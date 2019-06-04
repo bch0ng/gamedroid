@@ -17,7 +17,7 @@ class GameSelectionActivity : AppCompatActivity(), GamelistFragment.OnFragmentIn
         identity = this.intent.getStringExtra("IDENTITY")
         username = this.intent.getStringExtra("USERNAME")
         gameChoice = this.intent.getStringExtra("GAME")
-        var gamelist = GamelistFragment.newInstance()
-        supportFragmentManager.beginTransaction().replace(R.id.fragmentFrame, overview, "Overview").commit()
+        var gamelist = GamelistFragment.newInstance(param1 = playMode, param2 = identity)
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentFrame, GamelistFragment(), "Gamelist").commit()
     }
 }

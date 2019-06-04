@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import org.json.JSONObject
 
 
@@ -28,6 +29,8 @@ class GamelistFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var mode: String? = null
     private var identity: String? = null
+    private lateinit var gamechoice: String
+    private lateinit var startgamebtn: Button
     private val gamelistData: JSONObject = JSONObject(
         """{
         |"Single":{
@@ -62,25 +65,52 @@ class GamelistFragment : Fragment() {
             val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
             //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
 
-            val game1: RadioButton = view.findViewById(R.id.choice1)
-            val choice2: RadioButton = view.findViewById(R.id.choice2)
-            val choice3: RadioButton = view.findViewById(R.id.choice3)
-            val choice4: RadioButton = view.findViewById(R.id.choice4)
-            choice1.setText(choices[0].toString())
-            choice2.setText(choices[1].toString())
-            choice3.setText(choices[2].toString())
-            choice4.setText(choices[3].toString())
+            var game1sbtn = view.findViewById<Button>(R.id.buttongame1s)
+            var game2sbtn = view.findViewById<Button>(R.id.buttongame2s)
+
+
+
+            game1sbtn.setText(games[0].toString())
+            game2sbtn.setText(games[1].toString())
 
             // Set up the current Answer
-            val radiogroup: RadioGroup = view.findViewById(R.id.radioGroup)
-            radiogroup.setOnCheckedChangeListener { _, checkedId ->
-                val checked: RadioButton = view.findViewById(checkedId)
-                currAnswer = checked.text.toString()
+            game1sbtn.setOnClickListener() {
+                gamechoice = game1sbtn.text.toString()
+                startgamebtn.isEnabled = true
             }
-
+            game2sbtn.setOnClickListener() {
+                gamechoice = game2sbtn.text.toString()
+                startgamebtn.isEnabled = true
+            }
 
         } else {
             val view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
+
+            val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
+            //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
+
+            var game1btn = view.findViewById<Button>(R.id.buttongame1)
+            var game2btn = view.findViewById<Button>(R.id.buttongame2)
+            var game3btn = view.findViewById<Button>(R.id.buttongame3)
+
+
+            game1btn.setText(games[0].toString())
+            game2btn.setText(games[1].toString())
+            game3btn.setText(games[2].toString())
+
+            // Set up the current Answer
+            game1btn.setOnClickListener() {
+                gamechoice = game1btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
+            game2btn.setOnClickListener() {
+                gamechoice = game2btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
+            game3btn.setOnClickListener() {
+                gamechoice = game3btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
         }
 
         //Different layout?
@@ -91,6 +121,7 @@ class GamelistFragment : Fragment() {
     fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -117,6 +148,7 @@ class GamelistFragment : Fragment() {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
+
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
