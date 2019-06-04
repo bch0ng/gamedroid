@@ -45,7 +45,7 @@ class ScoreboardActivity : AppCompatActivity() {
             val intent = Intent(this@ScoreboardActivity, gameMap.get(gamechoice)!!::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
-            playmode = this.intent.getStringExtra("PLAYMODE")
+            intent.putExtra("PLAYMODE", playmode)
             startActivity(intent)
         }
         newGameButton.setOnClickListener {
@@ -53,7 +53,7 @@ class ScoreboardActivity : AppCompatActivity() {
             // What if the player wants to switch between single mode and multi mode?
             val intent = Intent(this@ScoreboardActivity, GameSelectionActivity::class.java)
             intent.putExtra("IDENTITY", identity)
-            playmode = this.intent.getStringExtra("PLAYMODE")
+            intent.putExtra("PLAYMODE", playmode)
             startActivity(intent)
         }
     }
