@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -30,6 +32,7 @@ class ConnectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
+        var nearby = NearbyConnection(this)
 
         buttonAdvertise = findViewById(R.id.buttonAdvertise)
         buttonDiscover = findViewById(R.id.buttonDiscover)
@@ -41,7 +44,7 @@ class ConnectionActivity : AppCompatActivity() {
         var mode = "none"
         buttonAdvertise.setOnClickListener {
             mode = "advertising"
-            val roomCode = NearbyConnection.startAdvertising()
+            val roomCode = nearby.startAdvertising()
             buttonDiscover.isEnabled = false
             buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
@@ -60,7 +63,7 @@ class ConnectionActivity : AppCompatActivity() {
         })
         buttonDiscover.setOnClickListener {
             mode = "discovery"
-            NearbyConnection.startDiscovery(roomCodeField.text.toString())
+            nearby.startDiscovery(roomCodeField.text.toString())
             buttonDiscover.isEnabled = false
             buttonAdvertise.isEnabled = false
             buttonAdvertise.visibility = View.GONE
@@ -69,11 +72,11 @@ class ConnectionActivity : AppCompatActivity() {
         }
         buttonStop.setOnClickListener {
             if (mode == "advertising")
-                NearbyConnection.stopAdvertising()
+                nearby.stopAdvertising()
             else if (mode == "discovery")
-                NearbyConnection.stopDiscovery()
+                nearby.stopDiscovery()
             else if (mode == "broadcast")
-                NearbyConnection.stopBroadcast()
+                nearby.stopBroadcast()
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
@@ -89,14 +92,16 @@ class ConnectionActivity : AppCompatActivity() {
         buttonBroadcast.setOnClickListener {
             mode = "broadcast"
             broadcastMessage = "Hello, world!"
-            NearbyConnection.sendMessageAll(broadcastMessage)
+            nearby.sendMessageAll(broadcastMessage)
         }
 
         val broadCastReceiver = object : BroadcastReceiver() {
             override fun onReceive(contxt: Context?, intent: Intent?) {
-                Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT)
+                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+                roomCodeShow.text = intent?.getStringExtra("message")
+                Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
             }
         }
-        NearbyConnection.registerReceiver(broadCastReceiver, IntentFilter("edu.us.ischool.bchong.info448project"))
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadCastReceiver, IntentFilter("edu.us.ischool.bchong.info448project"))
     }
 }
