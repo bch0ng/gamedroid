@@ -1,5 +1,6 @@
 package edu.us.ischool.bchong.info448project
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -12,6 +13,12 @@ class ScoreboardActivity : AppCompatActivity() {
     private lateinit var identity: String
     private lateinit var restartButton: Button
     private lateinit var newGameButton: Button
+    private var gameMap = hashMapOf<String, Activity>(
+        "Shake the Soda" to Gametemple(),
+        "Flip the Phone" to Gametemple(),
+        "Answer the Phone" to Gametemple(),
+        "Roll the Dice" to Gametemple()
+    )
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
@@ -34,11 +41,7 @@ class ScoreboardActivity : AppCompatActivity() {
 
         restartButton.setOnClickListener {
             newGameButton.isEnabled = false
-            /*This supposed to return to the current game activity??? How to directly jump back? we can either modify teh gamelistactivty
-            with another listener that listens to the string on
-
-            */
-            val intent = Intent(this@ScoreboardActivity, GameSelectionActivity::class.java)
+            val intent = Intent(this@ScoreboardActivity, gameMap.get(gamechoice)!!::class.java)
             intent.putExtra("GAME", gamechoice)
             intent.putExtra("IDENTITY", identity)
             startActivity(intent)
@@ -50,6 +53,10 @@ class ScoreboardActivity : AppCompatActivity() {
             intent.putExtra("IDENTITY", identity)
             startActivity(intent)
         }
+    }
+
+    private fun winnerCounter() {
+
     }
 
 }

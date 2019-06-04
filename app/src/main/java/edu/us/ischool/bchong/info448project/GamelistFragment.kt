@@ -13,7 +13,7 @@ import org.json.JSONObject
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val playmode = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val useridentity = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -27,6 +27,7 @@ private const val ARG_PARAM2 = "param2"
 class GamelistFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var mode: String? = null
+    private var identity: String? = null
     private val gamelistData: JSONObject = JSONObject(
         """{
         |"Single":{
@@ -46,6 +47,7 @@ class GamelistFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             mode = it.getString(playmode)
+            identity = it.getString(useridentity)
         }
     }
 
@@ -54,7 +56,33 @@ class GamelistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_gamelist, container, false)
+        if (mode == "simple") {
+            val view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
+
+            val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
+            //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
+
+            val game1: RadioButton = view.findViewById(R.id.choice1)
+            val choice2: RadioButton = view.findViewById(R.id.choice2)
+            val choice3: RadioButton = view.findViewById(R.id.choice3)
+            val choice4: RadioButton = view.findViewById(R.id.choice4)
+            choice1.setText(choices[0].toString())
+            choice2.setText(choices[1].toString())
+            choice3.setText(choices[2].toString())
+            choice4.setText(choices[3].toString())
+
+            // Set up the current Answer
+            val radiogroup: RadioGroup = view.findViewById(R.id.radioGroup)
+            radiogroup.setOnCheckedChangeListener { _, checkedId ->
+                val checked: RadioButton = view.findViewById(checkedId)
+                currAnswer = checked.text.toString()
+            }
+
+
+        } else {
+            val view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
+        }
+
         //Different layout?
         return view
     }
@@ -109,7 +137,7 @@ class GamelistFragment : Fragment() {
             GamelistFragment().apply {
                 arguments = Bundle().apply {
                     putString(playmode, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString(useridentity, param2)
                 }
             }
     }
