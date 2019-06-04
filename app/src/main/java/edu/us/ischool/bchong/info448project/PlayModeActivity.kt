@@ -33,7 +33,7 @@ class PlayModeActivity : AppCompatActivity() {
         multibtn.setOnClickListener {
             singlebtn.isEnabled = false
             playmode = "Multi"
-            val intent = Intent(this@PlayModeActivity, Connection_activity::class.java)
+            val intent = Intent(this@PlayModeActivity, ConnectionActivity::class.java)
             intent.putExtra("PLAYMODE", playmode)
             intent.putExtra("USERNAME", username)
             startActivity(intent)

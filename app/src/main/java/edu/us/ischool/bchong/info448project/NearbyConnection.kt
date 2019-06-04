@@ -1,7 +1,10 @@
 package edu.us.ischool.bchong.info448project
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -10,22 +13,32 @@ const val USER_NICKNAME: String = "info448project"
 const val SERVICE_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
 const val ROOM_CODE_LENGTH: Int = 4
 
-object NearbyConnection: Application()
+class NearbyConnection(context: Context): Application()
 {
     private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
     private var endpointIDList: ArrayList<String> = ArrayList()
     private var endpointIDUsernameScoreMap: MutableMap<String, Pair<String, String?>> = HashMap()
     private var broadcastMessage: String = ""
+    private val context = context
+
+    companion object {
+        private var instance: NearbyConnection? = null
+
+        fun getContext(): NearbyConnection {
+            return instance as NearbyConnection
+        }
+    }
 
     init
     {
+        instance = this
         Log.d("INFO_448_DEBUG", "Init complete")
     }
 
     fun getClient(): ConnectionsClient
     {
-        return Nearby.getConnectionsClient(this@NearbyConnection)
+        return Nearby.getConnectionsClient(context)
     }
 
     fun startAdvertising(): String
@@ -38,7 +51,7 @@ object NearbyConnection: Application()
             .joinToString("")
         Log.d("INFO_448_DEBUG", roomCode)
 
-        Nearby.getConnectionsClient(this@NearbyConnection)
+        Nearby.getConnectionsClient(context)
             .startAdvertising(
                 USER_NICKNAME, SERVICE_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
             )
@@ -55,7 +68,7 @@ object NearbyConnection: Application()
 
     fun stopAdvertising()
     {
-        Nearby.getConnectionsClient(this@NearbyConnection).stopAdvertising()
+        Nearby.getConnectionsClient(context).stopAdvertising()
         Log.d("INFO_448_DEBUG", "Stopped Advertising")
     }
 
@@ -63,7 +76,7 @@ object NearbyConnection: Application()
     {
         Log.d("INFO_448_DEBUG", roomCode)
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
-        Nearby.getConnectionsClient(this@NearbyConnection)
+        Nearby.getConnectionsClient(context)
             .startDiscovery(SERVICE_ID_BASE + roomCode, endpointDiscoveryCallback, discoveryOptions)
             .addOnSuccessListener {
                 // We're discovering!
@@ -77,24 +90,24 @@ object NearbyConnection: Application()
 
     fun stopDiscovery()
     {
-        Nearby.getConnectionsClient(this@NearbyConnection).stopDiscovery()
+        Nearby.getConnectionsClient(context).stopDiscovery()
         Log.d("INFO_448_DEBUG", "Stopped Discovering")
     }
 
     fun sendMessage(endpointID: String, message: String)
     {
         val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
-        Nearby.getConnectionsClient(this@NearbyConnection).sendPayload(endpointID, bytesPayload)
+        Nearby.getConnectionsClient(context).sendPayload(endpointID, bytesPayload)
     }
 
     fun sendMessageAll(message: String)
     {
         val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
-        Nearby.getConnectionsClient(this@NearbyConnection).sendPayload(endpointIDList, bytesPayload)
+        Nearby.getConnectionsClient(context).sendPayload(endpointIDList, bytesPayload)
     }
 
     fun stopBroadcast() {
-        val nearby = Nearby.getConnectionsClient(this@NearbyConnection)
+        val nearby = Nearby.getConnectionsClient(context)
         nearby.stopAdvertising()
         nearby.stopAllEndpoints()
         for (id in endpointIDList) {
@@ -108,7 +121,7 @@ object NearbyConnection: Application()
         {
             // An endpoint was found. We request a connection to it.
             Log.d("INFO_448_DEBUG", "Endpoint Found")
-            Nearby.getConnectionsClient(this@NearbyConnection)
+            Nearby.getConnectionsClient(context)
                 .requestConnection(USER_NICKNAME, endpointID, connectionLifecycleCallback)
                 .addOnSuccessListener {
                     // We successfully requested a connection. Now both sides
@@ -135,7 +148,7 @@ object NearbyConnection: Application()
         override fun onConnectionInitiated(endpointID: String, connectionInfo: ConnectionInfo)
         {
             // Automatically accept the connection on both sides.
-            Nearby.getConnectionsClient(this@NearbyConnection)
+            Nearby.getConnectionsClient(context)
                 .acceptConnection(endpointID, receivePayloadCallback)
         }
 
@@ -145,6 +158,10 @@ object NearbyConnection: Application()
                 ConnectionsStatusCodes.STATUS_OK -> {
                     endpointIDList.add(endpointID)
                     Log.d("INFO_448_DEBUG", "Connection success")
+                    val intent = Intent()
+                        intent.action = "edu.us.ischool.bchong.info448project"
+                        intent.putExtra("message", "HELLO WORLD")
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.d("INFO_448_DEBUG", "Connection rejected")
@@ -188,10 +205,6 @@ object NearbyConnection: Application()
                     }
                     else -> {}
                 }
-                val intent = Intent()
-                    intent.action = "edu.us.ischool.bchong.info448project"
-                    intent.putExtra("message", message)
-                sendBroadcast(intent)
             }
             Log.d("INFO_448_DEBUG", "Payload Received: $message")
             //Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
