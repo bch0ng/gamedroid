@@ -1,5 +1,7 @@
 package edu.us.ischool.bchong.info448project
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.hardware.Sensor
@@ -32,6 +34,8 @@ class DiceFragment : Fragment(), GameFragment {
         return this
     }
 
+
+
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
     var gameObj: Game? = null
@@ -41,6 +45,7 @@ class DiceFragment : Fragment(), GameFragment {
     lateinit var motionSensorController: SensorManager
     //lateinit var accelerometer:Sensor
 
+    private lateinit var randomCharSet:Array<String>
 
     val PLAYER_KEY = "player"
     val PLAYERS_KEY = "players"
@@ -52,8 +57,8 @@ class DiceFragment : Fragment(), GameFragment {
     //Animation variables
     var baseHeight = 100
     var baseWidth = 100
-    lateinit var dimensionAnimators:HashMap<String,ValueAnimator>
-    lateinit var playerDiceDimAnimator:ValueAnimator
+    lateinit var dimensionAnimators: HashMap<String, ValueAnimator>
+    lateinit var playerDiceDimAnimator: ValueAnimator
 
     fun ShowWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
@@ -62,6 +67,7 @@ class DiceFragment : Fragment(), GameFragment {
 
     //Should be called by the client when the starting message is recieved from the server
     fun StartGame(myId: Pair<String, String>, allPlayers: Array<Pair<String, String>>) {
+        randomCharSet=arrayOf<String>("$","?","@","ß","∫")
         Log.v("dice", "Start game called by server")
         var index = 0
         players = allPlayers
@@ -69,8 +75,8 @@ class DiceFragment : Fragment(), GameFragment {
             players[index]=it
             index++
         }*/
-        playerDiceDimAnimator=ValueAnimator()
-        dimensionAnimators= hashMapOf<String,ValueAnimator>()
+        playerDiceDimAnimator = ValueAnimator()
+        dimensionAnimators = hashMapOf<String, ValueAnimator>()
         player = myId
         val fragMananager = fragmentManager
         val fragTransaction = fragMananager!!.beginTransaction()
@@ -199,10 +205,11 @@ class DiceFragment : Fragment(), GameFragment {
     //Eat unit of force equals 1 radian of rotation per second
     fun diceRoll(force1: Float, force2: Float, currentRollEnergy: Double, duration: Long) {
         // TODO: test visuals
-        if(playerDiceDimAnimator.isRunning){
-            playerDiceDimAnimator.end()
+        if (playerDiceDimAnimator.isRunning) {
+            //playerDiceDimAnimator.end()
+        }else{
+            playerDiceDimAnimator = setDimAnimator(player_dice, duration)
         }
-        playerDiceDimAnimator=setDimAnimator(player_dice,duration)
         //val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
         //dimensionAnimator.duration = duration
         //dimensionAnimator.addUpdateListener(dimAnimator(player_dice, force1, force2))
@@ -230,8 +237,9 @@ class DiceFragment : Fragment(), GameFragment {
     fun opponentRolled(id: String, strength: Double, duration: Long) {
         // TODO:
         try {
-            Log.v("dice", "Opponent Rolled Fragment listener started")
-            val element: View = opponent_dice.findViewWithTag(getIdString(id))
+            Log.v("diceSet", "Opponent Rolled Fragment listener started")
+            val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
+            val element: View = elementGroup.findViewWithTag("dice_img")
             /*val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
             dimensionAnimator.duration = duration
             val animator = /*dimAnimator(
@@ -242,37 +250,69 @@ class DiceFragment : Fragment(), GameFragment {
             dimensionAnimator.addUpdateListener(
                 animator
             )*/
-            if(dimensionAnimators.containsKey(id)){
-                val dimensionAnimator=dimensionAnimators.get(id)
-            }else{
+            if (dimensionAnimators.containsKey(id)) {
+                val dimensionAnimator = dimensionAnimators.get(id)
+            } else {
                 val element: View = opponent_dice.findViewWithTag(getIdString(id))
-                dimensionAnimators.put(id,setDimAnimator(element,duration))
+                dimensionAnimators.put(id, setDimAnimator(element, duration))
             }
         } catch (err: Exception) {
             Log.e("dice", "Error finding opponent roll view")
         }
     }
 
+    //Turns off all timers animating the player and opponents dice
+    private fun cancelAllVisualTimers() {
+        dimensionAnimators.map {
+            it.value.cancel()
+        }
+        playerDiceDimAnimator.cancel()
+    }
+
     fun dpToPx(dp: Int): Int {
         val density = context!!.resources.displayMetrics.density
         return Math.round(dp.toFloat() * density)
     }
-    fun setDimAnimator( targetView:View, milliDuration:Long):ValueAnimator{
-        var valueAnimator:ValueAnimator=ValueAnimator.ofFloat(0f,Math.PI.toFloat()*6f)
+
+    fun setDimAnimator(targetView: View, milliDuration: Long): ValueAnimator {
+        Log.v("diceSet", "New animator set for $milliDuration")
+        var targetTextView=(targetView as ViewGroup).findViewWithTag<TextView>("dice_text")
+        var valueAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, Math.PI.toFloat() * 4f)
         valueAnimator.addUpdateListener {
             val animatedVal = it.animatedValue as Float
-            var cosinedDimension=Math.cos(animatedVal.toDouble())
-            Log.v("dice","value changed to $animatedVal :$cosinedDimension");
-            var params=targetView.layoutParams
-            params.height=dpToPx((baseHeight*cosinedDimension).toInt())
-            params.width=dpToPx((baseWidth*cosinedDimension).toInt())
-            targetView.layoutParams=params
+            var cosinedDimension = Math.cos(animatedVal.toDouble())
+            targetView.rotation=(cosinedDimension*Math.PI*180f).toFloat()
+            targetTextView.text=randomCharSet.random()
+
+            Log.v("dice", "value changed to $animatedVal :$cosinedDimension");
+            var params = targetView.layoutParams
+            params.height = dpToPx((baseHeight * cosinedDimension).toInt())
+            params.width = dpToPx((baseWidth * cosinedDimension).toInt())
+            targetView.layoutParams = params
         }
+        valueAnimator.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(p0: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                //animation.cancel()
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                targetView.layoutParams.height=baseHeight
+                targetView.layoutParams.width=baseWidth
+                //targetView.rotation=0f
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
         valueAnimator.interpolator = LinearInterpolator()
         valueAnimator.duration = milliDuration
         valueAnimator.start()
         return valueAnimator
     }
+
     fun displayRestart(yourScore: Int, winnerScore: Int, isWin: Boolean) {
         postgame_buttons.visibility = View.VISIBLE
     }
@@ -297,6 +337,7 @@ class DiceFragment : Fragment(), GameFragment {
 
     override fun onPause() {
         super.onPause()
+        cancelAllVisualTimers()
         gameObj!!.onPause()
         this.motionSensorController.unregisterListener(gameObj)
     }

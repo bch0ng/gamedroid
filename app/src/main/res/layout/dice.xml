@@ -14,16 +14,15 @@
                 android:layout_marginTop="15dp"
                 android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="140dp"
                 layout="@layout/dice_img"
                 android:id="@+id/player_dice"
         />
         <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/player_dice"
-                android:layout_marginTop="10dp"
-        >
+                android:layout_marginTop="165dp"
+                android:layout_alignParentTop="true">
             <LinearLayout
                     android:orientation="vertical"
                     android:id="@+id/opponent_dice"

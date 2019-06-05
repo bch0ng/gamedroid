@@ -27,7 +27,7 @@ class RollTheDiceClient : NetworkGame {
 
     private val diceRollVisualDuration=GameApp.applicationContext().getResources().getInteger(R.integer.dice_roll_visual_duration).toLong()
     private var pregameDuration = GameApp.applicationContext().getResources().getInteger(R.integer.dice_pregame_duration).toLong()
-    var gameDuration = R.integer.dice_game_duration.toLong()
+    var gameDuration = GameApp.applicationContext().getResources().getInteger(R.integer.dice_game_duration).toLong()
     private var postgameDuration = R.integer.dice_postgame_duration.toLong()
 
     var gameState = gameStates.PREGAME
@@ -155,7 +155,7 @@ class RollTheDiceClient : NetworkGame {
     //When the player attempts to roll
     private fun inGameRoll(event: SensorEvent) {
         val strength = accumulatedRollEnergy * (Random().nextDouble() + 0.5)
-        frag.diceRoll(event.values[0], event.values[1], accumulatedRollEnergy, this.gameDuration)
+        frag.diceRoll(event.values[0], event.values[1], accumulatedRollEnergy, this.diceRollVisualDuration)
         sendOpponentRollData(strength)
 
         //Remove later
@@ -182,8 +182,9 @@ class RollTheDiceClient : NetworkGame {
 
     //Was the dice rolled? based on an acceleration change
     private fun isRoll(values: FloatArray): Boolean {
-        values[0] + values[1] + values[2] > 100.0
-        return true
+        val rollVel=values[0] + values[1] + values[2]
+        //Log.v("diceRoll","Roll $rollVel")
+        return rollVel > 20.0
     }
 
     private fun increaseAccumulatedEnergy(event: SensorEvent): Boolean {
