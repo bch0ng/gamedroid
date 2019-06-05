@@ -239,7 +239,7 @@ class DiceFragment : Fragment(), GameFragment {
         try {
             Log.v("diceSet", "Opponent Rolled Fragment listener started")
             val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
-            val element: View = elementGroup.findViewWithTag("dice_img")
+            val element: View = elementGroup.findViewWithTag("opponent_dice_box")
             /*val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
             dimensionAnimator.duration = duration
             val animator = /*dimAnimator(
@@ -252,8 +252,11 @@ class DiceFragment : Fragment(), GameFragment {
             )*/
             if (dimensionAnimators.containsKey(id)) {
                 val dimensionAnimator = dimensionAnimators.get(id)
+                if(!dimensionAnimator!!.isRunning){
+                    dimensionAnimators.put(id, setDimAnimator(element, duration))
+                }
             } else {
-                val element: View = opponent_dice.findViewWithTag(getIdString(id))
+                //val element: View = opponent_dice.findViewWithTag(getIdString(id))
                 dimensionAnimators.put(id, setDimAnimator(element, duration))
             }
         } catch (err: Exception) {
@@ -286,7 +289,7 @@ class DiceFragment : Fragment(), GameFragment {
 
             Log.v("dice", "value changed to $animatedVal :$cosinedDimension");
             var params = targetView.layoutParams
-            params.height = dpToPx((baseHeight * cosinedDimension).toInt())
+            //params.height = dpToPx((baseHeight * cosinedDimension).toInt())
             params.width = dpToPx((baseWidth * cosinedDimension).toInt())
             targetView.layoutParams = params
         }
@@ -297,12 +300,14 @@ class DiceFragment : Fragment(), GameFragment {
 
             override fun onAnimationEnd(animation: Animator) {
                 //animation.cancel()
+                targetView.rotation=0f
+
             }
 
             override fun onAnimationCancel(animation: Animator) {
                 targetView.layoutParams.height=baseHeight
                 targetView.layoutParams.width=baseWidth
-                //targetView.rotation=0f
+                targetView.rotation=0f
             }
 
             override fun onAnimationRepeat(animation: Animator) {}

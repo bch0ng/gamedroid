@@ -17,15 +17,15 @@
                 android:tag="player_name"
                 android:layout_gravity="center"
                 android:layout_width="80dp"
-                android:layout_height="19dp"
-                app:layout_constraintStart_toStartOf="@+id/dice_text"
-                app:layout_constraintEnd_toStartOf="@+id/dice_text"/>
+                android:layout_height="19dp"/>
         <android.support.constraint.ConstraintLayout android:layout_width="wrap_content"
-                                                     android:layout_height="wrap_content">
+                                                     android:layout_height="wrap_content"
+                                                     android:tag="dice_img"
+
+        >
             <ImageView
                     android:background="@drawable/dice_shape"
                     android:layout_centerInParent="true"
-                    android:tag="dice_img"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"
