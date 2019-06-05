@@ -216,7 +216,7 @@ class RollTheDiceClient : NetworkGame {
         }
     }
 
-    override fun OnRegisterMotionListener() {
+    override fun onRegisterMotionListener() {
 
     }
 
@@ -229,7 +229,7 @@ class RollTheDiceClient : NetworkGame {
 
     }
 
-    override fun OnEnd(): Int {
+    override fun onEnd(): Int {
         return score.toInt()
     }
 

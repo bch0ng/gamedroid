@@ -35,6 +35,6 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
 
     override fun onDestroy() {
         super.onDestroy()
-        game.OnEnd()
+        game.onEnd()
     }
 }
