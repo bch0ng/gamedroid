@@ -77,10 +77,13 @@ class SodaShake : Game {
     fun explodeSoda() {
         val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
         @Suppress("DEPRECATION")
-        vibrator?.vibrate(1000)
+        vibrator?.vibrate(1500)
+        (gameFragment as SodaShakeFragment).endGame()
+        OnEnd()
     }
 
     override fun OnEnd() : Int {
+        mSensorManager?.unregisterListener(mShakeDetector)
         return 0
     }
 
