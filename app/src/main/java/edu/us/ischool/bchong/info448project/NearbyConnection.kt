@@ -8,12 +8,13 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 const val USER_NICKNAME: String = "info448project"
 const val SERVICE_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
 const val ROOM_CODE_LENGTH: Int = 4
 
-class NearbyConnection(context: Context): Application()
+class NearbyConnection private constructor(context: Context)
 {
     private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
@@ -23,17 +24,21 @@ class NearbyConnection(context: Context): Application()
     private val context = context
 
     companion object {
-        private var instance: NearbyConnection? = null
+        private lateinit var INSTANCE: NearbyConnection
+        private val initialized = AtomicBoolean()
 
-        fun getContext(): NearbyConnection {
-            return instance as NearbyConnection
+        val instance: NearbyConnection get() = INSTANCE
+
+        fun initialize(context: Context) {
+            if(!initialized.getAndSet(true)) {
+                INSTANCE = NearbyConnection(context)
+            }
         }
     }
 
-    init
+    fun getContext(): Context
     {
-        instance = this
-        Log.d("INFO_448_DEBUG", "Init complete")
+        return context
     }
 
     fun getClient(): ConnectionsClient
@@ -96,13 +101,13 @@ class NearbyConnection(context: Context): Application()
 
     fun sendMessage(endpointID: String, message: String)
     {
-        val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
+        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
         Nearby.getConnectionsClient(context).sendPayload(endpointID, bytesPayload)
     }
 
     fun sendMessageAll(message: String)
     {
-        val bytesPayload = Payload.fromBytes(broadcastMessage.toByteArray(Charsets.UTF_8))
+        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
         Nearby.getConnectionsClient(context).sendPayload(endpointIDList, bytesPayload)
     }
 
@@ -159,7 +164,7 @@ class NearbyConnection(context: Context): Application()
                     endpointIDList.add(endpointID)
                     Log.d("INFO_448_DEBUG", "Connection success")
                     val intent = Intent()
-                        intent.action = "edu.us.ischool.bchong.info448project"
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
                         intent.putExtra("message", "HELLO WORLD")
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 }
@@ -192,16 +197,26 @@ class NearbyConnection(context: Context): Application()
             // payload. You can check the payload type with payload.getType().
             val receivedBytes = payload.asBytes()
             var message = ""
+            Log.d("INFO_448_DEBUG", (receivedBytes != null).toString())
             if (receivedBytes != null) {
                 message = String(receivedBytes, Charsets.UTF_8)
 
                 when {
-                    message.substring(0, 9) == "username:" -> {
+                    message.startsWith("username:") -> {
+                        Log.d("INFO_448_DEBUG", "Message starts with 'username:'")
                         endpointIDUsernameScoreMap[endpointID] = Pair(message.substring(9, message.length), null)
                     }
-                    message.substring(0, 6) == "score:" -> {
+                    message.startsWith("score:") -> {
+                        Log.d("INFO_448_DEBUG", "Message starts with 'score:'")
                         val value: Pair<String, String?>? = endpointIDUsernameScoreMap[endpointID]
                         endpointIDUsernameScoreMap[endpointID] = Pair(value!!.first, message.substring(6, message.length))
+                    }
+                    message.startsWith("test:") -> {
+                        Log.d("INFO_448_DEBUG", "Message starts with 'test:'")
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "HELLO MARS")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     else -> {}
                 }

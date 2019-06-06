@@ -1,10 +1,16 @@
 package edu.us.ischool.bchong.info448project
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.AlarmClock.EXTRA_MESSAGE
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
@@ -21,23 +27,80 @@ class ConnectionActivity : AppCompatActivity() {
     private lateinit var buttonAdvertise: Button
     private lateinit var buttonDiscover: Button
     private lateinit var buttonStop: Button
-    private lateinit var buttonBroadcast: Button
+    private lateinit var buttonOtherActivity: Button
     private lateinit var roomCodeField: EditText
     private lateinit var roomCodeShow: TextView
+
+    private lateinit var nearby: NearbyConnection
 
     private var endpointID: ArrayList<String> = ArrayList()
     private var broadcastMessage: String = ""
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onStart()
+    {
+        super.onStart()
+        if (Build.VERSION.SDK_INT < 28) {
+            if (ContextCompat.checkSelfPermission(
+                    this@ConnectionActivity,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@ConnectionActivity,
+                    arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    8034
+                )
+            }
+        } else {
+            if (ContextCompat.checkSelfPermission(
+                    this@ConnectionActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this@ConnectionActivity,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    8035
+                )
+            }
+        }
+    }
+
+    val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+            roomCodeShow.text = intent?.getStringExtra("message")
+            Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND"))
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
-        var nearby = NearbyConnection(this)
+        NearbyConnection.initialize(this)
+        nearby = NearbyConnection.instance
 
         buttonAdvertise = findViewById(R.id.buttonAdvertise)
         buttonDiscover = findViewById(R.id.buttonDiscover)
         buttonStop = findViewById(R.id.buttonStop)
-        buttonBroadcast = findViewById(R.id.buttonBroadcast)
+        buttonOtherActivity = findViewById(R.id.buttonOtherActivity)
         roomCodeField = findViewById(R.id.roomCodeText)
         roomCodeShow = findViewById(R.id.roomCodeShow)
 
@@ -49,6 +112,7 @@ class ConnectionActivity : AppCompatActivity() {
             buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
             buttonStop.isEnabled = true
+            buttonOtherActivity.isEnabled = true
             roomCodeField.visibility = View.GONE
             roomCodeShow.visibility = View.VISIBLE
             roomCodeShow.text = roomCode
@@ -68,6 +132,7 @@ class ConnectionActivity : AppCompatActivity() {
             buttonAdvertise.isEnabled = false
             buttonAdvertise.visibility = View.GONE
             buttonStop.isEnabled = true
+            buttonOtherActivity.isEnabled = true
             roomCodeField.isEnabled = false
         }
         buttonStop.setOnClickListener {
@@ -81,27 +146,21 @@ class ConnectionActivity : AppCompatActivity() {
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
             buttonDiscover.visibility = View.VISIBLE
-            buttonBroadcast.isEnabled = false
-            buttonBroadcast.visibility = View.GONE
+            buttonOtherActivity.isEnabled = false
             buttonStop.isEnabled = false
             buttonAdvertise.visibility = View.VISIBLE
             roomCodeField.visibility = View.VISIBLE
             roomCodeField.isEnabled = true
             roomCodeShow.visibility = View.GONE
         }
-        buttonBroadcast.setOnClickListener {
+        buttonOtherActivity.setOnClickListener {
             mode = "broadcast"
             broadcastMessage = "Hello, world!"
             nearby.sendMessageAll(broadcastMessage)
-        }
-
-        val broadCastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(contxt: Context?, intent: Intent?) {
-                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-                roomCodeShow.text = intent?.getStringExtra("message")
-                Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, TestActivity::class.java).apply {
+                putExtra(EXTRA_MESSAGE, broadcastMessage)
             }
+            startActivity(intent)
         }
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadCastReceiver, IntentFilter("edu.us.ischool.bchong.info448project"))
     }
 }
