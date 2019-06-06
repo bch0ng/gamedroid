@@ -21,8 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startSodaShake(view: View?) {
         val intent = Intent(this, GameActivity::class.java)
-        var game = SodaShake()
-        intent.putExtra("game", game)
+        intent.putExtra("game", "SODA_SHAKE")
         startActivity(intent)
     }
 

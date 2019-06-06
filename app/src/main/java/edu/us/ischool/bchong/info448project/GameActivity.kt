@@ -20,7 +20,11 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
-        game = intent.extras.getSerializable("game") as Game
+        if (intent.getStringExtra("game") == "SODA_SHAKE") {
+            game = SodaShake(this)
+        } else {
+            game = intent.extras.getSerializable("game") as Game
+        }
 
         var gameFragment = game.gameFragment as Fragment
         findViewById<Button>(R.id.back_button).setOnClickListener {
