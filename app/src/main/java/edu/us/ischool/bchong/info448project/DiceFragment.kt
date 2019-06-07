@@ -23,6 +23,7 @@ import android.text.Layout
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.view.*
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.roundToInt
@@ -270,6 +271,9 @@ class DiceFragment : Fragment(), GameFragment {
             it.value.cancel()
         }
         playerDiceDimAnimator.cancel()
+    }
+    fun displayNewTurn(playerName:String){
+        turn_text_view.text="$playerName's turn"
     }
 
     fun dpToPx(dp: Int): Int {

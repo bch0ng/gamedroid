@@ -21,8 +21,8 @@ import kotlin.concurrent.schedule
 //WARNING: Use newInstance to set this phone's local gameclient
 class RollTheDiceHost : GameHost {
     lateinit var players: Array<Pair<String, String>>       //ID and name
-    override fun setPlayers(playerData: ArrayList<Pair<String,String>>) {
-        players= (playerData.toArray() as Array<Pair<String, String>>)
+    override fun setPlayers(playerData: ArrayList<Pair<String, String>>) {
+        players = (playerData.toArray() as Array<Pair<String, String>>)
     }
 
     override fun kickPlayer(id: String) {
@@ -47,7 +47,7 @@ class RollTheDiceHost : GameHost {
 
     lateinit var myId: String
     lateinit var playerScores: MutableMap<String, Int>
-
+    var turnIndex=0
     //Sets the local client to the given game and returns this instance
     override fun newInstance(game: NetworkGame): GameHost {
         this.localClient = game
@@ -86,14 +86,30 @@ class RollTheDiceHost : GameHost {
     private fun newShake(message: Bundle) {
         val sender = message.getString("id")
         val roll = randomDiceRoll()
-        this.playerScores.put(sender, roll)
-        players.map {
-            if (it.first != sender) {
-                var newMessage: Bundle = Bundle()
-                newMessage.putString("type", DiceNetworkMessages.OPPONENT_SHAKE.code)
-                newMessage.putString("id", sender)
-                newMessage.putInt("strength", roll)
-                sendMessage(newMessage)
+        if(sender==players[turnIndex].first){
+            players.map {
+                if (it.first != sender) {
+                    var newMessage: Bundle = Bundle()
+                    newMessage.putString("type", DiceNetworkMessages.OPPONENT_SHAKE.code)
+                    newMessage.putString("id", sender)
+                    newMessage.putInt("strength", roll)
+                    sendMessage(newMessage)
+                }
+            }
+        }
+    }
+
+    private fun nextTurn() {
+        if (turnIndex > players.size) {
+            gameOver()
+        } else {
+            var newTurnBundle=Bundle()
+            newTurnBundle.putString("type",DiceNetworkMessages.NEW_TURN.code)
+            newTurnBundle.putString("id",players[turnIndex].first)
+            sendMessage(newTurnBundle)
+            Timer("turnTimer", false).schedule(gameDuration) {
+                turnIndex += 1
+                nextTurn()
             }
         }
     }
@@ -104,14 +120,14 @@ class RollTheDiceHost : GameHost {
         var baseMessage: Bundle = Bundle()
         baseMessage.putString("type", DiceNetworkMessages.GAME_OVER.code)
         var scoresArray: Array<Pair<String, Int>> = arrayOf<Pair<String, Int>>()
-        var count=0
+        var count = 0
         while (scores.hasNext()) {
             val id = scores.next()
-            val value=playerScores.get(id)
-            scoresArray[count]=Pair<String,Int>(id,value!!)
+            val value = playerScores.get(id)
+            scoresArray[count] = Pair<String, Int>(id, value!!)
             count++
         }
-        baseMessage.putSerializable("scores",scoresArray)
+        baseMessage.putSerializable("scores", scoresArray)
         players.map {
             sendMessage(baseMessage)
         }
@@ -121,10 +137,10 @@ class RollTheDiceHost : GameHost {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    constructor(frag:DiceFragment) {
+    constructor(frag: DiceFragment) {
         //TODO: add check if gamefragment is set correctly
-        this.localClient=RollTheDiceClient()
-        localClient.gameFragment=frag
+        this.localClient = RollTheDiceClient()
+        localClient.gameFragment = frag
     }
 
 
@@ -133,21 +149,22 @@ class RollTheDiceHost : GameHost {
     override fun onStart() {
         Timer("endPregame", false).schedule(pregameDuration) {
             gameState = gameStates.INGAME
+            nextTurn()
             endPregame()
         }
         this.playerScores = hashMapOf<String, Int>()
+        players.map {
+            playerScores.put(it.first,randomDiceRoll())
+        }
         Log.v("test", "Dice Listener Started")
     }
-    private fun tellPlayersGameHasStarted(){
+
+    private fun tellPlayersGameHasStarted() {
         //TODO: SEND THE DiceNetworkMessages.START_GAME.code MESSAGE to all the players
     }
 
     private fun endPregame() {
         gameState = gameStates.INGAME
-        Timer("startInGame", false).schedule(gameDuration) {
-            gameState = gameStates.POSTGAME
-            startPostgame()
-        }
     }
 
     private fun startPostgame() {

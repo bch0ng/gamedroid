@@ -100,6 +100,7 @@ class RollTheDiceClient : NetworkGame {
                 message.get("id") as String,
                 message.get("strength") as Double
             )
+            DiceNetworkMessages.NEW_TURN -> newTurn(message.get("id") as String)
             DiceNetworkMessages.OPPONENT_SCORE.code -> newOpponentScore(
                 message.get("id") as String,
                 message.get("score") as Int
@@ -107,6 +108,13 @@ class RollTheDiceClient : NetworkGame {
             DiceNetworkMessages.OPPONENT_DISCONNECT.code -> opponentDisconnect(message.getString("id"))
             DiceNetworkMessages.GAME_OVER.code -> gameOver(message.get("scores") as Array<Pair<String, Int>>)
             else -> Log.e("dice", "Invalid message $type")
+        }
+    }
+    private fun newTurn(id: String){
+        players.map {
+            if(it.first==id){
+                frag.displayNewTurn(it.second)
+            }
         }
     }
 
