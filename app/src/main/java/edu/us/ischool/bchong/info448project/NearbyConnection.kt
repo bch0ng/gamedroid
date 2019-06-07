@@ -10,18 +10,21 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-const val USER_NICKNAME: String = "info448project"
 const val SERVICE_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
 const val ROOM_CODE_LENGTH: Int = 4
 
 class NearbyConnection private constructor(context: Context)
 {
-    private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    // private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') +
 
     private var endpointIDList: ArrayList<String> = ArrayList()
     private var endpointIDUsernameScoreMap: MutableMap<String, Pair<String, String?>> = HashMap()
     private var broadcastMessage: String = ""
     private val context = context
+    private var username = ""
+    private var isHosting = false
+
+    private var players: ArrayList<String> = ArrayList() // index 0 is host, index 1 is current player if not host
 
     companion object {
         private lateinit var INSTANCE: NearbyConnection
@@ -36,6 +39,16 @@ class NearbyConnection private constructor(context: Context)
         }
     }
 
+    fun getMyUsername(): String
+    {
+        return username
+    }
+
+    fun isHosting(): Boolean
+    {
+        return isHosting
+    }
+
     fun getContext(): Context
     {
         return context
@@ -46,19 +59,26 @@ class NearbyConnection private constructor(context: Context)
         return Nearby.getConnectionsClient(context)
     }
 
+    fun setUsername(newUsername: String)
+    {
+        if (username == "") {
+            username = newUsername
+        }
+    }
+
     fun startAdvertising(): String
     {
         val advertisingOptions = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
-
+        players.add(username)
+        isHosting = true
         val roomCode = (1..ROOM_CODE_LENGTH)
-            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
+            .map { kotlin.random.Random.nextInt(0, 9) }
             .joinToString("")
         Log.d("INFO_448_DEBUG", roomCode)
 
         Nearby.getConnectionsClient(context)
             .startAdvertising(
-                USER_NICKNAME, SERVICE_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
+                username, SERVICE_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
             )
             .addOnSuccessListener { unused: Void? ->
                 // We're advertising!
@@ -74,6 +94,7 @@ class NearbyConnection private constructor(context: Context)
     fun stopAdvertising()
     {
         Nearby.getConnectionsClient(context).stopAdvertising()
+        isHosting = false
         Log.d("INFO_448_DEBUG", "Stopped Advertising")
     }
 
@@ -112,6 +133,11 @@ class NearbyConnection private constructor(context: Context)
     }
 
     fun disconnectEndpoints() {
+        Log.d("INFO_448_DEBUG", "Remove player in disconnect")
+        if (!isHosting) {
+            sendMessageAll("removePlayer:$username")
+        }
+        players.clear()
         val nearby = Nearby.getConnectionsClient(context)
         nearby.stopAdvertising()
         nearby.stopAllEndpoints()
@@ -127,12 +153,12 @@ class NearbyConnection private constructor(context: Context)
             // An endpoint was found. We request a connection to it.
             Log.d("INFO_448_DEBUG", "Endpoint Found")
             Nearby.getConnectionsClient(context)
-                .requestConnection(USER_NICKNAME, endpointID, connectionLifecycleCallback)
+                .requestConnection(username, endpointID, connectionLifecycleCallback)
                 .addOnSuccessListener {
                     // We successfully requested a connection. Now both sides
                     // must accept before the connection is established.
-                    endpointIDList.add(endpointID)
                     stopDiscovery()
+                    players.add(username)
                     Log.d("INFO_448_DEBUG", "Connection success (join)")
                 }
                 .addOnFailureListener { e: Exception ->
@@ -148,6 +174,11 @@ class NearbyConnection private constructor(context: Context)
         }
     }
 
+    fun getCurrPlayers(): ArrayList<String>
+    {
+        return players
+    }
+
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback()
     {
         override fun onConnectionInitiated(endpointID: String, connectionInfo: ConnectionInfo)
@@ -161,11 +192,18 @@ class NearbyConnection private constructor(context: Context)
         {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    endpointIDList.add(endpointID)
+                    //endpointIDList.add(endpointID)
                     Log.d("INFO_448_DEBUG", "Connection success")
+                    endpointIDList.add(endpointID)
+                    endpointIDUsernameScoreMap[endpointID] = Pair(endpointID, null)
+                    if (isHosting) {
+                        sendMessageAll("addPlayer:host:$username")
+                    } else {
+                        sendMessageAll("addPlayer:$username")
+                    }
                     val intent = Intent()
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "HELLO WORLD")
+                        intent.putExtra("message", "openTestActivity")
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
@@ -202,9 +240,71 @@ class NearbyConnection private constructor(context: Context)
                 message = String(receivedBytes, Charsets.UTF_8)
 
                 when {
-                    message.startsWith("username:") -> {
-                        Log.d("INFO_448_DEBUG", "Message starts with 'username:'")
-                        endpointIDUsernameScoreMap[endpointID] = Pair(message.substring(9, message.length), null)
+                    message.startsWith("updateRoom:") -> {
+                        players = ArrayList(message.substring(11, message.length).split(",").toList())
+                        Log.d("INFO_448_DEBUG", "UPDATE ROOM: " + message)
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    message.startsWith("addPlayer:") -> {
+                        var playerUsername = ""
+                        var isHost = false
+                        if (message.startsWith("addPlayer:host:")) {
+                            isHost = true
+                            playerUsername = message.substring(15)
+                        } else {
+                            playerUsername = message.substring(10)
+                        }
+                        Log.d("INFO_448_DEBUG", "Message to ADD PLAYER")
+                        if (isHost) {
+                            Log.d("INFO_448_DEBUG", "Message to ADD HOST")
+                            players.add(0, playerUsername)
+                        } else {
+                            players.add(playerUsername)
+                        }
+                        sendMessageAll("updateRoom:${players.joinToString (separator = ",") { it }}")
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    message.startsWith("removePlayer:") -> {
+                        val playerUsername = message.substring(13)
+                        Log.d("INFO_448_DEBUG", "REMOVING PLAYER: " + message.substring(13))
+                        Log.d("INFO_448_DEBUG", players.toString())
+                        Log.d("INFO_448_DEBUG", players.contains(playerUsername).toString())
+                        if (players.contains(playerUsername)) {
+                            players.remove(playerUsername)
+                            val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        }
+                    }
+                    message.startsWith("room:") -> {
+                        /*
+                            room: {
+                                host: {
+                                    endpoint: ?
+                                    username: ?
+                                    score: ?
+                                },
+                                players: [
+                                    {
+                                        endpoint: ?
+                                        username: ?
+                                        score: ?
+                                    },
+                                    {
+                                        endpoint: ?
+                                        username: ?
+                                        score: ?
+                                    }
+                                ]
+                            }
+                         */
                     }
                     message.startsWith("score:") -> {
                         Log.d("INFO_448_DEBUG", "Message starts with 'score:'")

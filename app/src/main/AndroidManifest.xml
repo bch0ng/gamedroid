@@ -22,12 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.TEST" />
-                <category android:name="android.intent.category.SECONDARY" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".TestActivity"></activity>
         <activity android:name=".PlayModeActivity"></activity>
         <activity android:name=".GameroomActivity"></activity>
         <!--<activity android:name=".ConnectionActivity"></activity>-->

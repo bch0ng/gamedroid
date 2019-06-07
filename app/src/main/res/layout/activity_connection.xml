@@ -16,6 +16,15 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/roomCodeShow"
                 android:visibility="gone"/>
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:id="@+id/usernameText"
+                android:layout_gravity="center_horizontal"
+                android:textSize="36sp"
+                android:layout_margin="24dp"
+                android:digits="qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"/>
         <Button
                 android:text="Advertise"
                 android:layout_width="match_parent"
@@ -32,7 +41,7 @@
                 android:textSize="36sp"
                 android:layout_margin="24dp"
                 android:maxLength="4"
-                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"/>
+                android:inputType="number"/>
         <Button
                 android:text="Discover"
                 android:layout_width="match_parent"
