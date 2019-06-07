@@ -111,7 +111,7 @@ class NearbyConnection private constructor(context: Context)
         Nearby.getConnectionsClient(context).sendPayload(endpointIDList, bytesPayload)
     }
 
-    fun stopBroadcast() {
+    fun disconnectEndpoints() {
         val nearby = Nearby.getConnectionsClient(context)
         nearby.stopAdvertising()
         nearby.stopAllEndpoints()
