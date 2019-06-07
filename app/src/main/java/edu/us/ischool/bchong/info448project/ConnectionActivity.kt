@@ -140,8 +140,7 @@ class ConnectionActivity : AppCompatActivity() {
                 nearby.stopAdvertising()
             else if (mode == "discovery")
                 nearby.stopDiscovery()
-            else if (mode == "broadcast")
-                nearby.stopBroadcast()
+            nearby.disconnectEndpoints()
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
@@ -154,7 +153,6 @@ class ConnectionActivity : AppCompatActivity() {
             roomCodeShow.visibility = View.GONE
         }
         buttonOtherActivity.setOnClickListener {
-            mode = "broadcast"
             broadcastMessage = "Hello, world!"
             nearby.sendMessageAll(broadcastMessage)
             val intent = Intent(this, TestActivity::class.java).apply {
