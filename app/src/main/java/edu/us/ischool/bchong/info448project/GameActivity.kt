@@ -2,14 +2,10 @@ package edu.us.ischool.bchong.info448project
 
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
-
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import android.util.Log
 import android.widget.Button
-import kotlinx.android.synthetic.main.activity_game.*
 
 class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListener {
     override fun onFragmentInteraction(uri: Uri) {

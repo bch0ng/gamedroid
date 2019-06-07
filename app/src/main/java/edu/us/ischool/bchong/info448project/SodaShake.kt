@@ -1,24 +1,12 @@
 package edu.us.ischool.bchong.info448project
 
-import android.app.Activity
-import android.app.PendingIntent.getActivity
-import android.app.Service
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.VibrationEffect
-import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import kotlin.math.sqrt
-import edu.us.ischool.bchong.info448project.SodaShake.OnShakeListener
-import android.support.v4.content.ContextCompat.getSystemService
 import android.os.Vibrator
-
-
-
-
 
 class SodaShake : Game {
     override var gameFragment: GameFragment? = null
@@ -111,11 +99,6 @@ class SodaShake : Game {
                     return
                 }*/
 
-                // reset the shake count after 3 seconds of no shakes
-                /*if (mShakeTimestamp + SHAKE_COUNT_RESET_TIME_MS < now) {
-                    mShakeCount = 0
-                }*/
-
                 mShakeTimestamp = now
                 mShakeCount++
 
@@ -123,15 +106,4 @@ class SodaShake : Game {
             }
         }
     }
-
-
-    /*override fun onResume() {
-        super.onResume()
-        mSensorManager?.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mSensorManager?.unregisterListener(mShakeDetector)
-    }*/
 }
