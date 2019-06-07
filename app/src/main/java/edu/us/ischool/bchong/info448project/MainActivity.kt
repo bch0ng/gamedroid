@@ -56,30 +56,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        startGameButton = findViewById(R.id.btnStartGame)
-        startGameButton.isEnabled = false
-
-        enterName = findViewById(R.id.editTextName)
-        enterName.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                userName = enterName.text.toString()
-                startGameButton.isEnabled = true
-            }
-        })
-
-        startGameButton.setOnClickListener {
-            val intent = Intent(this, PlayModeActivity::class.java)
-            intent.putExtra("USERNAME", userName)
-            startActivity(intent)
-        }
     }
 }
 
