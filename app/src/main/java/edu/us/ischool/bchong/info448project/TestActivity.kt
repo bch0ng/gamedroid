@@ -45,7 +45,7 @@ class TestActivity : AppCompatActivity() {
     val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
             Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-            textShow.text = intent?.getStringExtra("message")
+            textShow.text = intent?.getStringExtra("messag")
             Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
         }
     }
