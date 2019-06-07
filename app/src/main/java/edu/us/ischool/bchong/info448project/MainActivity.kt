@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         single_player.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
-            var game=Flip()
+            var game = Flip()
             intent.putExtra("game", game)
             startActivity(intent)
         }
@@ -24,6 +24,5 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("game", "SODA_SHAKE")
         startActivity(intent)
     }
-
 
 }

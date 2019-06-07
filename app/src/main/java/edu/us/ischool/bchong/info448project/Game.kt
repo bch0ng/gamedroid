@@ -4,7 +4,7 @@ import android.hardware.SensorEventListener
 import android.support.v4.app.Fragment
 import java.io.Serializable
 
-interface Game :Serializable,SensorEventListener{
+interface Game: Serializable, SensorEventListener {
     var gameFragment: GameFragment?
     fun OnStart()
     fun OnRegisterMotionListener()
