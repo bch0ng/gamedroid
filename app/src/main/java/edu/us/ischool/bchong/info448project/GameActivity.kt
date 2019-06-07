@@ -25,7 +25,7 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
         var gameFragment = game.gameFragment as Fragment
         findViewById<Button>(R.id.back_button).setOnClickListener {
             game.OnEnd()
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, MainGameActivity::class.java)
             startActivity(intent)
         }
         supportFragmentManager

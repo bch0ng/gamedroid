@@ -15,7 +15,7 @@
             android:theme="@style/AppTheme">
         <activity android:name=".SodaShake">
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainGameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
