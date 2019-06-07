@@ -3,11 +3,13 @@ package edu.us.ischool.bchong.info448project
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.ShapeDrawable
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -44,10 +46,41 @@ class FlipFragment : Fragment(),GameFragment {
     //lateinit var linearAccelerometer:SensorManager
     lateinit var motionSensorController: SensorManager
     //lateinit var accelerometer:Sensor
+
+    var colorGMin=12
+    var colorBMin=50
+    var colorG=12
+    var colorB=50
+    var colorGMax=102
+    var colorBMax=132
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        safety_compliance_button.setOnClickListener {
+            safety_layout.visibility=View.GONE
+        }
+
+    }
+    private fun incrementColors(increment:Int){
+        colorG+=increment
+        colorB+=increment
+        if(colorB>colorBMax){
+            colorB=colorBMin
+        }
+        if(colorG>colorGMax){
+            colorG=colorGMin
+        }
+    }
+    fun rotateFlipAccent(power:Int){
+        flip_score_background.rotation+=power
+        flip_score_background2.rotation+=power*2
+        incrementColors(power)
+        flip_score_background2.setColorFilter(Color.rgb(255,colorG,colorB))
+        flip_score_background.setColorFilter(Color.rgb(0,255-colorG,240-colorB))
     }
 
     override fun onCreateView(
@@ -92,8 +125,9 @@ class FlipFragment : Fragment(),GameFragment {
         fun onFragmentInteraction(uri: Uri)
     }
     fun OnFlip(score:Int){
-        flip_counter.text="score: $score"
+        flip_counter.text="$score"
     }
+
 
     override fun onResume() {
         super.onResume()

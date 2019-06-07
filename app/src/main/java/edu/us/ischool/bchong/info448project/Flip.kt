@@ -46,6 +46,7 @@ class Flip : Game {
     var accStartingVal=0f
     var accStartTime:Long=0
 
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
@@ -57,7 +58,10 @@ class Flip : Game {
     private fun accelerationEvent(event: SensorEvent?) {
         //incrementAccByMoment(event)
         incrementAccByPeriod(event)
-        OnFlip()
+        //OnFlip()
+        if(event!!.values[1]>1||event.values[2]>1){
+            frag.rotateFlipAccent(1)
+        }
     }
     private fun incrementAccByPeriod(event:SensorEvent?){
         val values=event!!.values
@@ -107,17 +111,20 @@ class Flip : Game {
     private fun gyroEvent(event: SensorEvent) {
         Log.i("test", "${event.values[0]}")
         val values = event.values
-        //incrementGyroByMoment(values)
+        incrementGyroByMoment(values)
     }
     private fun incrementGyroByMoment(values:FloatArray){
         if (values[0] + values[1] + values[2] > 0.4) {
-            score += (Math.pow((previousRotations[0] - values[0]).toDouble(), 2.0) +
+            val scoreUp=(Math.pow((previousRotations[0] - values[0]).toDouble(), 2.0) +
                     Math.pow((previousRotations[1] - values[1]).toDouble(), 2.0) +
                     Math.pow((previousRotations[2] - values[2]).toDouble(), 2.0)) * 0.095
+            score += scoreUp
             previousRotations[0] = values[0]
             previousRotations[1] = values[1]
             previousRotations[2] = values[2]
+            this.rotationAccumulation=rotationAccumulation*.95f+scoreUp.toFloat()*5
             OnFlip()
+            frag.rotateFlipAccent(rotationAccumulation.toInt())
         }
     }
 
