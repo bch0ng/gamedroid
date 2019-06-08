@@ -56,6 +56,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+
+        val welcomeFragment = WelcomeFragment.newInstance()
+        transaction.replace(R.id.fragments, welcomeFragment)
+        transaction.commit()
     }
 }
 

@@ -16,24 +16,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".ConnectionActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".TestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.TEST" />
-                <category android:name="android.intent.category.SECONDARY" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".PlayModeActivity"></activity>
-        <activity android:name=".GameroomActivity"></activity>
-        <!--<activity android:name=".ConnectionActivity"></activity>-->
-        <activity android:name=".GameSelectionActivity"></activity>
-        <activity android:name=".ScoreboardActivity"></activity>
-        <activity android:name=".Gametemple"></activity>
-    </application>
+    <activity android:name=".MainActivity" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity android:name=".PlayModeActivity"></activity>
+    <activity android:name=".GameroomActivity"></activity>
+    <activity android:name=".GameSelectionActivity"></activity>
+    <activity android:name=".ScoreboardActivity"></activity>
+    <activity android:name=".Gametemple"></activity>
+</application>
 
 </manifest>

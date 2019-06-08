@@ -65,7 +65,7 @@ class WelcomeFragment : Fragment() {
         })
 
         startGameButton.setOnClickListener {
-            val playModeFragment = PlayModeFragment.newInstance()
+            val playModeFragment = PlayModeFragment.newInstance(userName)
             val transaction = fragmentManager!!.beginTransaction()
             transaction.replace(R.id.fragments, playModeFragment)
             transaction.addToBackStack(null)
