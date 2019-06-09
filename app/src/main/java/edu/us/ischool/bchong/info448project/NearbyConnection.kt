@@ -92,9 +92,7 @@ class NearbyConnection private constructor(context: Context)
      */
     fun setUsername(newUsername: String)
     {
-        if (username == USERNAME_NOT_SET_STRING) {
-            username = newUsername
-        }
+        username = newUsername
     }
 
     /**
