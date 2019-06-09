@@ -138,7 +138,7 @@ class ConnectionActivity : AppCompatActivity() {
                 nearby.stopAdvertising()
             else if (mode == "discovery")
                 nearby.stopDiscovery()
-            nearby.disconnectEndpoints()
+            nearby.disconnectEndpointsAndStop()
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
