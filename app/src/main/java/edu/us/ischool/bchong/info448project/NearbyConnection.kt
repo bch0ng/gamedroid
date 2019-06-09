@@ -194,7 +194,6 @@ class NearbyConnection private constructor(context: Context)
                     endpointIDUsernameScoreMap[endpointID] = Pair(endpointID, null)
                     if (isHosting) {
                         sendMessageAll("roomCode:$roomCode")
-                        //sendMessageAll("addPlayer:host:$username")
                     } else {
                         sendMessageAll("addPlayer:$username")
                     }
@@ -316,6 +315,10 @@ class NearbyConnection private constructor(context: Context)
                         if (players[1] != username) {
                             players[players.indexOf(username)] = players[1]
                             players[1] = username
+                        }
+                        if (!isHosting) {
+                            players[0] = players[0] + " (Host)"
+                            players[1] = players[1] + " (You)"
                         }
                         Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
                         val intent = Intent()

@@ -36,10 +36,14 @@ class TestActivity : AppCompatActivity() {
         sendButton = findViewById(R.id.buttonSend)
         closeButton = findViewById(R.id.buttonClose)
 
-        val players = nearby.getCurrPlayers()
-        textShow.text = ""
-        for (player in players) {
-            textShow.text = textShow.text.toString() + "\n" + player
+        if (nearby.isHosting()) {
+            textShow.text = "${nearby.getMyUsername()} (You are the Host)"
+        } else {
+            val players = nearby.getCurrPlayers()
+            textShow.text = ""
+            for (player in players) {
+                textShow.text = textShow.text.toString() + "\n" + player
+            }
         }
 
         val message = intent.getStringExtra("roomCode")
@@ -66,8 +70,12 @@ class TestActivity : AppCompatActivity() {
                 if (message?.startsWith("updateRoom:")!!) {
                     val players = nearby.getCurrPlayers()
                     textShow.text = ""
-                    for (player in players) {
-                        textShow.text = textShow.text.toString() + "\n" + player
+                    for ((index, player) in players.withIndex()) {
+                        if (index == 0 && nearby.isHosting()) {
+                            textShow.text = "$player (You are the Host)"
+                        } else {
+                            textShow.text = textShow.text.toString() + "\n" + player
+                        }
                     }
                 }
                 Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
