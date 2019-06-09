@@ -50,11 +50,13 @@ class Flip : Game {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
+    //On initialization make the fragment
     constructor() {
         gameFragment = FlipFragment().newInstance(this)
         this.frag = gameFragment as FlipFragment
     }
 
+    //When the phone is accelerated add score
     private fun accelerationEvent(event: SensorEvent?) {
         //incrementAccByMoment(event)
         incrementAccByPeriod(event)
@@ -63,6 +65,8 @@ class Flip : Game {
             frag.rotateFlipAccent(1)
         }
     }
+
+    //Alternate scoring method for accelerations
     private fun incrementAccByPeriod(event:SensorEvent?){
         val values=event!!.values
         var valueSum=Math.abs(values[0]*previousAcc[0])+Math.abs(values[1]*previousAcc[1])
@@ -93,6 +97,7 @@ class Flip : Game {
         previousAcc=event.values
     }
 
+    //Alternate scoring method for accelerations
     private fun incrementAccByMoment(event: SensorEvent?){
         val gz = event!!.values[2]
         //Log.v("test", "$gz")
@@ -108,11 +113,14 @@ class Flip : Game {
         }
     }
 
+    //On gyro event increment score
     private fun gyroEvent(event: SensorEvent) {
         Log.i("test", "${event.values[0]}")
         val values = event.values
         incrementGyroByMoment(values)
     }
+
+    //Gyro scoring formula
     private fun incrementGyroByMoment(values:FloatArray){
         if (values[0] + values[1] + values[2] > 0.4) {
             val scoreUp=(Math.pow((previousRotations[0] - values[0]).toDouble(), 2.0) +
@@ -142,12 +150,14 @@ class Flip : Game {
 
     }
 
+    //Tells the fragment to update visuals
     private fun OnFlip() {
         //score++
         frag.OnFlip(score.toInt())
         Log.v("test", "$score")
     }
 
+    //Returns the score
     override fun onEnd(): Int {
         return score.toInt()
     }

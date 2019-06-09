@@ -21,6 +21,8 @@ import kotlin.concurrent.schedule
 //WARNING: Use newInstance to set this phone's local gameclient
 class RollTheDiceHost : GameHost {
     lateinit var players: Array<Pair<String, String>>       //ID and name
+
+    //Sets the players
     override fun setPlayers(playerData: ArrayList<Pair<String, String>>) {
         players = (playerData.toArray() as Array<Pair<String, String>>)
     }

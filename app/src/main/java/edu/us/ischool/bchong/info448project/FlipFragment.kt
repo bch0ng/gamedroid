@@ -29,6 +29,8 @@ import kotlinx.android.synthetic.main.flip.*
  *
  */
 class FlipFragment : Fragment(),GameFragment {
+
+    //Return an instance of this fragment with the game set
     override fun newInstance(game: Game): GameFragment {
         gameObj=game
         return this
@@ -38,7 +40,6 @@ class FlipFragment : Fragment(),GameFragment {
         this.gameObj!!.onFragmentStart()
     }
 
-    // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
     var gameObj:Game?=null
     lateinit var gyroscope:Sensor
@@ -53,18 +54,22 @@ class FlipFragment : Fragment(),GameFragment {
     var colorB=50
     var colorGMax=102
     var colorBMax=132
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
     }
+
+    //Set the buttons
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         safety_compliance_button.setOnClickListener {
             safety_layout.visibility=View.GONE
         }
-
     }
+
+    //The spinning squares color delta
     private fun incrementColors(increment:Int){
         colorG+=increment
         colorB+=increment
@@ -75,6 +80,8 @@ class FlipFragment : Fragment(),GameFragment {
             colorG=colorGMin
         }
     }
+
+    //Rotating the spinning squares formula
     fun rotateFlipAccent(power:Int){
         flip_score_background.rotation+=power
         flip_score_background2.rotation+=power*2
@@ -124,11 +131,13 @@ class FlipFragment : Fragment(),GameFragment {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
     }
+
+    //Setting the score visually.
     fun OnFlip(score:Int){
         flip_counter.text="$score"
     }
 
-
+    //
     override fun onResume() {
         super.onResume()
         this.motionSensorController =GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager

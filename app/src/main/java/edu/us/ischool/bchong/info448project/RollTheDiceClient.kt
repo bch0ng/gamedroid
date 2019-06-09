@@ -6,15 +6,13 @@ import android.hardware.SensorEvent
 import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
-import java.lang.Integer.getInteger
 import java.util.*
-import kotlin.concurrent.schedule
 
 //TODO Everything
 class RollTheDiceClient : NetworkGame {
 
     override fun onDisconnect() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun setId(id: String) {
@@ -92,6 +90,7 @@ class RollTheDiceClient : NetworkGame {
         }, pregameDuration)
     }
 
+    //When a new message is received from the server
     override fun newMessage(message: Bundle) {
         val type = message.get("type")
         when (type) {
@@ -110,6 +109,8 @@ class RollTheDiceClient : NetworkGame {
             else -> Log.e("dice", "Invalid message $type")
         }
     }
+
+    //When it is a player's turn, display their name
     private fun newTurn(id: String){
         players.map {
             if(it.first==id){
@@ -122,6 +123,7 @@ class RollTheDiceClient : NetworkGame {
         //frag.opponentDisconnected(id)
     }
 
+    //When the gameover message is recieved
     private fun gameOver(playerScores: Array<Pair<String, Int>>) {
         var highestScore = Pair<String, Int>(myId, score.toInt())
         playerScores.map { pair ->
@@ -130,9 +132,10 @@ class RollTheDiceClient : NetworkGame {
                 highestScore = pair
             }
         }
-        frag.ShowWinner(highestScore)
+        frag.showWinner(highestScore)
     }
 
+    //Reveals a opponents score
     private fun newOpponentScore(id: String, playerScore: Int) {
         frag.revealRoll(id, playerScore)
     }
@@ -141,9 +144,10 @@ class RollTheDiceClient : NetworkGame {
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    //Vibrates
     fun vibrate(id: String, strength: Double) {
         Log.v("dice", "Vibrator strength $strength")
-        vibrator.vibrate(vibrationStrength)
+        vibrator.vibrate((vibrationStrength*strength).toLong())
         frag.opponentRolled(id, strength, diceRollVisualDuration)
     }
 
@@ -176,9 +180,11 @@ class RollTheDiceClient : NetworkGame {
         }
     }
 
+    //Sends roll value to the server
     private fun sendOpponentRollData(strength: Double) {
         var message: Bundle = Bundle()
         message.putString("type", DiceNetworkMessages.OPPONENT_SHAKE.code)
+        message.putString("id",this.myId)
         message.putDouble("strength", strength)
         sendMessage(message)
     }

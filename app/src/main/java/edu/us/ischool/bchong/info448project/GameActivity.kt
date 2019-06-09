@@ -14,7 +14,7 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
 
     lateinit var game:Game
 
-
+    //Send a game in the bundle, set its fragment and call startGame()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)

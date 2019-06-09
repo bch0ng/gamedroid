@@ -28,14 +28,13 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
+
 class DiceFragment : Fragment(), GameFragment {
 
     override fun newInstance(game: Game): GameFragment {
         gameObj = game
         return this
     }
-
-
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
@@ -61,27 +60,24 @@ class DiceFragment : Fragment(), GameFragment {
     lateinit var dimensionAnimators: HashMap<String, ValueAnimator>
     lateinit var playerDiceDimAnimator: ValueAnimator
 
-    fun ShowWinner(winner: Pair<String, Int>) {
+    //Shows the name of the player who won
+    fun showWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
+        turn_text_view.text=scoreString
+        turn_text_view.visibility=View.VISIBLE
         Log.v("dice", scoreString)
     }
 
-    //Should be called by the client when the starting message is recieved from the server
+    //When the starting message is received from the server
     fun StartGame(myId: Pair<String, String>, allPlayers: Array<Pair<String, String>>) {
         randomCharSet=arrayOf<String>("$","?","@","ß","∫")
         Log.v("dice", "Start game called by server")
-        var index = 0
         players = allPlayers
-        /*allPlayers.map {
-            players[index]=it
-            index++
-        }*/
         playerDiceDimAnimator = ValueAnimator()
         dimensionAnimators = hashMapOf<String, ValueAnimator>()
         player = myId
         val fragMananager = fragmentManager
         val fragTransaction = fragMananager!!.beginTransaction()
-        //val inflater=layoutInflater
         if (opponent_dice.childCount > 0) {
             opponent_dice.removeAllViews()
         }
@@ -89,11 +85,12 @@ class DiceFragment : Fragment(), GameFragment {
         fragTransaction.commit()
     }
 
-
+    //Returns the id string used in view id's
     private fun getIdString(id: String): String {
         return "$id$ID_SUFFIX"
     }
 
+    //Redraws all the players in their list in scrollview
     private fun redrawPlayers() {
         players.map { thisPlayer: Pair<String, String> ->
             val newDiceObj = LayoutInflater.from(context).inflate(R.layout.dice_opponent, null)
@@ -103,6 +100,7 @@ class DiceFragment : Fragment(), GameFragment {
         }
     }
 
+    //Draws all the players in the scrollview
     private fun drawPlayers(savedInstanceState: Bundle) {
         val playerNameTag: TextView = player_dice.findViewWithTag("player_name") as TextView
         //val inflater=context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -119,6 +117,7 @@ class DiceFragment : Fragment(), GameFragment {
         playerDiceVisual = player_dice.findViewWithTag("dice_img") as ImageView
     }
 
+    //Saves the current players
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (players != null) {
@@ -129,11 +128,13 @@ class DiceFragment : Fragment(), GameFragment {
         }
     }
 
+    //When the game is started it will call this function.
     override fun onStart() {
         super.onStart()
         this.gameObj!!.onFragmentStart()
     }
 
+    //When the view is created
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState != null) {
@@ -172,6 +173,7 @@ class DiceFragment : Fragment(), GameFragment {
     }
 
     /*
+    //Do not add a onAttach function
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
@@ -211,24 +213,9 @@ class DiceFragment : Fragment(), GameFragment {
         }else{
             playerDiceDimAnimator = setDimAnimator(player_dice, duration)
         }
-        //val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
-        //dimensionAnimator.duration = duration
-        //dimensionAnimator.addUpdateListener(dimAnimator(player_dice, force1, force2))
     }
 
-    /*
-    //Changes the size of dice
-    private fun dimAnimator(element: View, force1: Float, force2: Float) =
-        object : ValueAnimator.AnimatorUpdateListener {
-            override fun onAnimationUpdate(animation: ValueAnimator) {
-                Log.v("dice", "Animation Update")
-                val animatedValue: Float = animation.animatedValue as Float
-                element.layoutParams.height = baseHeight * (Math.cos(force1 * animatedValue.toDouble())).toInt()
-                element.layoutParams.width = baseWidth * (Math.cos(force2 * animatedValue.toDouble())).toInt()
-            }
-        }*/
-
-
+    //Reveals the roll for the opponent dice with the given id
     fun revealRoll(id: String, rollValue: Int) {
         val parentElement = root_dice_layout.findViewWithTag<TextView>("${id}Dice")
         parentElement.findViewWithTag<TextView>("dice_text").text = "$rollValue"
@@ -241,16 +228,6 @@ class DiceFragment : Fragment(), GameFragment {
             Log.v("diceSet", "Opponent Rolled Fragment listener started")
             val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
             val element: View = elementGroup.findViewWithTag("opponent_dice_box")
-            /*val dimensionAnimator = ValueAnimator.ofFloat(0f, (Math.PI * duration).toFloat())
-            dimensionAnimator.duration = duration
-            val animator = /*dimAnimator(
-                element,
-                (strength * Math.random().roundToInt() * -1.0).toFloat(),
-                (strength * Math.random().roundToInt() * -1.0).toFloat()
-            )*/
-            dimensionAnimator.addUpdateListener(
-                animator
-            )*/
             if (dimensionAnimators.containsKey(id)) {
                 val dimensionAnimator = dimensionAnimators.get(id)
                 if(!dimensionAnimator!!.isRunning){
@@ -273,14 +250,17 @@ class DiceFragment : Fragment(), GameFragment {
         playerDiceDimAnimator.cancel()
     }
     fun displayNewTurn(playerName:String){
+        turn_text_view.visibility=View.VISIBLE
         turn_text_view.text="$playerName's turn"
     }
 
-    fun dpToPx(dp: Int): Int {
+    //Converts px values to dp units
+    private fun dpToPx(dp: Int): Int {
         val density = context!!.resources.displayMetrics.density
         return Math.round(dp.toFloat() * density)
     }
 
+    //Rotates and changes the size of a view
     fun setDimAnimator(targetView: View, milliDuration: Long): ValueAnimator {
         Log.v("diceSet", "New animator set for $milliDuration")
         var targetTextView=(targetView as ViewGroup).findViewWithTag<TextView>("dice_text")
@@ -322,10 +302,12 @@ class DiceFragment : Fragment(), GameFragment {
         return valueAnimator
     }
 
+    //Displays the restart buttons, needs testing
     fun displayRestart(yourScore: Int, winnerScore: Int, isWin: Boolean) {
         postgame_buttons.visibility = View.VISIBLE
     }
 
+    //Reregisters the motion sensors
     override fun onResume() {
         super.onResume()
         this.motionSensorController =
