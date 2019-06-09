@@ -60,16 +60,24 @@ class TestActivity : AppCompatActivity() {
 
     val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
-            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-            val message = intent?.getStringExtra("message")
-            if (message?.startsWith("updateRoom:")!!) {
-                val players = nearby.getCurrPlayers()
-                textShow.text = ""
-                for (player in players) {
-                    textShow.text = textShow.text.toString() + "\n" + player
+            if (intent?.hasExtra("message")!!) {
+                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+                val message = intent?.getStringExtra("message")
+                if (message?.startsWith("updateRoom:")!!) {
+                    val players = nearby.getCurrPlayers()
+                    textShow.text = ""
+                    for (player in players) {
+                        textShow.text = textShow.text.toString() + "\n" + player
+                    }
+                }
+                Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
+            } else if (intent.hasExtra("roomCode")) {
+                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("roomCode")}")
+                if (textShow2.text.toString().isBlank()) {
+                    val message = intent?.getStringExtra("roomCode")
+                    textShow2.text = message
                 }
             }
-            Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
         }
     }
 

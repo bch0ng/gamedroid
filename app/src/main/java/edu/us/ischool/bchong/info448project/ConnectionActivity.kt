@@ -150,22 +150,14 @@ class ConnectionActivity : AppCompatActivity() {
             roomCodeField.isEnabled = true
             roomCodeShow.visibility = View.GONE
         }
-        /*
-        buttonOtherActivity.setOnClickListener {
-            broadcastMessage = "Hello, world!"
-            nearby.sendMessageAll(broadcastMessage)
-        }
-        */
     }
-
+    
     val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
             Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-            //roomCodeShow.text = intent?.getStringExtra("message")
-            //Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
-            if (intent?.getStringExtra("message")?.startsWith("openTestActivity")!!) {
+            if (intent?.hasExtra("roomCode")!!) {
                 val intent = Intent(this@ConnectionActivity, TestActivity::class.java).apply {
-                    putExtra(EXTRA_MESSAGE, "Hello world!")
+                    putExtra("roomCode", intent.getStringExtra("roomCode"))
                 }
                 startActivity(intent)
             }

@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 private const val ROOM_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
 private const val ROOM_CODE_LENGTH: Int = 4
 private const val USERNAME_NOT_SET_STRING: String = "username_not_set"
+private const val ROOM_CODE_NOT_SET_STRING: String = "room_code_not_set"
 private val CONNECTION_STRATEGY: Strategy = Strategy.P2P_STAR
 
 /**
@@ -23,9 +24,10 @@ class NearbyConnection private constructor(context: Context)
 {
     private var endpointIDUsernameScoreMap: MutableMap<String, Pair<String, String?>>
             = HashMap() // Key: EndpointID, Value: <Username, Score>
-    private val context = context   // Context must be given with initialization
-    private var username = USERNAME_NOT_SET_STRING   // This user's name
-    private var isHosting = false   // Is this user the host?
+    private val context: Context = context
+    private var isHosting: Boolean = false
+    private var username: String = USERNAME_NOT_SET_STRING
+    private var roomCode: String = ROOM_CODE_NOT_SET_STRING
 
     private var players: ArrayList<String> = ArrayList() // [0] is host, [1] is curr player if not host
 
@@ -107,7 +109,7 @@ class NearbyConnection private constructor(context: Context)
         isHosting = true
         val advertisingOptions =
                 AdvertisingOptions.Builder().setStrategy(CONNECTION_STRATEGY).build()
-        val roomCode = (1..ROOM_CODE_LENGTH)
+        roomCode = (1..ROOM_CODE_LENGTH)
             .map { kotlin.random.Random.nextInt(0, 9) }
             .joinToString("")
         Log.d("INFO_448_DEBUG", roomCode)
@@ -193,13 +195,14 @@ class NearbyConnection private constructor(context: Context)
                     Log.d("INFO_448_DEBUG", "Connection success")
                     endpointIDUsernameScoreMap[endpointID] = Pair(endpointID, null)
                     if (isHosting) {
+                        sendMessageAll("roomCode:$roomCode")
                         sendMessageAll("addPlayer:host:$username")
                     } else {
                         sendMessageAll("addPlayer:$username")
                     }
                     val intent = Intent()
-                    intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                    intent.putExtra("message", "openTestActivity")
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                        intent.putExtra("message", "openTestActivity")
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
@@ -292,16 +295,30 @@ class NearbyConnection private constructor(context: Context)
 
                 when {
                     /**
+                     * Tells the currently displayed activity to open the game lobby
+                     * activity (if it hasn't already) and display the passed room code.
+                     */
+                    message.startsWith("roomCode:") -> {
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("roomCode", message.substring(9))
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    /**
                      * Tells the currently displayed activity to update
                      * their room information
                      */
                     message.startsWith("updateRoom:") -> {
                         players = ArrayList(message.substring(11)
                             .split(",").toList())
+                        if (players.indexOf(username) != 1) {
+                            players.removeAt(players.indexOf(username))
+                            players.add(1, username)
+                        }
                         Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
                         val intent = Intent()
-                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "updateRoom:true")
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     /**
@@ -324,10 +341,13 @@ class NearbyConnection private constructor(context: Context)
                         } else {
                             players.add(playerUsername)
                         }
-                        sendMessageAll("updateRoom:${players.joinToString (separator = ",") { it }}")
+                        if (isHosting) {
+                            sendMessageAll("roomCode:$roomCode")
+                            sendMessageAll("updateRoom:${players.joinToString(separator = ",") { it }}")
+                        }
                         val intent = Intent()
-                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "updateRoom:true")
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     /**
@@ -342,8 +362,8 @@ class NearbyConnection private constructor(context: Context)
                         if (players.contains(playerUsername)) {
                             players.remove(playerUsername)
                             val intent = Intent()
-                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                            intent.putExtra("message", "updateRoom:true")
+                                intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                                intent.putExtra("message", "updateRoom:true")
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                         }
                     }
@@ -414,7 +434,7 @@ class NearbyConnection private constructor(context: Context)
             }
         }
     }
-    
+
     /**
      * Disconnect from all connected users and stop advertising/discovering.
      */
