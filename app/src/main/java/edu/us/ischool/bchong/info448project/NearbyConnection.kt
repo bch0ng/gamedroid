@@ -309,9 +309,9 @@ class NearbyConnection private constructor(context: Context)
                     message.startsWith("updateRoom:") -> {
                         players = ArrayList(message.substring(11)
                             .split(",").toList())
-                        if (players.indexOf(username) != 1) {
-                            players.removeAt(players.indexOf(username))
-                            players.add(1, username)
+                        if (players[1] != username) {
+                            players[players.indexOf(username)] = players[1]
+                            players[1] = username
                         }
                         Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
                         val intent = Intent()
