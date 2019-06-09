@@ -39,7 +39,7 @@
                 android:text="Lets' game"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnStartGame" android:layout_marginTop="276dp"
+                android:id="@+id/btnWelcome" android:layout_marginTop="276dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" android:textSize="18sp"
                 android:layout_gravity="center"/>

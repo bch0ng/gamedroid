@@ -16,18 +16,18 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
-        if (intent.getStringExtra("game") == "SODA_SHAKE") {
+        /*if (intent.getStringExtra("game") == "SODA_SHAKE") {
             game = SodaShake(this)
         } else {
-            game = intent.extras.getSerializable("game") as Game
-        }
-
+            game = intent.extras.getSerializable("GAME") as Game
+        }*/
+        game = intent.extras.getSerializable("GAME") as Game
         var gameFragment = game.gameFragment as Fragment
-        findViewById<Button>(R.id.back_button).setOnClickListener {
+        /*findViewById<Button>(R.id.back_button).setOnClickListener {
             game.OnEnd()
             val intent = Intent(this, MainGameActivity::class.java)
             startActivity(intent)
-        }
+        }*/
         supportFragmentManager
             .beginTransaction()
             .add(R.id.game_frame, gameFragment!!, "game_fragment")

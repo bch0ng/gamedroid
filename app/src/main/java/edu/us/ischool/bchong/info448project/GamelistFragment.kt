@@ -11,24 +11,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import org.json.JSONObject
 
+private const val playmode = "PLAYMODE"
+private const val useridentity = "IDENTITY"
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val playmode = "param1"
-private const val useridentity = "param2"
-private lateinit var view: View
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [GamelistFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [GamelistFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class GamelistFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var mode: String? = null
     private var identity: String? = null
     private lateinit var gamechoice: String
@@ -54,7 +40,6 @@ class GamelistFragment : Fragment() {
             mode = it.getString(playmode)
             identity = it.getString(useridentity)
         }
-        Log.d("GameSystem", "I am in oncreate")
     }
 
     override fun onCreateView(
@@ -62,14 +47,11 @@ class GamelistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view: View? = null
-        Log.d("GameSystem", "I am in oncreateview")
-        // Inflate the layout for this fragment
         if (mode == "Single") {
 
             view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
 
             val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
-            //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
 
             var game1sbtn = view.findViewById<Button>(R.id.buttongame1s)
             var game2sbtn = view.findViewById<Button>(R.id.buttongame2s)
@@ -91,7 +73,7 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                val intent = Intent(activity, Gametemple::class.java)
+                val intent = Intent(activity, GameActivity::class.java)
                 intent.putExtra("IDENTITY", identity)
                 intent.putExtra("GAME", gamechoice)
                 startActivity(intent)
@@ -102,7 +84,6 @@ class GamelistFragment : Fragment() {
             view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
 
             val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
-            //val choicegroup : RadioGroup = view.findViewById(R.id.radioGroup)
 
             var game1btn = view.findViewById<Button>(R.id.buttongame1)
             var game2btn = view.findViewById<Button>(R.id.buttongame2)
@@ -128,24 +109,14 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                val intent = Intent(activity, Gametemple::class.java)
+                val intent = Intent(activity, GameActivity::class.java)
                 intent.putExtra("IDENTITY", identity)
                 intent.putExtra("GAME", gamechoice)
                 startActivity(intent)
             }
         }
-        Log.d("GameSystem", "I should be returned")
-        //Different layout?
-
         return view
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    /*fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }*/
-
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnFragmentInteractionListener) {
@@ -160,39 +131,17 @@ class GamelistFragment : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onGameSelect(param1: String, param2: String) {}
+        fun onGameSelect(gamemode: String, playeridentity: String) {}
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment GamelistFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(gamemode: String, playeridentity: String) =
             GamelistFragment().apply {
                 arguments = Bundle().apply {
-                    putString(playmode, param1)
-                    putString(useridentity, param2)
+                    putString(playmode, gamemode)
+                    putString(useridentity,playeridentity)
                 }
             }
     }

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startGameButton: Button
     private lateinit var enterName: EditText
     private lateinit var userName: String
-
 
     override fun onStart()
     {
@@ -60,10 +60,15 @@ class MainActivity : AppCompatActivity() {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
 
-        val welcomeFragment = WelcomeFragment.newInstance()
-        transaction.replace(R.id.fragments, welcomeFragment)
+        val welcomePage = WelcomeFragment.newInstance()
+        transaction.replace(R.id.fragments, welcomePage)
         transaction.commit()
+
     }
+
+    //override fun onPlaymodeInteraction(){}
+
+
 }
 
 

@@ -14,19 +14,11 @@ import android.widget.Button
 class PlayModeFragment : Fragment() {
 
     private lateinit var playmode: String
-    private lateinit var username: String
+    //private lateinit var username: String
     private lateinit var singlebtn: Button
     private lateinit var multibtn: Button
 
-    companion object {
-        fun newInstance(username: String): PlayModeFragment {
-            val fragment = PlayModeFragment()
-            val bundle = Bundle()
-            bundle.putString("USERNAME", username)
-            fragment.arguments = bundle
-            return fragment
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,28 +35,36 @@ class PlayModeFragment : Fragment() {
     }
 
     fun handleView (view: View) {
-        username = arguments!!.getString("USERNAME")
+        //username = arguments!!.getString("USERNAME")
         singlebtn = view.findViewById(R.id.btnSingle)
         multibtn = view.findViewById(R.id.btnMulti)
 
         singlebtn.setOnClickListener {
             multibtn.isEnabled = false
             playmode = "Single"
-            val gameSelectionFragment = GameSelectionFragment.newInstance(username, playmode, "Host")
+            val gameSelectionFragment = GamelistFragment.newInstance(playmode, "Host")
             val transaction = fragmentManager!!.beginTransaction()
             transaction.replace(R.id.fragments, gameSelectionFragment)
             transaction.addToBackStack(null)
             transaction.commit()
         }
 
-        multibtn.setOnClickListener {
+        /*multibtn.setOnClickListener {
             singlebtn.isEnabled = false
             playmode = "Multi"
-            val gameSelectionFragment = GameSelectionFragment.newInstance(username, playmode,null)
+            val gameSelectionFragment = GameSelectionFragment.newInstance(playmode,null)
             val transaction = fragmentManager!!.beginTransaction()
             transaction.replace(R.id.fragments, gameSelectionFragment)
             transaction.addToBackStack(null)
             transaction.commit()
-        }
+        }*/
+    }
+    companion object {
+        @JvmStatic
+        fun newInstance() =
+            GamelistFragment().apply {
+                arguments = Bundle().apply {
+                }
+            }
     }
 }
