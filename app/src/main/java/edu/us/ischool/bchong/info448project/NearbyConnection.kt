@@ -194,7 +194,7 @@ class NearbyConnection private constructor(context: Context)
                     endpointIDUsernameScoreMap[endpointID] = Pair(endpointID, null)
                     if (isHosting) {
                         sendMessageAll("roomCode:$roomCode")
-                        sendMessageAll("addPlayer:host:$username")
+                        //sendMessageAll("addPlayer:host:$username")
                     } else {
                         sendMessageAll("addPlayer:$username")
                     }
@@ -295,6 +295,8 @@ class NearbyConnection private constructor(context: Context)
                     /**
                      * Tells the currently displayed activity to open the game lobby
                      * activity (if it hasn't already) and display the passed room code.
+                     *
+                     * @note Only the non-host players will receive these messages.
                      */
                     message.startsWith("roomCode:") -> {
                         val intent = Intent()
@@ -304,7 +306,9 @@ class NearbyConnection private constructor(context: Context)
                     }
                     /**
                      * Tells the currently displayed activity to update
-                     * their room information
+                     * their room information.
+                     *
+                     * @note Only the non-host players will receive these messages.
                      */
                     message.startsWith("updateRoom:") -> {
                         players = ArrayList(message.substring(11)
@@ -322,25 +326,14 @@ class NearbyConnection private constructor(context: Context)
                     /**
                      * Adds a player's username to the players list and tells the
                      * currently displayed activity to update their room information
+                     *
+                     * @note: Only the host will receive these messages.
                      */
                     message.startsWith("addPlayer:") -> {
-                        var playerUsername = ""
-                        var isHost = false  // True if player to add is the host, else false
-                        if (message.startsWith("addPlayer:host:")) {
-                            isHost = true
-                            playerUsername = message.substring(15)
-                        } else {
-                            playerUsername = message.substring(10)
-                        }
+                        var playerUsername = message.substring(10)
                         Log.d("INFO_448_DEBUG", "Message to ADD PLAYER")
-                        if (isHost) {
-                            Log.d("INFO_448_DEBUG", "Message to ADD HOST")
-                            players.add(0, playerUsername)
-                        } else {
-                            players.add(playerUsername)
-                        }
+                        players.add(playerUsername)
                         if (isHosting) {
-                            sendMessageAll("roomCode:$roomCode")
                             sendMessageAll("updateRoom:${players.joinToString(separator = ",") { it }}")
                         }
                         val intent = Intent()
@@ -351,6 +344,8 @@ class NearbyConnection private constructor(context: Context)
                     /**
                      * Removes a player from the players list and tells the currently
                      * displayed activity to update their room information
+                     *
+                     * @note: Only the host will receive these messages.
                      */
                     message.startsWith("removePlayer:") -> {
                         val playerUsername = message.substring(13)
