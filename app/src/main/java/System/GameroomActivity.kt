@@ -16,7 +16,6 @@ class GameroomActivity : AppCompatActivity()
 
         val findCreateRoomFragment = FindCreateRoomFragment.newInstance()
         transaction.replace(R.id.fragment_find_create_room, findCreateRoomFragment)
-        transaction.addToBackStack(null)
         transaction.commit()
     }
 }
