@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import edu.us.ischool.bchong.info448project.R
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
@@ -25,20 +26,23 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         identity = intent.getStringExtra("IDENTITY")
+
         mode = intent.getStringExtra("GAMEMODE")
-        onGameSelect(identity, mode)
+        Log.e("game","The mode is"+mode)
+        onGameSelect(mode,identity)
     }
 
     fun onGameSelect(playmode: String, useridentity: String) {
-
+        Log.e("game","In onGameSelect")
         /*game = intent.extras.getSerializable("GAME") as Game
         var gameFragment = game.gameFragment as Fragment*/
         if (playmode == "Single" && useridentity == "Host") {
+            Log.e("game","In right")
             val gameSelectionFragment =
                 GamelistFragment.newInstance(playmode, useridentity)
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.game_frame, gameSelectionFragment!!, "game_fragment")
+                .add(R.id.framegame, gameSelectionFragment!!, "game_fragment")
                 .commit()
         } else if (playmode == "Multi" && useridentity == "Host") {
             //TODO
@@ -54,7 +58,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.game_frame, gameFragment!!, "game_fragment")
+            .replace(R.id.framegame, gameFragment!!, "game_fragment")
             .commit()
         game.OnStart()
     }
@@ -63,7 +67,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         val scoreBoardFragment = ScoreBoardFragment.newInstance(username, useridentity, gamechoice, userscore, playmode)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.game_frame, scoreBoardFragment!!, "game_fragment")
+            .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
 

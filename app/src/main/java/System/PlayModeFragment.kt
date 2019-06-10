@@ -15,16 +15,23 @@ import edu.us.ischool.bchong.info448project.R
 class PlayModeFragment : Fragment() {
 
     private lateinit var playmode: String
-    //private lateinit var username: String
+    private lateinit var username: String
     private lateinit var singlebtn: Button
     private lateinit var multibtn: Button
 
-
+    companion object {
+        fun newInstance(username: String): PlayModeFragment {
+            val fragment = PlayModeFragment()
+            val bundle = Bundle()
+            bundle.putString("USERNAME", username)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
+
     }
 
     override fun onCreateView(
@@ -37,9 +44,10 @@ class PlayModeFragment : Fragment() {
     }
 
     fun handleView (view: View) {
-        //username = arguments!!.getString("USERNAME")
+        username = arguments!!.getString("USERNAME")
         singlebtn = view.findViewById(R.id.btnSingle)
         multibtn = view.findViewById(R.id.btnMulti)
+
 
         singlebtn.setOnClickListener {
             multibtn.isEnabled = false
@@ -55,12 +63,5 @@ class PlayModeFragment : Fragment() {
             //TODO
         }
     }
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            GamelistFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
-    }
+
 }

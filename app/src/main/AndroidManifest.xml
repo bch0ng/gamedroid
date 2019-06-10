@@ -23,11 +23,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
-    <activity android:name=".PlayModeActivity"></activity>
+    <activity android:name="Game.GameActivity"></activity>
     <activity android:name="System.GameroomActivity"></activity>
-    <activity android:name=".GameSelectionActivity"></activity>
-    <activity android:name="System.ScoreboardActivity"></activity>
-    <activity android:name="Game.Gametemple"></activity>
 </application>
 
 </manifest>
