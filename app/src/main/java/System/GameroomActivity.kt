@@ -1,9 +1,10 @@
-package edu.us.ischool.bchong.info448project
+package System
 
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.R
 
 class GameroomActivity : AppCompatActivity(){
     private lateinit var identity: String

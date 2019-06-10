@@ -1,4 +1,4 @@
-package edu.us.ischool.bchong.info448project
+package Game
 
 import android.app.Application
 
@@ -7,11 +7,11 @@ class GameApp: Application() {
         private var instance: GameApp? = null
 
         fun applicationContext(): GameApp {
-            return instance as GameApp
+            return Companion.instance as GameApp
         }
     }
     init{
-        instance=this
+       Companion.instance =this
     }
 
     override fun onCreate() {

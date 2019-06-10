@@ -1,21 +1,18 @@
-package edu.us.ischool.bchong.info448project
+package System
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import edu.us.ischool.bchong.info448project.R
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),WelcomeFragment.OnPlaymodetInteractionListener {
     //Permission check based on version
     private lateinit var startGameButton: Button
     private lateinit var enterName: EditText
@@ -61,10 +58,16 @@ class MainActivity : AppCompatActivity() {
         val transaction = fragmentManager.beginTransaction()
 
         val welcomePage = WelcomeFragment.newInstance()
-        transaction.replace(R.id.fragments, welcomePage)
+        transaction.add(R.id.fragmentmain, welcomePage)
         transaction.commit()
-
     }
+
+    override fun onPlaymodeInteraction(){
+        val playmodePage = PlayModeFragment.newInstance()
+        supportFragmentManager.beginTransaction().replace(R.id.fragmentmain, playmodePage).commit()
+    }
+
+
 
     //override fun onPlaymodeInteraction(){}
 

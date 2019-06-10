@@ -1,7 +1,6 @@
-package edu.us.ischool.bchong.info448project
+package Game
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -9,14 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.R
 import org.json.JSONObject
 
 private const val playmode = "PLAYMODE"
-private const val useridentity = "IDENTITY"
+private const val identity = "IDENTITY"
 
 class GamelistFragment : Fragment() {
     private var mode: String? = null
-    private var identity: String? = null
+    private var useridentity: String? = null
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
     private val gamelistData: JSONObject = JSONObject(
@@ -31,14 +31,14 @@ class GamelistFragment : Fragment() {
         |}}
     """.trimMargin()
     )
-    private var listener: OnFragmentInteractionListener? = null
+    private var listener: OnGameInteractionListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             mode = it.getString(playmode)
-            identity = it.getString(useridentity)
+            useridentity = it.getString(identity)
         }
     }
 
@@ -58,12 +58,9 @@ class GamelistFragment : Fragment() {
             startgamebtn = view.findViewById<Button>(R.id.buttonsinglestart)
             startgamebtn.isEnabled = false
 
-            Log.d("GameSystem", "I am in singlelayout")
-
             game1sbtn.setText(games[0].toString())
             game2sbtn.setText(games[1].toString())
 
-            // Set up the current Answer
             game1sbtn.setOnClickListener() {
                 gamechoice = game1sbtn.text.toString()
                 startgamebtn.isEnabled = true
@@ -73,10 +70,7 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                val intent = Intent(activity, GameActivity::class.java)
-                intent.putExtra("IDENTITY", identity)
-                intent.putExtra("GAME", gamechoice)
-                startActivity(intent)
+                listener?.onGameStart(gamechoice)
             }
 
 
@@ -95,7 +89,6 @@ class GamelistFragment : Fragment() {
             game2btn.setText(games[1].toString())
             game3btn.setText(games[2].toString())
 
-            // Set up the current Answer
             game1btn.setOnClickListener() {
                 gamechoice = game1btn.text.toString()
                 startgamebtn.isEnabled = true
@@ -109,17 +102,14 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                val intent = Intent(activity, GameActivity::class.java)
-                intent.putExtra("IDENTITY", identity)
-                intent.putExtra("GAME", gamechoice)
-                startActivity(intent)
+                //TODO
             }
         }
         return view
     }
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
+        if (context is OnGameInteractionListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
@@ -131,17 +121,17 @@ class GamelistFragment : Fragment() {
         listener = null
     }
 
-    interface OnFragmentInteractionListener {
-        fun onGameSelect(gamemode: String, playeridentity: String) {}
+    interface OnGameInteractionListener {
+        fun onGameStart(gamechoice:String){}
     }
 
     companion object {
         @JvmStatic
-        fun newInstance(gamemode: String, playeridentity: String) =
+        fun newInstance(PLAYMODE: String, IDENTITY: String) =
             GamelistFragment().apply {
                 arguments = Bundle().apply {
-                    putString(playmode, gamemode)
-                    putString(useridentity,playeridentity)
+                    putString(playmode, PLAYMODE)
+                    putString(identity,IDENTITY)
                 }
             }
     }

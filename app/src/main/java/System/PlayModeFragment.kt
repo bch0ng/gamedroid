@@ -1,14 +1,15 @@
-package edu.us.ischool.bchong.info448project
+package System
 
-import android.content.Context
+import Game.GameActivity
+import Game.GamelistFragment
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.R
 
 
 class PlayModeFragment : Fragment() {
@@ -22,7 +23,8 @@ class PlayModeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        arguments?.let {
+        }
     }
 
     override fun onCreateView(
@@ -42,22 +44,16 @@ class PlayModeFragment : Fragment() {
         singlebtn.setOnClickListener {
             multibtn.isEnabled = false
             playmode = "Single"
-            val gameSelectionFragment = GamelistFragment.newInstance(playmode, "Host")
-            val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.fragments, gameSelectionFragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            val intent = Intent(activity, GameActivity::class.java)
+            intent.putExtra("IDENTITY", "Host")
+            intent.putExtra("GAMEMODE","Single")
+            startActivity(intent)
+            getActivity()!!.finish()
         }
 
-        /*multibtn.setOnClickListener {
-            singlebtn.isEnabled = false
-            playmode = "Multi"
-            val gameSelectionFragment = GameSelectionFragment.newInstance(playmode,null)
-            val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.fragments, gameSelectionFragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
-        }*/
+        multibtn.setOnClickListener {
+            //TODO
+        }
     }
     companion object {
         @JvmStatic

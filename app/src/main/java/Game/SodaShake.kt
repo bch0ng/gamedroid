@@ -1,4 +1,4 @@
-package edu.us.ischool.bchong.info448project
+package Game
 
 import android.content.Context
 import android.hardware.Sensor

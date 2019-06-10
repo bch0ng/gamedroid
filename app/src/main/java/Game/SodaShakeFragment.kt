@@ -1,4 +1,4 @@
-package edu.us.ischool.bchong.info448project
+package Game
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import edu.us.ischool.bchong.info448project.R
 
 class SodaShakeFragment : Fragment(), GameFragment {
     var gameObj: Game? = null

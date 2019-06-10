@@ -1,7 +1,6 @@
-package edu.us.ischool.bchong.info448project
+package System
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -9,8 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
-import org.w3c.dom.Text
+import edu.us.ischool.bchong.info448project.R
 
 class WelcomeFragment : Fragment() {
 
