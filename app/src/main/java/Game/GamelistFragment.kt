@@ -19,7 +19,11 @@ class GamelistFragment : Fragment() {
     private var useridentity: String? = null
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
-    private val gamelistData: JSONObject = JSONObject(
+
+    private var singlePlayerGameNames= arrayOf("Shake the Soda","Flip the Phone")
+    private var multiPlayerGameNames= arrayOf("Shake the Soda", "Answer the Phone", "Roll the Dice")
+
+    /*private val gamelistData: JSONObject = JSONObject(
         """{
         |"Single":{
         |   "NumberOfGame":"2",
@@ -30,7 +34,7 @@ class GamelistFragment : Fragment() {
         |   "GameName" : ["Shake the Soda", "Answer the Phone", "Roll the Dice"]
         |}}
     """.trimMargin()
-    )
+    )*/
     private var listener: OnGameInteractionListener? = null
 
 
@@ -51,8 +55,8 @@ class GamelistFragment : Fragment() {
 
             view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
 
-            val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
-
+            //val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
+            val games = singlePlayerGameNames
             var game1sbtn = view.findViewById<Button>(R.id.buttongame1s)
             var game2sbtn = view.findViewById<Button>(R.id.buttongame2s)
             startgamebtn = view.findViewById<Button>(R.id.buttonsinglestart)
@@ -77,8 +81,8 @@ class GamelistFragment : Fragment() {
         } else {
             view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
 
-            val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
-
+            //val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
+            val games=multiPlayerGameNames
             var game1btn = view.findViewById<Button>(R.id.buttongame1)
             var game2btn = view.findViewById<Button>(R.id.buttongame2)
             var game3btn = view.findViewById<Button>(R.id.buttongame3)
@@ -107,6 +111,7 @@ class GamelistFragment : Fragment() {
         }
         return view
     }
+    /*
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnGameInteractionListener) {
@@ -114,7 +119,7 @@ class GamelistFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
-    }
+    }*/
 
     override fun onDetach() {
         super.onDetach()
