@@ -10,11 +10,13 @@ Anjoyd is an Android app for mini motion games. In this app, we have 4 games in 
 
 # Game Intro
 ## Flip the Phone
+Flip the phone is a single player game promoting physical activity and fun! Our scoring systems rewards players for
+any kind of tricks and moves they preform with their phone. Flip it in your hand or play catch with your friends. The possibilities are endless.
 
 ## Shake the Soda
 
 ## Answer the Phone
 
 ## Roll the Dice
-
-
+Roll the dice is a deception based party game for all your friends. Take turns rolling dice and making bets on who's the winner by
+feeling vibrations from your phone.
