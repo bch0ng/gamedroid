@@ -57,9 +57,9 @@ class WelcomeFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
 
-            override fun afterTextChanged(s: Editable?) {
+            override fun afterTextChanged(s: Editable) {
                 userName = enterName.text.toString()
-                startGameButton.isEnabled = true
+                startGameButton.isEnabled = s.isNotBlank()
             }
         })
 

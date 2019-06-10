@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 
 
@@ -60,7 +61,9 @@ class PlayModeFragment : Fragment() {
         }
 
         multibtn.setOnClickListener {
-            //TODO
+            NearbyConnection.instance.setUsername(username)
+            val intent = Intent(activity, GameroomActivity::class.java)
+            startActivity(intent)
         }
     }
 
