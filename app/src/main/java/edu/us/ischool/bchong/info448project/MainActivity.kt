@@ -25,4 +25,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    fun startTelephone(view: View?) {
+        val intent = Intent(this, GameActivity::class.java)
+        intent.putExtra("game", "TELEPHONE")
+        startActivity(intent)
+    }
+
 }
