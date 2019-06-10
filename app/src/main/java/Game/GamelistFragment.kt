@@ -63,7 +63,7 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                listener?.onGameStart(gamechoice)
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
 
 
@@ -95,12 +95,11 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
-                //TODO
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
         }
         return view
     }
-    /*
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnGameInteractionListener) {
@@ -108,7 +107,7 @@ class GamelistFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
-    }*/
+    }
 
     override fun onDetach() {
         super.onDetach()
