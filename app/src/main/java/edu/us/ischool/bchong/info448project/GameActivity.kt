@@ -20,7 +20,7 @@ class GameActivity : FragmentActivity(),FlipFragment.OnFragmentInteractionListen
         if (gameName == "SODA_SHAKE") {
             game = SodaShake(this)
         } else if (gameName == "TELEPHONE") {
-            game = Telephone()
+            game = Telephone(this)
         } else {
             game = intent.extras.getSerializable("game") as Game
         }

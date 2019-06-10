@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
+             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".TelephoneFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:layout_height="match_parent">
 
+        <TextView
+                android:text="Face your phones down."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/telephone_message" app:layout_constraintStart_toStartOf="@+id/guideline2"
+                android:layout_marginStart="8dp" app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                android:layout_marginEnd="8dp" android:textSize="24sp" android:textColor="#FC000000"
+                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="200dp"/>
+        <android.support.constraint.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                              android:id="@+id/guideline2"
+                                              android:orientation="vertical"
+                                              app:layout_constraintGuide_percent="0.5"
+                                              app:layout_constraintStart_toStartOf="parent"
+                                              android:layout_marginStart="50dp"
+                                              app:layout_constraintEnd_toEndOf="parent"
+                                              android:layout_marginEnd="50dp"/>
+    </android.support.constraint.ConstraintLayout>
 </FrameLayout>
