@@ -30,6 +30,7 @@ class ConnectionActivity : AppCompatActivity() {
     private lateinit var buttonOtherActivity: Button
     private lateinit var roomCodeField: EditText
     private lateinit var roomCodeShow: TextView
+    private lateinit var usernameField: EditText
 
     private lateinit var nearby: NearbyConnection
 
@@ -69,27 +70,6 @@ class ConnectionActivity : AppCompatActivity() {
         }
     }
 
-    val broadCastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(contxt: Context?, intent: Intent?) {
-            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-            roomCodeShow.text = intent?.getStringExtra("message")
-            Toast.makeText(this@ConnectionActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
-            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND"))
-    }
-
-    override fun onPause()
-    {
-        super.onPause()
-        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -103,11 +83,28 @@ class ConnectionActivity : AppCompatActivity() {
         buttonOtherActivity = findViewById(R.id.buttonOtherActivity)
         roomCodeField = findViewById(R.id.roomCodeText)
         roomCodeShow = findViewById(R.id.roomCodeShow)
+        usernameField = findViewById(R.id.usernameText)
 
         var mode = "none"
+        usernameField.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                buttonAdvertise.isEnabled = s.toString().isNotBlank()
+                buttonDiscover.isEnabled = s.toString().isNotBlank()
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        })
         buttonAdvertise.setOnClickListener {
+            nearby.setUsername(usernameField.text.toString())
             mode = "advertising"
             val roomCode = nearby.startAdvertising()
+
+            val intent = Intent(this@ConnectionActivity, TestActivity::class.java).apply {
+                putExtra("roomCode", roomCode)
+            }
+            startActivity(intent)
+
             buttonDiscover.isEnabled = false
             buttonDiscover.visibility = View.GONE
             buttonAdvertise.isEnabled = false
@@ -127,6 +124,7 @@ class ConnectionActivity : AppCompatActivity() {
         })
         buttonDiscover.setOnClickListener {
             mode = "discovery"
+            nearby.setUsername(usernameField.text.toString())
             nearby.startDiscovery(roomCodeField.text.toString())
             buttonDiscover.isEnabled = false
             buttonAdvertise.isEnabled = false
@@ -140,7 +138,7 @@ class ConnectionActivity : AppCompatActivity() {
                 nearby.stopAdvertising()
             else if (mode == "discovery")
                 nearby.stopDiscovery()
-            nearby.disconnectEndpoints()
+            nearby.disconnectEndpointsAndStop()
             mode = "none"
             buttonAdvertise.isEnabled = true
             buttonDiscover.isEnabled = true
@@ -152,13 +150,30 @@ class ConnectionActivity : AppCompatActivity() {
             roomCodeField.isEnabled = true
             roomCodeShow.visibility = View.GONE
         }
-        buttonOtherActivity.setOnClickListener {
-            broadcastMessage = "Hello, world!"
-            nearby.sendMessageAll(broadcastMessage)
-            val intent = Intent(this, TestActivity::class.java).apply {
-                putExtra(EXTRA_MESSAGE, broadcastMessage)
+    }
+    
+    val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+            if (intent?.hasExtra("roomCode")!!) {
+                val intent = Intent(this@ConnectionActivity, TestActivity::class.java).apply {
+                    putExtra("roomCode", intent.getStringExtra("roomCode"))
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND"))
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
 }

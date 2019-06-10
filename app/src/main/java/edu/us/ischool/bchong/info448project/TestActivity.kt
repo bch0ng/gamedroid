@@ -20,6 +20,7 @@ import com.google.android.gms.nearby.Nearby
 class TestActivity : AppCompatActivity() {
 
     private lateinit var textShow: TextView
+    private lateinit var textShow2: TextView
     private lateinit var sendButton: Button
     private lateinit var closeButton: Button
 
@@ -31,11 +32,30 @@ class TestActivity : AppCompatActivity() {
         nearby = NearbyConnection.instance
 
         textShow = findViewById(R.id.textShow)
+        textShow2 = findViewById(R.id.textShow2)
         sendButton = findViewById(R.id.buttonSend)
         closeButton = findViewById(R.id.buttonClose)
 
+        if (nearby.isHosting()) {
+            textShow.text = "${nearby.getMyUsername()} (You are the Host)"
+        } else {
+            val players = nearby.getCurrPlayers()
+            textShow.text = ""
+            for (player in players) {
+                textShow.text = textShow.text.toString() + "\n" + player
+            }
+        }
+
+        val message = intent.getStringExtra("roomCode")
+        textShow2.text = message
+
         sendButton.setOnClickListener {
             nearby.sendMessageAll("test:Hello Mars")
+            val players = nearby.getCurrPlayers()
+            textShow.text = ""
+            for (player in players) {
+                textShow.text = textShow.text.toString() + "\n" + player
+            }
         }
         closeButton.setOnClickListener {
             finish()
@@ -44,9 +64,28 @@ class TestActivity : AppCompatActivity() {
 
     val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(contxt: Context?, intent: Intent?) {
-            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
-            textShow.text = intent?.getStringExtra("messag")
-            Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
+            if (intent?.hasExtra("message")!!) {
+                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+                val message = intent?.getStringExtra("message")
+                if (message?.startsWith("updateRoom:")!!) {
+                    val players = nearby.getCurrPlayers()
+                    textShow.text = ""
+                    for ((index, player) in players.withIndex()) {
+                        if (index == 0 && nearby.isHosting()) {
+                            textShow.text = "$player (You are the Host)"
+                        } else {
+                            textShow.text = textShow.text.toString() + "\n" + player
+                        }
+                    }
+                }
+                Toast.makeText(this@TestActivity, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
+            } else if (intent.hasExtra("roomCode")) {
+                Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("roomCode")}")
+                if (textShow2.text.toString().isBlank()) {
+                    val message = intent?.getStringExtra("roomCode")
+                    textShow2.text = message
+                }
+            }
         }
     }
 
