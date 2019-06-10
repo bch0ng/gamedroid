@@ -14,11 +14,13 @@
                 android:text="Single Player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/btnSingle" android:layout_margin="64dp"
-                android:background="@android:color/holo_blue_bright" android:textSize="18sp"/>
+                android:background="#2196F3" android:textSize="18sp"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"/>
         <Button
                 android:text="Mutiple Player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/btnMulti" android:layout_margin="64dp"
-                android:background="@android:color/holo_orange_light" android:textSize="18sp"/>
+                android:background="#FFC107" android:textSize="18sp"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

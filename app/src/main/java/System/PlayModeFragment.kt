@@ -61,6 +61,13 @@ class PlayModeFragment : Fragment() {
 
         multibtn.setOnClickListener {
             //TODO
+//            singlebtn.isEnabled = false
+//            playmode = "Multi"
+//            val gameSelectionFragment = GameSelectionFragment.newInstance(username, playmode,null)
+//            val transaction = fragmentManager!!.beginTransaction()
+//            transaction.replace(R.id.fragmentmain, gameSelectionFragment)
+//            transaction.addToBackStack(null)
+//            transaction.commit()
         }
     }
 
