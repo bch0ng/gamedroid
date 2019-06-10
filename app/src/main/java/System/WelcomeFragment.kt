@@ -44,7 +44,7 @@ class WelcomeFragment : Fragment() {
     }
 
     fun handleView(view: View) {
-        startGameButton = view.findViewById(R.id.btnWelcome)
+        startGameButton = view.findViewById(R.id.btnStartGame)
         startGameButton.isEnabled = false
 
         enterName = view.findViewById(R.id.editTextName)
