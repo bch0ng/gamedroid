@@ -1,6 +1,5 @@
 package edu.us.ischool.bchong.info448project
 
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,22 +18,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 
-
-private const val ARG_USERNAME = "username"
-
 /**
  * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [FindCreateRoomFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
  * Use the [FindCreateRoomFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class FindCreateRoomFragment : Fragment() {
-    // TODO: Rename and change types of parameters
+class FindCreateRoomFragment : Fragment()
+{
     private var username: String? = null
-    private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var hostButton: Button
     private lateinit var discoverButton: Button
@@ -43,21 +35,24 @@ class FindCreateRoomFragment : Fragment() {
 
     private lateinit var nearby: NearbyConnection
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View?
+    {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_find_create_room, container, false)
         handleView(view)
         return view
     }
 
-    fun handleView(view: View) {
+    /**
+     * Generates the view for this fragment.
+     *
+     * @param view  view to generate on top of
+     */
+    private fun handleView(view: View)
+    {
         nearby = NearbyConnection.instance
 
         hostButton = view.findViewById(R.id.host_button)
@@ -119,9 +114,17 @@ class FindCreateRoomFragment : Fragment() {
         }
     }
 
-    val broadCastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(contxt: Context?, intent: Intent?) {
-            Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
+    /**
+     * Listens to any broadcast messages.
+     *
+     * @note: If it receives a room code message, it will open the room lobby fragment.
+     */
+    private val broadCastReceiver = object : BroadcastReceiver()
+    {
+        override fun onReceive(contxt: Context?, intent: Intent?)
+        {
+            Log.d("INFO_448_DEBUG", "Broadcast message received:" +
+                    "${intent?.getStringExtra("message")}")
             if (intent?.hasExtra("roomCode")!!) {
                 openRoomLobbyFragment(intent.getStringExtra("roomCode"))
             }
@@ -142,7 +145,13 @@ class FindCreateRoomFragment : Fragment() {
         LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
 
-    fun openRoomLobbyFragment(roomCode: String) {
+    /**
+     * Opens the room lobby fragment and displays the room code.
+     *
+     * @param roomCode  room code to display on room lobby
+     */
+    fun openRoomLobbyFragment(roomCode: String)
+    {
         val roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
         val transaction = fragmentManager!!.beginTransaction()
             transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment)
@@ -150,50 +159,14 @@ class FindCreateRoomFragment : Fragment() {
             transaction.commit()
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
-
-    companion object {
+    companion object
+    {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
          * @return A new instance of fragment FindCreateRoomFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
             FindCreateRoomFragment().apply {
