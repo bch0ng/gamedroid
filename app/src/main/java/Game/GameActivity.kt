@@ -1,5 +1,6 @@
 package Game
 
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -37,15 +38,18 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
 
     override fun onGameStart(gamechoice: String) {
         Log.i("TEST", "gamechoice: $gamechoice")
-        if (gamechoice == "Shake the Soda") {
-            game = SodaShake(this)
+        when(gamechoice){
+            "Shake the Soda" -> game = SodaShake(this)
+            "Flip the Phone" -> game = Flip()
+            //TODO "Answer the Phone" and " Roll the Dice"
         }
+
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.framegame, gameFragment!!, "game_fragment")
             .commit()
-        game.OnStart()
+        game.onStart()
     }
 
     fun onGameResult(username: String, useridentity: String, gamechoice: String, userscore: String, playmode: String) {
@@ -57,7 +61,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     }
 
     override fun onEndCycle() {
-        game.OnEnd()
+        game.onEnd()
         onDestroy()
     }
 

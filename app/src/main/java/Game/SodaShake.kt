@@ -18,7 +18,7 @@ class SodaShake : Game {
     private val SHAKE_SLOP_TIME_MS = 500
     private val SHAKE_COUNT_RESET_TIME_MS = 3000
 
-    private var mListener: OnShakeListener? = null
+    private var mListener: onShakeListener? = null
     private var mShakeTimestamp: Long = 0
     private var mShakeCount: Int = 0
 
@@ -28,11 +28,11 @@ class SodaShake : Game {
     private var context: Context? = null
 
 
-    interface OnShakeListener {
+    interface onShakeListener {
         fun onShake(count: Int)
     }
 
-    fun setOnShakeListener(listener: OnShakeListener) {
+    fun setOnShakeListener(listener: onShakeListener) {
         this.mListener = listener
     }
 
@@ -43,12 +43,12 @@ class SodaShake : Game {
     }
 
 
-    override fun OnStart() {
+    override fun onStart() {
         mSensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         mShakeDetector = SodaShake(context as Context)
         mSensorManager?.registerListener(mShakeDetector, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
-        mShakeDetector?.setOnShakeListener(object : OnShakeListener {
+        mShakeDetector?.setOnShakeListener(object : onShakeListener {
             override fun onShake(count: Int) {
                 Log.i("TEST", "Num of shakes: $count / $shakeCapacity")
                 if (count >= shakeCapacity) {
@@ -67,17 +67,24 @@ class SodaShake : Game {
         @Suppress("DEPRECATION")
         vibrator?.vibrate(1500)
         (gameFragment as SodaShakeFragment).endGame()
-        OnEnd()
+        onEnd()
     }
 
-    override fun OnEnd() : Int {
+    override fun onEnd() : Int {
         mSensorManager?.unregisterListener(mShakeDetector)
         return 0
     }
 
-    override fun OnRegisterMotionListener() {}
+    override fun onRegisterMotionListener() {}
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+    override fun onFragmentStart() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onPause() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (mListener != null) {
