@@ -10,13 +10,6 @@ import edu.us.ischool.bchong.info448project.R
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
     ScoreBoardFragment.OnScoreboardInteractionListener {
-    override fun onGameSelect() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    /*override fun onFragmentInteraction(uri: Uri) {
-        //Something
-}*/
 
     private lateinit var game: Game
     private lateinit var identity: String
@@ -32,26 +25,18 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         onGameSelect(mode,identity)
     }
 
-    fun onGameSelect(playmode: String, useridentity: String) {
+    override fun onGameSelect(playmode: String, useridentity: String) {
         Log.e("game","In onGameSelect")
-        /*game = intent.extras.getSerializable("GAME") as Game
-        var gameFragment = game.gameFragment as Fragment*/
-        if (playmode == "Single" && useridentity == "Host") {
-            Log.e("game","In right")
-            val gameSelectionFragment =
-                GamelistFragment.newInstance(playmode, useridentity)
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.framegame, gameSelectionFragment!!, "game_fragment")
-                .commit()
-        } else if (playmode == "Multi" && useridentity == "Host") {
-            //TODO
-        } else {
-            //TODO
-        }
+        val gameSelectionFragment =
+            GamelistFragment.newInstance(playmode, useridentity)
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.framegame, gameSelectionFragment!!, "game_fragment")
+            .commit()
     }
 
     override fun onGameStart(gamechoice: String) {
+        Log.i("TEST", "gamechoice: $gamechoice")
         if (gamechoice == "Shake the Soda") {
             game = SodaShake(this)
         }
