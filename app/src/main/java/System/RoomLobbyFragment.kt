@@ -1,4 +1,4 @@
-package edu.us.ischool.bchong.info448project
+package System
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,6 +16,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import edu.us.ischool.bchong.info448project.NearbyConnection
+import edu.us.ischool.bchong.info448project.R
 
 private const val ARG_ROOM_CODE = "roomCode"
 

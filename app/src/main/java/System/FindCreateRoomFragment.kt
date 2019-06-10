@@ -1,4 +1,4 @@
-package edu.us.ischool.bchong.info448project
+package System
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,6 +17,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import edu.us.ischool.bchong.info448project.NearbyConnection
+import edu.us.ischool.bchong.info448project.R
 
 /**
  * A simple [Fragment] subclass.
