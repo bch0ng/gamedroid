@@ -84,6 +84,7 @@ class RollTheDiceClient : NetworkGame {
 
     //When the game gets the starting signal from the server
     private fun startGame(message: Bundle) {
+        Log.v("dice","client startgame is called")
         players = message.getSerializable("players") as ArrayList<Pair<String, String>>
         myId = message.getString("playerId")
         this.gameState = gameStates.INGAME
@@ -99,6 +100,7 @@ class RollTheDiceClient : NetworkGame {
 
     //When a new message is received from the server
     override fun newMessage(message: Bundle) {
+        Log.v("dice","new message received ${message.getString("type")}")
         val type = message.get("type")
         when (type) {
             DiceNetworkMessages.START_GAME.code -> startGame(message)
@@ -154,6 +156,7 @@ class RollTheDiceClient : NetworkGame {
     //Vibrates
     fun vibrate(id: String, strength: Double) {
         Log.v("dice", "Vibrator strength $strength")
+
         vibrator.vibrate((vibrationStrength*strength).toLong())
         frag.opponentRolled(id, strength, diceRollVisualDuration)
     }
@@ -220,7 +223,7 @@ class RollTheDiceClient : NetworkGame {
         return roll
     }
 
-    private fun accelerationEvent(event: SensorEvent?) {
+    private fun accelerationEvent(event: SensorEvent?) {/*
         if (increaseAccumulatedEnergy(event!!)) {
             when (gameState) {
                 gameStates.PREGAME -> pregameRoll()
@@ -228,7 +231,8 @@ class RollTheDiceClient : NetworkGame {
                 gameStates.POSTGAME -> postGameRoll()
 
             }
-        }
+        }*/
+        inGameRoll(event!!)
     }
 
 

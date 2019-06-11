@@ -49,6 +49,7 @@ class DiceFragment : Fragment(), GameFragment {
         return this
     }
 
+
     private lateinit var nearby: NearbyConnection
     private var listener: OnFragmentInteractionListener? = null
     lateinit var gameObj: NetworkGame
@@ -92,7 +93,6 @@ class DiceFragment : Fragment(), GameFragment {
         randomCharSet=arrayOf<String>("$","?","@","ß","∫")
         Log.v("dice", "Start game called by server")
         players = allPlayers
-        playerDiceDimAnimator = ValueAnimator()
         dimensionAnimators = hashMapOf<String, ValueAnimator>()
         player = myId
         val fragMananager = fragmentManager
@@ -152,7 +152,7 @@ class DiceFragment : Fragment(), GameFragment {
         super.onStart()
         if(this.localHost!=null){
             localHost!!.setNearby(nearby)
-            //localHost!!.onStart()
+            localHost!!.onStart()
         }
         this.gameObj!!.onFragmentStart()
     }
@@ -187,6 +187,7 @@ class DiceFragment : Fragment(), GameFragment {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
+        playerDiceDimAnimator = ValueAnimator()
     }
     fun sendMessage(bundle: Bundle){
         val keyset=bundle.keySet()

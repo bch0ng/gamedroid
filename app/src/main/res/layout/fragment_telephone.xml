@@ -10,6 +10,7 @@
 
         <TextView
                 android:text="Face your phones down."
+                android:fontFamily="@font/lato_bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/telephone_message" app:layout_constraintStart_toStartOf="@+id/guideline2"
