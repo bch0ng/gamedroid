@@ -1,15 +1,13 @@
-package Game
+package game
 
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import edu.us.ischool.bchong.info448project.R
-import org.json.JSONObject
 
 private const val playmode = "PLAYMODE"
 private const val identity = "IDENTITY"
@@ -62,6 +60,7 @@ class GamelistFragment : Fragment() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
             }
+
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }

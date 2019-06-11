@@ -1,7 +1,7 @@
 package edu.us.ischool.bchong.info448project
 
-import Game.Game
-import Game.GameFragment
+import game.Game
+import game.GameFragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater

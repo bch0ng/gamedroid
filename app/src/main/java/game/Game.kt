@@ -1,7 +1,6 @@
-package Game
+package game
 
 import android.hardware.SensorEventListener
-import android.os.Bundle
 import java.io.Serializable
 
 interface Game: Serializable, SensorEventListener {

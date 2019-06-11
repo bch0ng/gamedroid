@@ -1,7 +1,7 @@
 package edu.us.ischool.bchong.info448project
 
-import Game.Game
-import Game.GameFragment
+import game.Game
+import game.GameFragment
 import android.app.Activity
 import android.app.Service
 import android.content.Context
@@ -21,6 +21,7 @@ class Telephone: Game, Service {
     var context: Context? = null
     var timer: Timer? = null
     var audioPlayer: MediaPlayer? = null
+    var didGameStart = false
 
     private var mGZ = 0f//gravity acceleration along the z axis
     private var mEventCountSinceGZChanged = 0
@@ -38,20 +39,6 @@ class Telephone: Game, Service {
         mSensorManager?.registerListener(this,
             mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
             SensorManager.SENSOR_DELAY_GAME)
-
-        audioPlayer = MediaPlayer.create(context, R.raw.telephone_ring)
-        audioPlayer?.setOnPreparedListener {
-            timer = Timer("Timer")
-
-            var delay: Long = (5000..15000).random().toLong()
-            var timerTask = Task(context!!, timer!!, audioPlayer!!)
-            Log.i("TEST", "Time: $delay")
-
-            timer?.schedule(timerTask, delay, delay)
-        }
-
-
-
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -87,13 +74,28 @@ class Telephone: Game, Service {
                         mEventCountSinceGZChanged = 0
                         if (gz > 0) {
                             Log.i("TEST", "now screen is facing up.")
-                            audioPlayer?.stop()
+                            if (didGameStart == true) {
+                                audioPlayer?.stop()
+                                // TODO: Show win or lose text depending on who wins or loses
+                                (gameFragment as TelephoneFragment).showWinText()
+                                onEnd()
+                            }
 
-
-                            // TODO: Show win or lose text depending on who wins or loses
-                            (gameFragment as TelephoneFragment).showWinText()
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
+                            if (didGameStart == false) {
+                                audioPlayer = MediaPlayer.create(context, R.raw.telephone_ring)
+                                audioPlayer?.setOnPreparedListener {
+                                    timer = Timer("Timer")
+
+                                    var delay: Long = (5000..15000).random().toLong()
+                                    var timerTask = Task(context!!, timer!!, audioPlayer!!)
+                                    Log.i("TEST", "Time: $delay")
+
+                                    timer?.schedule(timerTask, delay, delay)
+                                }
+                                didGameStart = true
+                            }
                         }
                     }
                 } else {

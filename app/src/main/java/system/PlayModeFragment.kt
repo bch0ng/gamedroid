@@ -1,7 +1,6 @@
-package System
+package system
 
-import Game.GameActivity
-import Game.GamelistFragment
+import game.GameActivity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
