@@ -65,6 +65,7 @@
             android:textSize="18sp"
             android:background="@drawable/rounded_button"
             android:layout_gravity="center"
+            android:visibility="invisible"
             android:textColor="@color/common_google_signin_btn_text_dark_pressed"
             android:layout_marginBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
