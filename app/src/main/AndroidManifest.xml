@@ -28,6 +28,8 @@
     <activity android:name=".GameSelectionActivity"></activity>
     <activity android:name="System.ScoreboardActivity"></activity>
     <activity android:name="Game.Gametemple"></activity>
-</application>
+        <activity android:name="System.InstructionsVideoListActivity"></activity>
+
+    </application>
 
 </manifest>

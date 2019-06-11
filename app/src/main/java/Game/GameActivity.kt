@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.widget.Toast
 import edu.us.ischool.bchong.info448project.R
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
@@ -50,7 +52,9 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun onGameStart(gamechoice: String) {
         if (gamechoice == "Shake the Soda") {
             game = SodaShake(this)
+            Log.v("game","sodaaa")
         }
+        Log.v("game","$gamechoice")
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()

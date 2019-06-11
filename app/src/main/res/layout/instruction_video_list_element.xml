@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/linearLayout3" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+                android:textSize="50dp"
+                android:text="@string/instructions_header"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <Button
+                android:id="@+id/instructions_pick_up_phone"
+                android:text="Pick up the phone"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        <Button
+                android:id="@+id/instructions_flip_phone"
+                android:text="Flip the phone"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        <Button
+                android:id="@+id/instructions_roll_dice"
+                android:text="Roll the dice"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        <Button
+                android:id="@+id/instructions_shake_soda"
+                android:text="Shake the soda"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
