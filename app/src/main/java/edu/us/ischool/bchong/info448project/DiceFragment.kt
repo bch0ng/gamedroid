@@ -345,7 +345,7 @@ class DiceFragment : Fragment(), GameFragment {
             IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
         )
         this.motionSensorController =
-            GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         motionSensorController.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.let {
             this.gyroscope = it
         }

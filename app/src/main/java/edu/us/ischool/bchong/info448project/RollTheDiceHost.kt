@@ -22,7 +22,7 @@ import kotlin.concurrent.schedule
 class RollTheDiceHost : GameHost {
     lateinit var players: Array<Pair<String, String>>       //ID and name
     private lateinit var nearby: NearbyConnection
-
+    private lateinit var context:Context
     //Sets the players
     override fun setPlayers(playerData: ArrayList<Pair<String, String>>) {
         players = (playerData.toArray() as Array<Pair<String, String>>)
@@ -140,10 +140,10 @@ class RollTheDiceHost : GameHost {
         nearby.sendMessageAll(message.toString())
     }
 
-    constructor() {
+    constructor(thisContext: Context) {
         //TODO: add check if gamefragment is set correctly
-
-        this.localClient = RollTheDiceClient()
+        this.context=thisContext
+        this.localClient = RollTheDiceClient(thisContext)
         this.localClient.gameFragment!!.setNetworkListener(this)
     }
 
