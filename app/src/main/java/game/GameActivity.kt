@@ -1,15 +1,20 @@
 package game
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
+import edu.us.ischool.bchong.info448project.RollTheDiceClient
+import edu.us.ischool.bchong.info448project.RollTheDiceHost
 import edu.us.ischool.bchong.info448project.Telephone
+import system.MainActivity
+import system.PlayModeFragment
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
-    ScoreBoardFragment.OnScoreboardInteractionListener {
+    ScoreBoardFragment.OnScoreboardInteractionListener, GameStateController {
 
     private lateinit var game: Game
     private lateinit var identity: String
@@ -31,6 +36,17 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         onGameSelect(mode, identity)
     }
 
+    override fun goBackToMenu() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("MODE", "GAME_MENU")
+        intent.putExtra("USERNAME", "TEST")
+        startActivity(intent)
+    }
+
+    override fun playAgain(gameName: String) {
+        onGameStart(gameName)
+    }
+
     override fun onGameSelect(playmode: String, useridentity: String) {
         Log.e("game", "In onGameSelect")
         val gameSelectionFragment =
@@ -47,8 +63,11 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
+            "RollTheDiceHost"-> game=RollTheDiceHost().localClient
+            "Roll the Dice"-> game=RollTheDiceClient()
             //TODO "Answer the Phone" and " Roll the Dice"
         }
+
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
@@ -64,9 +83,14 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
+    //fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
+      //  onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
+    //}
     fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
         onGameResult("0")
     }
+
+
 
 
     override fun onEndCycle() {

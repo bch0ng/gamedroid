@@ -9,6 +9,7 @@ import android.util.Log
 import game.GameApp
 import game.GameFragment
 import java.util.*
+import kotlin.collections.ArrayList
 
 //TODO Everything
 class RollTheDiceClient : NetworkGame {
@@ -39,7 +40,7 @@ class RollTheDiceClient : NetworkGame {
     var score: Double = 0.0
     var prevAccelerations = arrayOf(0f, 0f, 0f)
     lateinit var myId: String
-    lateinit var players: Array<Pair<String, String>>       //ID and name
+    lateinit var players: ArrayList<Pair<String, String>>       //ID and name
 
 
     lateinit var vibrator: Vibrator
@@ -80,7 +81,7 @@ class RollTheDiceClient : NetworkGame {
 
     //When the game gets the starting signal from the server
     private fun startGame(message: Bundle) {
-        players = message.getSerializable("players") as Array<Pair<String, String>>
+        players = message.getSerializable("players") as ArrayList<Pair<String, String>>
         myId = message.getString("playerId")
         this.gameState = gameStates.INGAME
         val myName = message.getString("playerName") as String
@@ -144,7 +145,7 @@ class RollTheDiceClient : NetworkGame {
     }
 
     override fun sendMessage(message: Bundle) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        frag.sendMessage(message)
     }
 
     //Vibrates

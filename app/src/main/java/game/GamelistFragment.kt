@@ -25,16 +25,26 @@ class GamelistFragment : Fragment() {
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
 
-    private lateinit var nearby: NearbyConnection
     private var isBroadcastListenerActive: Boolean = false
 
     private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
-    private var multiPlayerGameNames = arrayOf("Answer the Phone", "Roll the Dice")
+    private var multiPlayerGameNames = arrayOf("Answer the Phone","RollTheDiceHost", "Roll the Dice")
+
     private var listener: OnGameInteractionListener? = null
 
+    private lateinit var nearby: NearbyConnection
 
+    private lateinit var gameHost: GameHost
+
+
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        nearby = NearbyConnection.instance
         arguments?.let {
             mode = it.getString(PLAYMODE)
             useridentity = it.getString(IDENTITY)
@@ -114,6 +124,9 @@ class GamelistFragment : Fragment() {
                 activity?.setResult(RESULT_OK, intent)
                 activity?.finish()
             }
+            if(intent!!.getStringExtra(":dice")!=null){
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart("Roll the Dice")
+            }
         }
     }
 
@@ -133,7 +146,9 @@ class GamelistFragment : Fragment() {
     }
 
     interface OnGameInteractionListener {
-        fun onGameStart(gamechoice: String) {}
+        fun onGameStart(gamechoice: String) {
+
+        }
     }
 
     companion object {
