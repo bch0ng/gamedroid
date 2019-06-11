@@ -1,5 +1,6 @@
 package edu.us.ischool.bchong.info448project
 
+import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -7,7 +8,9 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
 import game.GameApp
+import game.GameApp.Companion.applicationContext
 import game.GameFragment
+import java.security.AccessController.getContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -26,11 +29,10 @@ class RollTheDiceClient : NetworkGame {
         PREGAME(), INGAME(), POSTGAME()
     }
 
-    private val diceRollVisualDuration=
-        GameApp.applicationContext().getResources().getInteger(R.integer.dice_roll_visual_duration).toLong()
-    private var pregameDuration = GameApp.applicationContext().getResources().getInteger(R.integer.dice_pregame_duration).toLong()
-    var gameDuration = GameApp.applicationContext().getResources().getInteger(R.integer.dice_game_duration).toLong()
-    private var postgameDuration = R.integer.dice_postgame_duration.toLong()
+    private val diceRollVisualDuration:Long=1000
+    private var pregameDuration:Long = 1000
+    var gameDuration:Long = 3000
+    private var postgameDuration:Long = 1000
 
     var gameState = gameStates.PREGAME
     override var gameFragment: GameFragment? = null
@@ -45,11 +47,13 @@ class RollTheDiceClient : NetworkGame {
 
     lateinit var vibrator: Vibrator
     val vibrationStrength =
-        (GameApp.applicationContext().getResources().getInteger(R.integer.dice_vibration_strength)).toLong()
+        (1000).toLong()
 
     //If this value is true then constants will be used to initialize the game
     //And shakes of your phone will trigger opponent shakes as well
-    private val offlineTesting = true
+    private val offlineTesting = false
+    private var context: Context? = null
+
     private var sendStartMessage = true
     override fun onPause() {
         if (vibrator != null) {
@@ -57,7 +61,7 @@ class RollTheDiceClient : NetworkGame {
         }
     }
 
-    override fun onFragmentStart() {
+    override fun onFragmentStart() {/*
         if (sendStartMessage && offlineTesting) {
             sendStartMessage = false
             Log.v("dice", "offline testing started.")
@@ -68,14 +72,13 @@ class RollTheDiceClient : NetworkGame {
             newBundle.putString("playerId", "Player")
             newBundle.putString("playerName", "Player")
             newMessage(newBundle)
-        }
+        }*/
     }
 
     //When the game is started locally, before any server calls
     override fun onStart(name: String) {
         score = 0.0
-        vibrator = GameApp.applicationContext().getSystemService(VIBRATOR_SERVICE) as Vibrator
-
+        vibrator=context!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         Log.v("test", "Dice Listener Started")
     }
 
@@ -158,9 +161,10 @@ class RollTheDiceClient : NetworkGame {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
-    constructor() {
+    constructor(thisContext:Context) {
         gameFragment = DiceFragment().newInstance(this)
         this.frag = gameFragment as DiceFragment
+        this.context=thisContext
     }
 
     //When the player attempts to roll before the game starts

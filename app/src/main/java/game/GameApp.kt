@@ -4,10 +4,10 @@ import android.app.Application
 
 class GameApp: Application() {
     companion object {
-        private var instance: GameApp? = null
+        private lateinit var instance: GameApp
 
         fun applicationContext(): GameApp {
-            return instance as GameApp
+            return instance
         }
     }
     init{

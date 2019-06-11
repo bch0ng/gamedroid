@@ -63,8 +63,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
-            "RollTheDiceHost"-> game=RollTheDiceHost().localClient
-            "Roll the Dice"-> game=RollTheDiceClient()
+            "RollTheDiceHost"-> game=RollTheDiceHost(this).localClient
+            "Roll the Dice"-> game=RollTheDiceClient(this)
             //TODO "Answer the Phone" and " Roll the Dice"
         }
 
