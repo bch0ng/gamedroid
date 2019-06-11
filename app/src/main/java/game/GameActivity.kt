@@ -68,6 +68,13 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         onGameResult("0")
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (mode == "Single") {
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right)
+        }
+    }
+
 
     override fun onEndCycle() {
         game.onEnd()

@@ -24,4 +24,10 @@ class GameroomActivity : AppCompatActivity()
         transaction.replace(R.id.fragment_find_create_room, findCreateRoomFragment)
         transaction.commit()
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right)
+    }
 }
