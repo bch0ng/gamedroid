@@ -32,7 +32,7 @@ class Telephone: Game, Service {
         gameFragment = TelephoneFragment().newInstance(this)
     }
 
-    override fun OnStart() {
+    override fun onStart() {
         mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
 
         mSensorManager?.registerListener(this,
@@ -58,15 +58,21 @@ class Telephone: Game, Service {
         return null
     }
 
-    override fun OnRegisterMotionListener() {}
+    override fun onRegisterMotionListener() {}
 
-    override fun OnEnd(): Int {
+    override fun onEnd(): Int {
         mSensorManager?.unregisterListener(this)
         return 0
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    override fun onFragmentStart() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun onPause() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
     override fun onSensorChanged(event: SensorEvent?) {
         val type = event?.sensor?.type
         if (type == Sensor.TYPE_ACCELEROMETER) {
