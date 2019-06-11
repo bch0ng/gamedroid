@@ -18,6 +18,7 @@
                 android:layout_centerVertical="true"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:fontFamily="@font/lato_bold"
         />
         <ImageView
                 android:src="@drawable/flip_score_accent"
@@ -27,6 +28,7 @@
                 android:rotation="45"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:fontFamily="@font/lato_bold"
         />
         <TextView
                 android:layout_marginTop="100dp"
@@ -35,7 +37,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:text="0"
-                android:id="@+id/flip_counter" />
+                android:id="@+id/flip_counter"
+                android:fontFamily="@font/lato_bold"/>
     </RelativeLayout>
     <LinearLayout
             android:layout_height="wrap_content"
@@ -47,23 +50,26 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/safety_layout" app:layout_constraintHorizontal_bias="0.488"
-            app:layout_constraintVertical_bias="0.779">
+            app:layout_constraintVertical_bias="0.779"
+            android:fontFamily="@font/lato_bold">
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="@string/safety_message_header"
                   android:gravity="center"
                   android:textSize="50sp"
                   android:textColor="@color/colorDiceBorder"
+                  android:fontFamily="@font/lato_bold"
         />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:text="@string/safety_message"
                   android:layout_margin="5dp"
                   android:textColor="@color/colorDiceBorder"
-
+                  android:fontFamily="@font/lato_bold"
         />
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                   android:layout_margin="5dp"
                   android:text="@string/safety_message_shirt"
                   android:textColor="@color/colorDiceBorder"
+                  android:fontFamily="@font/lato_bold"
         />
         <Button android:layout_gravity="center"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -71,6 +77,7 @@
                 android:id="@+id/safety_compliance_button"
                 android:text="@string/safety_message_confirmation"
                 android:layout_marginBottom="6dp"
+                android:fontFamily="@font/lato_bold"
         />
     </LinearLayout>
 

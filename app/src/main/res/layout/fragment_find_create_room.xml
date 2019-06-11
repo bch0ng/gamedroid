@@ -21,7 +21,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="44dp"
-            android:backgroundTint="@android:color/holo_green_light"/>
+            android:backgroundTint="@android:color/holo_green_light"
+            android:fontFamily="@font/lato_bold"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +33,8 @@
             android:layout_margin="24dp"
             android:maxLength="4"
             android:visibility="gone"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:fontFamily="@font/lato_bold"/>
     <Button
             android:text="Find Room"
             android:layout_width="match_parent"
@@ -46,7 +48,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@android:color/holo_orange_light"/>
+            android:backgroundTint="@android:color/holo_orange_light"
+            android:fontFamily="@font/lato_bold"/>
     <Button
             android:text=""
             android:layout_width="60dp"
@@ -63,5 +66,6 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="30dp"
             android:enabled="false"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:fontFamily="@font/lato_bold"/>
 </LinearLayout>

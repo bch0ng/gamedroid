@@ -39,15 +39,6 @@
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@+id/buttonRestart"/>
-        <Button
-                android:text="End Game"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" android:id="@+id/buttonEnd"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@+id/buttonNew" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="16dp" android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:background="#F44336"/>
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
