@@ -52,6 +52,7 @@ class GamelistFragment : Fragment() {
         super.onPause()
         LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         nearby = NearbyConnection.instance
@@ -61,6 +62,8 @@ class GamelistFragment : Fragment() {
         }
         nearby = NearbyConnection.instance
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -1,16 +1,27 @@
 package edu.us.ischool.bchong.info448project
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import game.Game
 import game.GameFragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import game.GameActivity
 
 
 class TelephoneFragment : Fragment(), GameFragment {
+    override fun setNetworkPlayers(thisPlayers: ArrayList<Pair<String, String>>) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun setNetworkListener(networkListener: NetworkListener) {
        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -24,6 +35,7 @@ class TelephoneFragment : Fragment(), GameFragment {
     }
 
     fun showWinText() {
+        NearbyConnection.instance.sendMessageAll("This is a test")
         gameMessage?.setText("You win!")
     }
 
@@ -41,4 +53,14 @@ class TelephoneFragment : Fragment(), GameFragment {
 
         return view
     }
+
+
+    private val broadCastReceiver = object : BroadcastReceiver()
+    {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.i("TEST", intent?.getStringExtra("TELEPHONE_RING"))
+        }
+    }
+
+
 }
