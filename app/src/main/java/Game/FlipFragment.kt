@@ -140,7 +140,7 @@ class FlipFragment : Fragment(),GameFragment {
     //
     override fun onResume() {
         super.onResume()
-        this.motionSensorController =GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        this.motionSensorController =context!!.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         motionSensorController.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.let {
             this.gyroscope = it
         }

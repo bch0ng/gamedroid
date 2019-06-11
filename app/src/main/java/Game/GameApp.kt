@@ -2,18 +2,16 @@ package Game
 
 import android.app.Application
 
-
-class GameApp : Application() {
+class GameApp: Application() {
     companion object {
-        private lateinit var instance: GameApp //= null
+        private var instance: GameApp? = null
 
-        fun applicationContext(): Application {
-            return this
+        fun applicationContext(): GameApp {
+            return instance as GameApp
         }
     }
-
-    init {
-        instance = this
+    init{
+        instance=this
     }
 
     override fun onCreate() {

@@ -57,9 +57,9 @@ class SodaShake : Game {
             }
         })
 
-        shakeCapacity = (300..2000).random()
+        /*shakeCapacity = (300..2000).random()
         numOfShakes = 0
-        Log.i("TEST", "Shake capacity: $shakeCapacity")
+        Log.i("TEST", "Shake capacity: $shakeCapacity")*/
     }
 
     fun explodeSoda() {
@@ -78,6 +78,7 @@ class SodaShake : Game {
     override fun onRegisterMotionListener() {}
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+
     override fun onFragmentStart() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

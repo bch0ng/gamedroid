@@ -38,10 +38,15 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
 
     override fun onGameStart(gamechoice: String) {
         Log.i("TEST", "gamechoice: $gamechoice")
-        when(gamechoice){
+        /*when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
             //TODO "Answer the Phone" and " Roll the Dice"
+        }*/
+        if(gamechoice == "Shake the Soda"){
+            game = SodaShake(this)
+        }else if (gamechoice == "Flip the Phone"){
+            game = Flip()
         }
 
         var gameFragment = game.gameFragment as Fragment
