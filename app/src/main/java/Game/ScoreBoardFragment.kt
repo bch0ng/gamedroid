@@ -32,9 +32,9 @@ class ScoreBoardFragment : Fragment(), GamelistFragment.OnGameInteractionListene
     // TODO: Rename and change types of parameters
     private var username: String? = null
     private var score: String? = null
-    private var identity: String? = null
+    private lateinit var identity: String
     private lateinit var game : String
-    private var mode: String? = null
+    private lateinit var mode: String
     private var listener: OnScoreboardInteractionListener? = null
     private lateinit var playmode: String
     private lateinit var winner: String
@@ -91,7 +91,7 @@ class ScoreBoardFragment : Fragment(), GamelistFragment.OnGameInteractionListene
             endGameButton.isEnabled = false
             // What if the player wants to switch between single mode and multi mode?
 
-           listener?.onGameSelect()
+           listener?.onGameSelect(mode,identity)
         }
 
         endGameButton.setOnClickListener{
@@ -117,10 +117,9 @@ class ScoreBoardFragment : Fragment(), GamelistFragment.OnGameInteractionListene
     }
 
     interface OnScoreboardInteractionListener {
-        // TODO: Update argument type and name
         fun onEndCycle()
 
-        fun onGameSelect()
+        fun onGameSelect(playmode: String, useridentity: String)
         fun onGameStart(gamechoice: String)
 
     }
