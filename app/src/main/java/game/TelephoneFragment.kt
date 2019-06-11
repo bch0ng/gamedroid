@@ -1,13 +1,21 @@
 package edu.us.ischool.bchong.info448project
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import game.Game
 import game.GameFragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import game.GameActivity
 
 
 class TelephoneFragment : Fragment(), GameFragment {
@@ -45,4 +53,33 @@ class TelephoneFragment : Fragment(), GameFragment {
 
         return view
     }
+
+    private val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            var timeDelay = intent?.getStringExtra("TELEPHONE_TIME")?.toLong()
+            if (timeDelay != null) {
+                (gameObj as Telephone).setTime(timeDelay)
+            }
+            var telephoneWin = intent?.getStringExtra("TELEPHONE_WIN")
+            if (telephoneWin != null) {
+                if (NearbyConnection.instance.isHosting()) {
+                    NearbyConnection.instance.sendMessageAll("telephone_win")
+                }
+                (gameObj as Telephone).updatePlayerWin()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(NearbyConnection.instance.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(NearbyConnection.instance.getContext()).unregisterReceiver(broadCastReceiver)
+    }
+
 }

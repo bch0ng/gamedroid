@@ -9,16 +9,10 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import edu.us.ischool.bchong.info448project.NearbyConnection
-import edu.us.ischool.bchong.info448project.R
-import edu.us.ischool.bchong.info448project.RollTheDiceClient
-import edu.us.ischool.bchong.info448project.RollTheDiceHost
-import edu.us.ischool.bchong.info448project.Telephone
-import system.MainActivity
-import system.PlayModeFragment
+import edu.us.ischool.bchong.info448project.*
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
-    ScoreBoardFragment.OnScoreboardInteractionListener, GameStateController {
+    ScoreBoardFragment.OnScoreboardInteractionListener {
 
     private lateinit var game: Game
     private lateinit var identity: String
@@ -40,17 +34,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         onGameSelect(mode, identity)
     }
 
-    override fun goBackToMenu() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("MODE", "GAME_MENU")
-        intent.putExtra("USERNAME", "TEST")
-        startActivity(intent)
-    }
-
-    override fun playAgain(gameName: String) {
-        onGameStart(gameName)
-    }
-
     override fun onGameSelect(playmode: String, useridentity: String) {
         Log.e("game", "In onGameSelect")
         val gameSelectionFragment =
@@ -64,7 +47,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun onGameStart(gamechoice: String) {
 
         if (NearbyConnection.instance.isHosting()) {
-            Log.i("TEST", "sending message: $gamechoice")
             NearbyConnection.instance.sendMessageAll("gamechoice: $gamechoice")
         }
 
@@ -73,12 +55,11 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
+
             "RollTheDiceHost" -> game = RollTheDiceHost(this).localClient
             "Roll the Dice" -> game = RollTheDiceClient(this)
             "Answer the Phone" -> game = Telephone(this)
-            //TODO "Answer the Phone" and " Roll the Dice"
         }
-
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
@@ -90,8 +71,9 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             var gameChoice = intent?.getStringExtra("GAME_CHOICE")
-            onGameStart(gameChoice!!)
-
+            if (gameChoice != null) {
+                onGameStart(gameChoice!!)
+            }
         }
     }
 
@@ -114,22 +96,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
-
     fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
         onGameResult("0")
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (mode == "Single") {
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right)
-        }
-    }
-
-
-
-
-    override fun onEndCycle() {
-        game.onEnd()
     }
 }
