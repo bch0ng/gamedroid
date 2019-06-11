@@ -23,17 +23,18 @@
         <Button
                 android:text="Restart"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" android:id="@+id/buttonRestart"
+                android:layout_height="60dp" android:id="@+id/buttonRestart"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" android:background="#2196F3"
+                android:layout_marginEnd="16dp" android:background="@drawable/rounded_button" android:backgroundTint="#2196F3"
                 android:textColor="@color/common_google_signin_btn_text_dark_default" android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"/>
         <Button
                 android:text="New Game"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" android:id="@+id/buttonNew"
-                android:background="#FFC107"
+                android:layout_height="60dp" android:id="@+id/buttonNew"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#FFC107"
                 android:textColor="@color/common_google_signin_btn_text_dark_default"
                 android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="16dp"

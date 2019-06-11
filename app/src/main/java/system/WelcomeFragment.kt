@@ -56,6 +56,9 @@ class WelcomeFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable) {
                 userName = enterName.text.toString()
+                if (s.isNotBlank()) {
+                    startGameButton.visibility = View.VISIBLE
+                }
                 startGameButton.isEnabled = s.isNotBlank()
             }
         })

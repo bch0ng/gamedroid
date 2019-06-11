@@ -6,4 +6,5 @@ import java.io.Serializable
 interface GameFragment:Serializable {
     fun newInstance(game: Game): GameFragment
     fun setNetworkListener(networkListener:NetworkListener)
-}
+    fun setNetworkPlayers(thisPlayers:ArrayList<Pair<String,String>>)
+    }

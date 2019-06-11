@@ -160,7 +160,9 @@ class RollTheDiceClient : NetworkGame {
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
-
+    override fun setNetworkPlayers(thisPlayers:ArrayList<Pair<String,String>>){
+        this.players=thisPlayers
+    }
     constructor(thisContext:Context) {
         gameFragment = DiceFragment().newInstance(this)
         this.frag = gameFragment as DiceFragment

@@ -18,7 +18,11 @@
             android:layout_marginTop="30dp">
         <Button
                 android:text="game2s"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+                android:layout_margin="16dp"
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content" android:id="@+id/buttongame1"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="#FFC107" android:textSize="18sp"
@@ -28,7 +32,11 @@
                 android:fontFamily="@font/lato_bold"/>
         <Button
                 android:text="game1s"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+                android:layout_margin="16dp"
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content" android:id="@+id/buttongame2"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/lato_bold"
@@ -36,6 +44,7 @@
                 android:textSize="18sp"
                 android:background="@drawable/rounded_button"
                 android:paddingRight="16dip"
+                android:layout_height="60dp" 
                 android:textColor="@color/common_google_signin_btn_text_dark_default"/>
 
     </LinearLayout>
@@ -70,4 +79,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp" android:textSize="18sp"
             android:fontFamily="@font/lato_bold"/>
+
 </android.support.constraint.ConstraintLayout>
