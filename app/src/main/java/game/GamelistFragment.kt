@@ -119,7 +119,6 @@ class GamelistFragment : Fragment() {
     {
         override fun onReceive(contxt: Context?, intent: Intent?)
         {
-            Log.i("TEST", intent?.getStringExtra("GAME_CHOICE"))
             if (intent?.hasExtra("closeRoom")!!) {
                 LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
                 isBroadcastListenerActive = false
