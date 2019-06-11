@@ -20,7 +20,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         identity = intent.getStringExtra("IDENTITY")
 
         mode = intent.getStringExtra("GAMEMODE")
-        Log.e("game", "The mode is" + mode)
+        Log.i("game", "The mode is" + mode)
         onGameSelect(mode, identity)
     }
 
@@ -32,8 +32,15 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .beginTransaction()
             .add(R.id.framegame, gameSelectionFragment!!, "game_fragment")
             .commit()
-    }
 
+    }
+    override fun onInstruction(gamechoice: String){
+        val instructionFragment = InstructionFragment.newInstance(gamechoice)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.frameinstruct, instructionFragment!!, "game_fragment")
+            .commit()
+    }
     override fun onGameStart(gamechoice: String) {
         Log.i("TEST", "gamechoice: $gamechoice")
         /*when(gamechoice){

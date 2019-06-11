@@ -3,6 +3,7 @@ package game
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class GamelistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view: View? = null
+        Log.e("game", "Should have view")
         if (mode == "Single") {
 
             view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
@@ -48,21 +50,24 @@ class GamelistFragment : Fragment() {
 
             startgamebtn = view.findViewById<Button>(R.id.buttonsinglestart)
             startgamebtn.isEnabled = false
-
+            Log.e("game", "Should have view")
             game1sbtn.setText(games[0].toString())
             game2sbtn.setText(games[1].toString())
 
             game1sbtn.setOnClickListener() {
                 gamechoice = game1sbtn.text.toString()
                 startgamebtn.isEnabled = true
+                (activity as GamelistFragment.OnGameInteractionListener).onInstruction(gamechoice)
             }
             game2sbtn.setOnClickListener() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
+                (activity as GamelistFragment.OnGameInteractionListener).onInstruction(gamechoice)
             }
 
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
+
             }
 
 
@@ -94,6 +99,7 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
             startgamebtn.setOnClickListener() {
+
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
         }
@@ -115,6 +121,7 @@ class GamelistFragment : Fragment() {
 
     interface OnGameInteractionListener {
         fun onGameStart(gamechoice:String){}
+        fun onInstruction(gamechoice: String){}
     }
 
     companion object {
