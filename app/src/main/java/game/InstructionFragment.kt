@@ -38,7 +38,7 @@ class InstructionFragment : Fragment() {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_instruction, container, false)
         var instruct = instructiondata.getString(gameChoice)
-        instructtext = view.findViewById(R.id.instructtextview)
+        instructtext = view.findViewById(R.id.txtInstruction)
         instructtext.setText(instruct)
         return view
     }
