@@ -1,12 +1,20 @@
 package game
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.util.Log
 import kotlin.math.sqrt
 import android.os.Vibrator
+import edu.us.ischool.bchong.info448project.R
+import java.util.*
+import android.support.v4.content.ContextCompat.getSystemService
+
+
 
 class SodaShake : Game {
     override var gameFragment: GameFragment? = null
@@ -27,6 +35,8 @@ class SodaShake : Game {
     private var mShakeDetector: SodaShake? = null
     private var context: Context? = null
 
+    private lateinit var vibrator:Vibrator
+    var timer: Timer? = null
 
     interface onShakeListener {
         fun onShake(count: Int)
@@ -44,6 +54,7 @@ class SodaShake : Game {
 
 
     override fun onStart() {
+        vibrator=context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         mSensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         mShakeDetector = SodaShake(context as Context)
@@ -51,6 +62,7 @@ class SodaShake : Game {
         mShakeDetector?.setOnShakeListener(object : onShakeListener {
             override fun onShake(count: Int) {
                 Log.i("TEST", "Num of shakes: $count / $shakeCapacity")
+                vibrator.vibrate(count.toLong()/2)
                 if (count >= shakeCapacity) {
                     explodeSoda()
                 }
@@ -63,15 +75,31 @@ class SodaShake : Game {
     }
 
     fun explodeSoda() {
-        val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
         @Suppress("DEPRECATION")
         vibrator?.vibrate(1500)
         (gameFragment as SodaShakeFragment).endGame()
         onEnd()
     }
+    private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer): TimerTask() {
+
+        override fun run() {
+            (context as Activity).runOnUiThread(object: Runnable {
+                override fun run() {
+                    audioPlayer.start()
+                    timer.cancel()
+                    timer.purge()
+                }
+            })
+        }
+    }
 
     override fun onEnd() : Int {
         mSensorManager?.unregisterListener(mShakeDetector)
+        val audioPlayer = MediaPlayer.create(context, R.raw.popping_sound)
+        audioPlayer.start()
+        audioPlayer.setOnCompletionListener {
+            it.stop()
+        }
         return 0
     }
 

@@ -80,6 +80,7 @@ class Flip : Game {
         if(valueSum<400){
             accTimeStarted=false
         }
+
         /*else if(accTimeStarted&&valueSum>800.1){
             Log.v("flip","Minor deacc detected started $valueSum")
             accTimeStarted=false
