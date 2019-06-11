@@ -123,10 +123,10 @@ class RoomLobbyFragment : Fragment()
                             playersList.text = playersList.text.toString() + "\n" + player
                         }
                     }
-                    if (nearby.isHosting() && !startButton.isEnabled && nearby.getCurrPlayers().size > 1) {
+                    if (nearby.isHosting() && nearby.getCurrPlayers().size > 1 && !startButton.isEnabled) {
                         startButton.isEnabled = true
                         startButton.visibility = View.VISIBLE
-                    } else {
+                    } else if (!nearby.isHosting()) {
                         startButton.isEnabled = false
                         startButton.visibility = View.GONE
                     }
