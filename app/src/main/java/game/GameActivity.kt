@@ -1,5 +1,8 @@
 package game
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
@@ -46,7 +49,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         Log.i("TEST", "gamechoice: $gamechoice")
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
-            "Flip the Phone" -> game = Telephone(this)
+            "Flip the Phone" -> game = Flip()
+            "Answer the Phone" -> game = Telephone(this)
             //TODO "Answer the Phone" and " Roll the Dice"
         }
         var gameFragment = game.gameFragment as Fragment
@@ -67,6 +71,12 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
 
     fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
         onGameResult("0")
+    }
+
+    private val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.i("TEST", intent?.getStringExtra("GAME_CHOICE"))
+        }
     }
 
 

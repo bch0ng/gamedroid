@@ -23,7 +23,7 @@ class Telephone: Game, Service {
     var audioPlayer: MediaPlayer? = null
     var didGameStart = false
     lateinit var name:String
-    private var mGZ = 0f//gravity acceleration along the z axis
+    private var mGZ = 0f //gravity acceleration along the z axis
     private var mEventCountSinceGZChanged = 0
     private val MAX_COUNT_GZ_CHANGE = 10
     private var mSensorManager: SensorManager? = null
@@ -34,7 +34,7 @@ class Telephone: Game, Service {
     }
 
     override fun onStart(name:String) {
-        this.name=name
+        this.name = name
         mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
 
         mSensorManager?.registerListener(this,
@@ -110,12 +110,10 @@ class Telephone: Game, Service {
     }
 
     private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer): TimerTask() {
-
         override fun run() {
             (context as Activity).runOnUiThread(object: Runnable {
                 override fun run() {
                     audioPlayer.start()
-                    Log.i("TEST", "Timer ended")
                     timer.cancel()
                     timer.purge()
                 }

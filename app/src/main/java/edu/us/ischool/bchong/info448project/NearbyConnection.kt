@@ -423,11 +423,19 @@ class NearbyConnection private constructor(context: Context)
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
 
-                    message.startsWith("telephone: ") -> {
+                    message.startsWith("telephone:") -> {
                         val intent = Intent()
+                        Log.i("TEST", "Message: $message")
                         intent.putExtra("TELEPHONE_RING", message)
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
+
+                    message.startsWith("game:") -> {
+                        val intent = Intent()
+                        intent.putExtra("GAME_CHOICE", message)
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+
                     else -> {}
                 }
             }
