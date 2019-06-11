@@ -52,10 +52,16 @@ class TelephoneFragment : Fragment(), GameFragment {
 
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.i("TEST", "timeDelay: ${intent?.getStringExtra("TELEPHONE_TIME")?.toLong()}")
             var timeDelay = intent?.getStringExtra("TELEPHONE_TIME")?.toLong()
             if (timeDelay != null) {
                 (gameObj as Telephone).setTime(timeDelay)
+            }
+            var telephoneWin = intent?.getStringExtra("TELEPHONE_WIN")
+            if (telephoneWin != null) {
+                if (NearbyConnection.instance.isHosting()) {
+                    NearbyConnection.instance.sendMessageAll("telephone_win")
+                }
+                (gameObj as Telephone).updatePlayerWin()
             }
         }
     }

@@ -79,6 +79,10 @@ class Telephone: Game, Service {
         Log.i("TEST", "timeDelay in setTime: $timeDelay")
     }
 
+    fun updatePlayerWin() {
+        didPlayerWin = true
+    }
+
     fun startGame() {
         if (didGameStart == false) {
             audioPlayer = MediaPlayer.create(context, R.raw.telephone_ring)
@@ -112,9 +116,9 @@ class Telephone: Game, Service {
                             if (didGameStart == true) {
                                 audioPlayer?.stop()
                                 // TODO: Show win or lose text depending on who wins or loses
-                                if (didPlayerWin) {
+                                if (!didPlayerWin) {
                                     (gameFragment as TelephoneFragment).showWinText()
-                                    
+                                     NearbyConnection.instance.sendMessageAll("telephone_win")
                                 } else {
                                     (gameFragment as TelephoneFragment).showLoseText()
                                 }

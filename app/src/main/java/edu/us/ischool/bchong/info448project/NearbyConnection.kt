@@ -432,6 +432,13 @@ class NearbyConnection private constructor(context: Context)
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
+
+                    message.startsWith("telephone_win") -> {
+                        val intent = Intent()
+                        intent.putExtra("TELEPHONE_WIN", message)
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
                     else -> {}
                 }
             }
