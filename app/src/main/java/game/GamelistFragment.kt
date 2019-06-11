@@ -1,13 +1,11 @@
 package game
 
-import android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,10 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
-import system.FindCreateRoomFragment
-import android.app.Activity
 import android.app.Activity.RESULT_OK
-
 
 private const val PLAYMODE = "PLAYMODE"
 private const val IDENTITY = "IDENTITY"
@@ -61,10 +56,10 @@ class GamelistFragment : Fragment() {
             games = multiPlayerGameNames
         }
 
-        var game1sbtn = view.findViewById<Button>(R.id.buttongame1)
-        var game2sbtn = view.findViewById<Button>(R.id.buttongame2)
+        var game1sbtn: Button = view.findViewById(R.id.buttongame1)
+        var game2sbtn: Button = view.findViewById(R.id.buttongame2)
 
-        startgamebtn = view.findViewById<Button>(R.id.buttonstart)
+        startgamebtn = view.findViewById(R.id.buttonstart)
         startgamebtn.isEnabled = false
 
         game1sbtn.setText(games[0])
@@ -83,7 +78,7 @@ class GamelistFragment : Fragment() {
             startgamebtn.visibility = View.VISIBLE
 
             startgamebtn.setOnClickListener() {
-                (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
+                (activity as OnGameInteractionListener).onGameStart(gamechoice)
             }
         } else {
             startgamebtn.isEnabled = false
@@ -97,7 +92,8 @@ class GamelistFragment : Fragment() {
         if (context is OnGameInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener")
         }
     }
 
