@@ -1,16 +1,8 @@
-package Game
+package game
 
-import android.app.Service
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.Sensor.TYPE_ACCELEROMETER
-import android.hardware.SensorManager
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
-import android.view.View
-import java.time.LocalTime
 
 
 class Flip : Game {
