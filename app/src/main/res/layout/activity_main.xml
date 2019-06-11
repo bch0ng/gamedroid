@@ -22,9 +22,11 @@
                 android:layout_marginRight="10dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:background="@drawable/rounded_button"
-                android:backgroundTint="#cdcdcd"
-                android:text="@string/instructions_header"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                android:background="@android:color/transparent"
+                android:backgroundTint="@android:color/transparent"
+                android:text="@string/instructions_main"
+                android:layout_width="373dp" android:layout_height="wrap_content" android:foregroundGravity="center"
+                android:gravity="center" android:shadowColor="@android:color/transparent"
+                android:textColorHint="@android:color/transparent" android:textSize="12sp"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
