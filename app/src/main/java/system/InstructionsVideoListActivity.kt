@@ -1,4 +1,4 @@
-package System
+package system
 
 import android.Manifest
 import android.content.pm.PackageManager

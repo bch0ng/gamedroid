@@ -1,6 +1,6 @@
 package system
 
-import Game.GameActivity
+import game.GameActivity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent

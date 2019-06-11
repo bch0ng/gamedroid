@@ -61,7 +61,7 @@ class GamelistFragment : Fragment() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
             }
-            
+
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
