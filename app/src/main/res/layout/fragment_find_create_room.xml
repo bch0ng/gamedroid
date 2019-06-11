@@ -55,7 +55,7 @@
             android:textSize="18sp"
             android:textColor="@color/common_google_signin_btn_text_dark_pressed"
             android:background="@drawable/circle_button"
-            android:drawableStart="@drawable/baseline_rotate_left_white_48"
+            android:drawableStart="@drawable/baseline_arrow_back_white_48"
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:gravity="center"

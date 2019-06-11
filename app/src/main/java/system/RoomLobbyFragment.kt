@@ -31,8 +31,6 @@ class RoomLobbyFragment : Fragment()
     private var roomCode: String? = null
 
     private lateinit var roomCodeShow: TextView
-    private lateinit var playersList: TextView
-    private lateinit var closeButton: Button
     private lateinit var startButton: Button
 
     private var isBroadcastListenerActive: Boolean = false
@@ -90,7 +88,6 @@ class RoomLobbyFragment : Fragment()
     private fun handleView(view: View)
     {
         roomCodeShow = view.findViewById(R.id.room_code_show)
-        //playersList = view.findViewById(R.id.players_list)
         startButton = view.findViewById(R.id.start_button)
         playersContainer = view.findViewById(R.id.players_container)
 
@@ -108,12 +105,12 @@ class RoomLobbyFragment : Fragment()
 
         startButton.setOnClickListener {
             nearby.sendMessageAll("openGameList:true")
-            val intent = Intent(activity, GameActivity::class.java)
+            isGameListOpen = true
+            val intent = Intent(context, GameActivity::class.java)
                 intent.putExtra("IDENTITY", "Host")
-                intent.putExtra("GAMEMODE","Multi")
+                intent.putExtra("GAMEMODE", "Multi")
             startActivity(intent)
             activity?.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left)
-            isGameListOpen = true
         }
     }
 
@@ -185,12 +182,12 @@ class RoomLobbyFragment : Fragment()
                 if (!isGameListOpen) {
                     LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
                     isBroadcastListenerActive = false
+                    isGameListOpen = true
                     val intent = Intent(context, GameActivity::class.java)
-                    intent.putExtra("IDENTITY", "Guest")
-                    intent.putExtra("GAMEMODE", "Multi")
+                        intent.putExtra("IDENTITY", "Guest")
+                        intent.putExtra("GAMEMODE", "Multi")
                     startActivityForResult(intent, 0)
                     activity?.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left)
-                    isGameListOpen = true
                 }
             } else if (intent.hasExtra("closeRoom")) {
                 closeRoomLobbyFragment()

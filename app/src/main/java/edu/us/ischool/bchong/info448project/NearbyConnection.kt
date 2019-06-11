@@ -376,29 +376,7 @@ class NearbyConnection private constructor(context: Context)
                     /**
                      * TODO?
                      */
-                    message.startsWith("room:") -> {
-                        /*
-                            room: {
-                                host: {
-                                    endpoint: ?
-                                    username: ?
-                                    score: ?
-                                },
-                                players: [
-                                    {
-                                        endpoint: ?
-                                        username: ?
-                                        score: ?
-                                    },
-                                    {
-                                        endpoint: ?
-                                        username: ?
-                                        score: ?
-                                    }
-                                ]
-                            }
-                         */
-                    }
+                    message.startsWith("room:") -> {}
                     /**
                      * TODO?
                      */
