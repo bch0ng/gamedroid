@@ -14,14 +14,28 @@ Games require's the phone to have a gyroscope and accelerometer to run.
 
 # User Guide
 Welcome Page:[ScreenShot]
-Playmode Selection Page:[ScreenShot]
-Find/Create Room Page:[ScreenShot]
-Game Lobby Page:[ScreenShot]
-Game Selection Page:[ScreenShot]
-Game Instruction Page:[ScreenShot]
-Game Page:[ScreenShot]
-ScoreBorad Page:[ScreenShot]
+Welcome to our mini games. Please enter your name and hit the LET'S GAME Button.
 
+Playmode Selection Page:[ScreenShot]
+Please select your play mode. Your can choose either Single Player or Multiple players.
+
+Find/Create Room Page:[ScreenShot]
+Please select host or enter your room code if you are a guest.
+
+Game Lobby Page:[ScreenShot]
+Welcome to the game lobby. The game will start when everyone is seated.
+
+Game Selection Page:[ScreenShot]
+Please choose your favoured game and hit START!
+
+Game Instruction Page:[ScreenShot]
+See how to play the game and safety instructions.
+
+Game Page:[ScreenShot]
+Enjoy your game!
+
+ScoreBroad Page:[ScreenShot]
+This the your scoreBroad. Your can restart game, start new game or end game after you checked your scores.
 
 # Game Intro
 
