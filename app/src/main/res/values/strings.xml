@@ -19,6 +19,8 @@
     <string name="no_sensor_affirmative">Alright...😔</string>
     <string name="hello_blank_fragment">🍆🍆🍆🍆🍆🍆🍆</string>
     <string name="instructions_header">Instruction videos</string>
+    <string name="instructions_main"><u>How to play? Check our instruction videos!</u></string>
+
 
     <!-- TODO: Flip Strings -->
     <string name="restart_button">Restart</string>
