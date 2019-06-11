@@ -24,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".PlayModeActivity"></activity>
         <activity android:name="system.GameroomActivity"></activity>
         <activity android:name=".GameSelectionActivity"></activity>
         <activity android:name="system.ScoreboardActivity"></activity>
