@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import edu.us.ischool.bchong.info448project.NetworkListener
 import edu.us.ischool.bchong.info448project.R
 import kotlinx.android.synthetic.main.fragment_flip.*
 import kotlinx.android.synthetic.main.fragment_score_board.*
@@ -25,6 +26,9 @@ import kotlinx.android.synthetic.main.fragment_score_board.*
  *
  */
 class FlipFragment : Fragment(),GameFragment {
+    override fun setNetworkListener(networkListener: NetworkListener) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     //Return an instance of this fragment with the game set
     override fun newInstance(game: Game): GameFragment {
@@ -33,7 +37,10 @@ class FlipFragment : Fragment(),GameFragment {
     }
     override fun onStart(){
         super.onStart()
+        if(gameObj!=null){
         this.gameObj!!.onFragmentStart()
+        }
+
     }
 
     private var listener: OnFragmentInteractionListener? = null
@@ -168,6 +175,10 @@ class FlipFragment : Fragment(),GameFragment {
     }
 
     companion object :GameFragment{
+        override fun setNetworkListener(networkListener: NetworkListener) {
+            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

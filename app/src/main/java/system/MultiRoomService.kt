@@ -7,8 +7,8 @@ import android.util.Log
 import edu.us.ischool.bchong.info448project.NearbyConnection
 
 
-class MultiRoomService : Service() {
-
+class MultiRoomService : Service()
+{
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }

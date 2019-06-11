@@ -6,6 +6,8 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import org.json.JSONObject
+import java.io.Serializable
 import java.util.concurrent.atomic.AtomicBoolean
 
 private const val ROOM_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
@@ -330,10 +332,6 @@ class NearbyConnection private constructor(context: Context)
                             players[players.indexOf(username)] = players[1]
                             players[1] = username
                         }
-                        if (!isHosting) {
-                            players[0] = players[0] + " (Host)"
-                            players[1] = players[1] + " (You)"
-                        }
                         Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
                         val intent = Intent()
                             intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
@@ -380,33 +378,23 @@ class NearbyConnection private constructor(context: Context)
                     /**
                      * TODO?
                      */
-                    message.startsWith("room:") -> {
-                        /*
-                            room: {
-                                host: {
-                                    endpoint: ?
-                                    username: ?
-                                    score: ?
-                                },
-                                players: [
-                                    {
-                                        endpoint: ?
-                                        username: ?
-                                        score: ?
-                                    },
-                                    {
-                                        endpoint: ?
-                                        username: ?
-                                        score: ?
-                                    }
-                                ]
-                            }
-                         */
-                    }
+                    message.startsWith("room:") -> {}
                     /**
                      * TODO?
                      */
-                    message.startsWith("score:") -> {
+                    message.startsWith("dice:") -> {
+                        Log.d("INFO_448_DEBUG", "Message starts with 'dice:'")
+                        val jsonStr=message.substring(5)
+                        var jsonObj=JSONObject(jsonStr)
+                        var intent=Intent()
+                        val keyset=jsonObj.keys()
+                        while(keyset.hasNext()){
+                            val value=keyset.next()
+                            intent.putExtra(value,jsonObj.get(value) as Serializable)
+                        }
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                        message.startsWith("score:") -> {
                         Log.d("INFO_448_DEBUG", "Message starts with 'score:'")
                         val value: Pair<String, String?>? = endpointIDUsernameScoreMap[endpointID]
                         endpointIDUsernameScoreMap[endpointID] =

@@ -1,8 +1,12 @@
 package game
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
+import android.app.Activity.RESULT_OK
 
 private const val PLAYMODE = "PLAYMODE"
 private const val IDENTITY = "IDENTITY"
@@ -20,18 +25,31 @@ class GamelistFragment : Fragment() {
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
 
+    private var isBroadcastListenerActive: Boolean = false
+
     private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
-    private var multiPlayerGameNames = arrayOf("Answer the Phone", "Roll the Dice")
+    private var multiPlayerGameNames = arrayOf("Answer the Phone","RollTheDiceHost", "Roll the Dice")
+
     private var listener: OnGameInteractionListener? = null
 
+    private lateinit var nearby: NearbyConnection
 
+    private lateinit var gameHost: GameHost
+
+
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        nearby = NearbyConnection.instance
         arguments?.let {
             mode = it.getString(PLAYMODE)
             useridentity = it.getString(IDENTITY)
-
         }
+        nearby = NearbyConnection.instance
     }
 
     override fun onCreateView(
@@ -48,10 +66,10 @@ class GamelistFragment : Fragment() {
             games = multiPlayerGameNames
         }
 
-        var game1sbtn = view.findViewById<Button>(R.id.buttongame1)
-        var game2sbtn = view.findViewById<Button>(R.id.buttongame2)
+        var game1sbtn: Button = view.findViewById(R.id.buttongame1)
+        var game2sbtn: Button = view.findViewById(R.id.buttongame2)
 
-        startgamebtn = view.findViewById<Button>(R.id.buttonstart)
+        startgamebtn = view.findViewById(R.id.buttonstart)
         startgamebtn.isEnabled = false
 
         game1sbtn.setText(games[0])
@@ -70,7 +88,7 @@ class GamelistFragment : Fragment() {
             startgamebtn.visibility = View.VISIBLE
 
             startgamebtn.setOnClickListener() {
-                (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
+                (activity as OnGameInteractionListener).onGameStart(gamechoice)
             }
         } else {
             startgamebtn.isEnabled = false
@@ -84,7 +102,41 @@ class GamelistFragment : Fragment() {
         if (context is OnGameInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener")
+        }
+    }
+
+    /**
+     * Listens to any broadcast messages.
+     *
+     * @note: If it receives a room code message, it will open the room lobby fragment.
+     */
+    private val broadCastReceiver = object : BroadcastReceiver()
+    {
+        override fun onReceive(contxt: Context?, intent: Intent?)
+        {
+            if (intent?.hasExtra("closeRoom")!!) {
+                LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
+                isBroadcastListenerActive = false
+                val intent = Intent()
+                    intent.putExtra("key_response", "closed")
+                activity?.setResult(RESULT_OK, intent)
+                activity?.finish()
+            }
+            if(intent!!.getStringExtra(":dice")!=null){
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart("Roll the Dice")
+            }
+        }
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        if (!isBroadcastListenerActive) {
+            LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+                IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+            )
         }
     }
 
@@ -94,7 +146,9 @@ class GamelistFragment : Fragment() {
     }
 
     interface OnGameInteractionListener {
-        fun onGameStart(gamechoice: String) {}
+        fun onGameStart(gamechoice: String) {
+
+        }
     }
 
     companion object {

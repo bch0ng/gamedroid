@@ -11,8 +11,6 @@ import android.widget.Button
 import android.widget.EditText
 import edu.us.ischool.bchong.info448project.R
 
-
-
 class WelcomeFragment : Fragment() {
 
     private lateinit var startGameButton: Button
@@ -65,6 +63,7 @@ class WelcomeFragment : Fragment() {
         startGameButton.setOnClickListener {
             val playModeFragment = PlayModeFragment.newInstance(userName)
             val transaction = fragmentManager!!.beginTransaction()
+                transaction.setCustomAnimations(R.anim.pop_in, R.anim.pop_out)
                 transaction.replace(R.id.fragmentmain, playModeFragment)
                 transaction.commit()
         }

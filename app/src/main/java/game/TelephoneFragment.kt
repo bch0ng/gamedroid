@@ -18,6 +18,10 @@ import game.GameActivity
 
 
 class TelephoneFragment : Fragment(), GameFragment {
+    override fun setNetworkListener(networkListener: NetworkListener) {
+       // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     var gameObj: Game? = null
     var gameMessage: TextView? = null
 

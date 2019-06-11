@@ -29,13 +29,13 @@ class TestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        nearby = NearbyConnection.instance
 
         textShow = findViewById(R.id.textShow)
         textShow2 = findViewById(R.id.textShow2)
         sendButton = findViewById(R.id.buttonSend)
         closeButton = findViewById(R.id.buttonClose)
 
+        nearby = NearbyConnection.instance
         if (nearby.isHosting()) {
             textShow.text = "${nearby.getMyUsername()} (You are the Host)"
         } else {
