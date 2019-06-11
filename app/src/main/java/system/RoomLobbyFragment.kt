@@ -43,6 +43,12 @@ class RoomLobbyFragment : Fragment()
         arguments?.let {
             roomCode = it.getString(ARG_ROOM_CODE)
         }
+
+        nearby = NearbyConnection.instance
+
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
     }
 
     override fun onCreateView(
@@ -63,8 +69,6 @@ class RoomLobbyFragment : Fragment()
      */
     private fun handleView(view: View)
     {
-        nearby = NearbyConnection.instance
-
         roomCodeShow = view.findViewById(R.id.room_code_show)
         playersList = view.findViewById(R.id.players_list)
         startButton = view.findViewById(R.id.start_button)
@@ -135,28 +139,13 @@ class RoomLobbyFragment : Fragment()
                     roomCodeShow.text = message
                 }
             } else if (intent.hasExtra("openGameList")) {
+                LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
                 val intent = Intent(activity, GameActivity::class.java)
                     intent.putExtra("IDENTITY", "Player")
                     intent.putExtra("GAMEMODE","Multi")
                 startActivity(intent)
             }
         }
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
-            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
-        )
-    }
-
-    override fun onPause()
-    {
-        super.onPause()
-        nearby.stopDiscovery()
-        nearby.stopAdvertising()
-        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
 
     companion object

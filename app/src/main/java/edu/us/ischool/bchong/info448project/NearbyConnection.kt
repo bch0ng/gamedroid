@@ -451,11 +451,13 @@ class NearbyConnection private constructor(context: Context)
     fun disconnectEndpointsAndStop() {
         Log.d("INFO_448_DEBUG", "Remove player in disconnect")
         if (!isHosting) {
+            Log.d("INFO_448_DEBUG", "Player not hosting, so sending remove request")
             sendMessageAll("removePlayer:$username")
         }
         players.clear()
         val nearby = Nearby.getConnectionsClient(context)
         nearby.stopAdvertising()
+        nearby.stopDiscovery()
         nearby.stopAllEndpoints()
         for (id in endpointIDUsernameScoreMap.keys.toList()) {
             nearby.disconnectFromEndpoint(id)

@@ -28,5 +28,11 @@
         <activity android:name="system.GameroomActivity"></activity>
         <activity android:name="game.GameActivity"></activity>
         <activity android:name="system.InstructionsVideoListActivity"></activity>
+
+        <service
+                android:enabled="true"
+                android:name="system.MultiRoomService"
+                android:exported="false"
+                android:stopWithTask="false" />
     </application>
 </manifest>
