@@ -26,5 +26,6 @@
     <string name="safety_message_header">Warning:</string>
     <string name="safety_message_confirmation">I shall comply</string>
     <string name="safety_message">Please use protective wrapping to secure device from kinetic damage.</string>
-    <string name="safety_message_shirt">Take off your shirt and wrap your phone within it. Secure with a tight knot.</string>
+    <string name="safety_message_shirt">Take off your shirt and wrap your phone within it. Secure with a tight knot.
+    </string>
 </resources>
