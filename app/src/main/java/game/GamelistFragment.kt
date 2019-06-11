@@ -78,7 +78,7 @@ class GamelistFragment : Fragment() {
             startgamebtn = view.findViewById<Button>(R.id.buttonmultistart)
 
             startgamebtn.isEnabled = false
-            if (useridentity == "Player") {
+            if (useridentity == "Guest") {
                 startgamebtn.visibility = View.GONE
             } else if (useridentity == "Host") {
                 startgamebtn.visibility = View.VISIBLE

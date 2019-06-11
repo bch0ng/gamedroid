@@ -58,8 +58,13 @@ class FindCreateRoomFragment : Fragment()
         nearby = NearbyConnection.instance
 
         // Stops advertising or discovering if coming back from room lobby fragment.
-        nearby.stopAdvertising()
-        nearby.stopDiscovery()
+        if (nearby.getCurrPlayers().size > 0) {
+            nearby.disconnectEndpointsAndStop()
+        } else {
+            nearby.stopAdvertising()
+            nearby.stopDiscovery()
+        }
+        Log.d("INFO_448_DEBUG", "CONTEXT IN FIND CREATE ROOM: $context")
 
         hostButton = view.findViewById(R.id.host_button)
         discoverButton = view.findViewById(R.id.discover_button)

@@ -108,7 +108,7 @@ class RoomLobbyFragment : Fragment()
      */
     private val broadCastReceiver = object : BroadcastReceiver()
     {
-        override fun onReceive(contxt: Context?, intent: Intent?)
+        override fun onReceive(context: Context?, intent: Intent?)
         {
             if (intent?.hasExtra("message")!!) {
                 Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("message")}")
@@ -141,9 +141,11 @@ class RoomLobbyFragment : Fragment()
             } else if (intent.hasExtra("openGameList")) {
                 LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
                 val intent = Intent(activity, GameActivity::class.java)
-                    intent.putExtra("IDENTITY", "Player")
+                    intent.putExtra("IDENTITY", "Guest")
                     intent.putExtra("GAMEMODE","Multi")
                 startActivity(intent)
+            } else if (intent.hasExtra("closeRoom")) {
+                fragmentManager?.popBackStack()
             }
         }
     }
