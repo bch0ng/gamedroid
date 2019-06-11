@@ -1,7 +1,7 @@
 package edu.us.ischool.bchong.info448project
 
-import Game.Game
-import Game.GameFragment
+import game.Game
+import game.GameFragment
 import android.app.Activity
 import android.app.Service
 import android.content.Context
@@ -21,6 +21,7 @@ class Telephone: Game, Service {
     var context: Context? = null
     var timer: Timer? = null
     var audioPlayer: MediaPlayer? = null
+    var didGameStart = false
 
     private var mGZ = 0f//gravity acceleration along the z axis
     private var mEventCountSinceGZChanged = 0
@@ -94,6 +95,9 @@ class Telephone: Game, Service {
                             (gameFragment as TelephoneFragment).showWinText()
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
+                            if (didGameStart == false) {
+                                didGameStart = true
+                            }
                         }
                     }
                 } else {
