@@ -13,12 +13,13 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private lateinit var game: Game
     private lateinit var identity: String
     private lateinit var mode: String
+    private lateinit var username: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         identity = intent.getStringExtra("IDENTITY")
-
+        username = intent.getStringExtra("USERNAME")
         mode = intent.getStringExtra("GAMEMODE")
         Log.e("game", "The mode is" + mode)
         onGameSelect(mode, identity)
