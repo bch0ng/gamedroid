@@ -1,4 +1,4 @@
-package Game
+package game
 
 import android.content.Context
 import android.hardware.Sensor
