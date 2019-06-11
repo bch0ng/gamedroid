@@ -20,12 +20,12 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         identity = intent.getStringExtra("IDENTITY")
 
         mode = intent.getStringExtra("GAMEMODE")
-        Log.e("game","The mode is"+mode)
-        onGameSelect(mode,identity)
+        Log.e("game", "The mode is" + mode)
+        onGameSelect(mode, identity)
     }
 
     override fun onGameSelect(playmode: String, useridentity: String) {
-        Log.e("game","In onGameSelect")
+        Log.e("game", "In onGameSelect")
         val gameSelectionFragment =
             GamelistFragment.newInstance(playmode, useridentity)
         supportFragmentManager
@@ -41,10 +41,10 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             "Flip the Phone" -> game = Flip()
             //TODO "Answer the Phone" and " Roll the Dice"
         }*/
-        if(gamechoice == "Shake the Soda"){
+        if (gamechoice == "Shake the Soda") {
             game = SodaShake(this)
-        } else if (gamechoice == "Flip the Phone"){
-            game = Flip() 
+        } else if (gamechoice == "Flip the Phone") {
+            game = Flip()
         }
 
         var gameFragment = game.gameFragment as Fragment
