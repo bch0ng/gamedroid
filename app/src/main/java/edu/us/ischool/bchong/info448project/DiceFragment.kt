@@ -73,6 +73,12 @@ class DiceFragment : Fragment(), GameFragment {
     lateinit var dimensionAnimators: HashMap<String, ValueAnimator>
     lateinit var playerDiceDimAnimator: ValueAnimator
     private var localHost:RollTheDiceHost?=null
+
+    override fun setNetworkPlayers(thisPlayers:ArrayList<Pair<String,String>>){
+        this.players=thisPlayers
+        this.gameObj.setNetworkPlayers(thisPlayers)
+    }
+
     //Shows the name of the player who won
     fun showWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
@@ -144,6 +150,10 @@ class DiceFragment : Fragment(), GameFragment {
     //When the game is started it will call this function.
     override fun onStart() {
         super.onStart()
+        if(this.localHost!=null){
+            localHost!!.setNearby(nearby)
+            //localHost!!.onStart()
+        }
         this.gameObj!!.onFragmentStart()
     }
 
@@ -377,6 +387,10 @@ class DiceFragment : Fragment(), GameFragment {
         }
     }
     companion object : GameFragment {
+        override fun setNetworkPlayers(thisPlayers: ArrayList<Pair<String, String>>) {
+
+        }
+
         override fun setNetworkListener(networkListener: NetworkListener) {
             //Doesn't do anything ATM
         }
