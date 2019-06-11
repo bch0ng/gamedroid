@@ -50,20 +50,20 @@ class PlayModeFragment : Fragment() {
 
 
         singlebtn.setOnClickListener {
-            multibtn.isEnabled = false
             playmode = "Single"
             val intent = Intent(activity, GameActivity::class.java)
-            intent.putExtra("USERNAME",username)
-            intent.putExtra("IDENTITY", "Host")
-            intent.putExtra("GAMEMODE","Single")
+                intent.putExtra("USERNAME",username)
+                intent.putExtra("IDENTITY", "Host")
+                intent.putExtra("GAMEMODE","Single")
             startActivity(intent)
-            getActivity()!!.finish()
+            activity?.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left)
         }
 
         multibtn.setOnClickListener {
             NearbyConnection.instance.setUsername(username)
             val intent = Intent(activity, GameroomActivity::class.java)
             startActivity(intent)
+            activity?.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left)
         }
     }
 

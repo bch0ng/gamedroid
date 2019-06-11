@@ -13,12 +13,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
+import android.support.v4.content.ContextCompat.getSystemService
+import android.view.inputmethod.InputMethodManager
+import android.support.v4.content.ContextCompat.getSystemService
+
+
+
 
 /**
  * A simple [Fragment] subclass.
@@ -34,6 +42,8 @@ class FindCreateRoomFragment : Fragment()
     private lateinit var discoverButton: Button
     private lateinit var stopButton: Button
     private lateinit var roomCodeField: EditText
+
+    private var roomLobbyFragment: RoomLobbyFragment? = null
 
     private lateinit var nearby: NearbyConnection
 
@@ -59,69 +69,100 @@ class FindCreateRoomFragment : Fragment()
         nearby = NearbyConnection.instance
 
         // Stops advertising or discovering if coming back from room lobby fragment.
-        if (nearby.getCurrPlayers().size > 0) {
+        if (nearby.getCurrPlayers().size > 1) {
             nearby.disconnectEndpointsAndStop()
         } else {
             nearby.stopAdvertising()
             nearby.stopDiscovery()
         }
-        Log.d("INFO_448_DEBUG", "CONTEXT IN FIND CREATE ROOM: $context")
 
         hostButton = view.findViewById(R.id.host_button)
         discoverButton = view.findViewById(R.id.discover_button)
         stopButton = view.findViewById(R.id.stop_button)
         roomCodeField = view.findViewById(R.id.room_code_text)
 
-        val separator: TextView = view.findViewById(R.id.seperator_word_or)
         var mode = "none"
         hostButton.setOnClickListener {
             mode = "hosting"
             val roomCode = nearby.startAdvertising()
-            Log.d("INFO_448_DEBUG", "HELLO")
             openRoomLobbyFragment(roomCode)
-            Log.d("INFO_448_DEBUG", "BYE")
             discoverButton.isEnabled = false
             discoverButton.visibility = View.GONE
             hostButton.isEnabled = false
-            stopButton.visibility = View.VISIBLE
-            stopButton.isEnabled = true
-            roomCodeField.visibility = View.GONE
         }
         roomCodeField.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                discoverButton.isEnabled = (s.toString().length == 4)
+                if (mode == "entering_room_code") {
+                    discoverButton.isEnabled = (s.toString().length == 4)
+                }
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
         discoverButton.setOnClickListener {
-            mode = "finding"
-            nearby.startDiscovery(roomCodeField.text.toString())
-            discoverButton.isEnabled = false
-            hostButton.isEnabled = false
-            hostButton.visibility = View.GONE
-            separator.visibility = View.GONE
-            stopButton.visibility = View.VISIBLE
-            stopButton.isEnabled = true
-            roomCodeField.isEnabled = false
+            if (mode == "entering_room_code") {
+                mode = "finding"
+                nearby.startDiscovery(roomCodeField.text.toString())
+                roomCodeField.isEnabled = false
+                discoverButton.isEnabled = false
+                discoverButton.text = "SEARCHING..."
+                stopButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_close_white_48, 0)
+            } else {
+                discoverButton.isEnabled = (roomCodeField.text.toString().length == 4)
+
+                hostButton.isEnabled = false
+                hostButton.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_top))
+                hostButton.visibility = View.GONE
+
+                stopButton.visibility = View.VISIBLE
+                stopButton.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom))
+                stopButton.isEnabled = true
+
+                roomCodeField.visibility = View.VISIBLE
+                val roomCodeFieldAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_in_top)
+                    roomCodeFieldAnimation.startOffset = 100
+                roomCodeField.startAnimation(roomCodeFieldAnimation)
+                roomCodeField.requestFocus()
+                val imm = context!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(roomCodeField, SHOW_IMPLICIT)
+
+                discoverButton.text = "GO"
+                mode = "entering_room_code"
+            }
         }
         stopButton.setOnClickListener {
-            if (mode == "hosting")
+            if (mode == "hosting") {
                 nearby.stopAdvertising()
-            else if (mode == "finding")
+            } else if (mode == "finding") {
+                roomCodeField.isEnabled = true
+                discoverButton.text = "GO"
                 nearby.stopDiscovery()
-            nearby.disconnectEndpointsAndStop()
-            mode = "none"
-            hostButton.isEnabled = true
-            separator.visibility = View.VISIBLE
-            discoverButton.isEnabled = true
-            discoverButton.visibility = View.VISIBLE
-            stopButton.visibility = View.GONE
-            stopButton.isEnabled = false
-            hostButton.visibility = View.VISIBLE
-            roomCodeField.visibility = View.VISIBLE
-            roomCodeField.isEnabled = true
+                stopButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_arrow_back_white_48, 0)
+            }
+
+            if (mode == "hosting" || mode == "entering_room_code") {
+                nearby.disconnectEndpointsAndStop()
+                mode = "none"
+
+                roomCodeField.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom))
+                roomCodeField.visibility = View.GONE
+                roomCodeField.isEnabled = true
+                val hostButtonAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_in_top)
+                hostButtonAnimation.startOffset = 100
+                hostButton.startAnimation(hostButtonAnimation)
+                hostButton.isEnabled = true
+                discoverButton.isEnabled = true
+                discoverButton.visibility = View.VISIBLE
+                discoverButton.text = "FIND ROOM"
+                stopButton.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_top))
+                stopButton.visibility = View.GONE
+                stopButton.isEnabled = false
+                hostButton.visibility = View.VISIBLE
+            }
+            if (mode == "finding") {
+                mode = "entering_room_code"
+            }
         }
     }
 
@@ -163,9 +204,10 @@ class FindCreateRoomFragment : Fragment()
      */
     fun openRoomLobbyFragment(roomCode: String)
     {
-        val roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
+        roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
         val transaction = fragmentManager!!.beginTransaction()
-            transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment)
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
+            transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment!!)
             transaction.addToBackStack(null)
             transaction.commit()
     }

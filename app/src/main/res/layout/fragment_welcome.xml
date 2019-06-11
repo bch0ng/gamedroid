@@ -57,17 +57,17 @@
                 app:layout_constraintBottom_toTopOf="@+id/btnStartGame" app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginEnd="16dp"/>
-        <Button
-                android:text="Lets' game"
-                android:layout_width="379dp"
-                android:layout_height="48dp"
-                android:id="@+id/btnStartGame"
-                android:textSize="18sp"
-                android:layout_gravity="center"
-                android:background="#03A9F4"
-                android:textColor="@color/common_google_signin_btn_text_dark_pressed"
-                android:layout_marginBottom="64dp"
-                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="16dp"/>
+    <Button
+            android:text="Let's game"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:id="@+id/btnStartGame"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_button"
+            android:layout_gravity="center"
+            android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+            android:layout_marginBottom="64dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"/>
 </android.support.constraint.ConstraintLayout>
