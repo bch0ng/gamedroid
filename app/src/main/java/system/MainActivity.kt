@@ -91,11 +91,10 @@ class MainActivity : AppCompatActivity(){
         }
 
         instructions_videos_page_button.setOnClickListener {
-            val intent = Intent(this, InstructionsVideoListActivity::class.java)
+            val intent = Intent(this, system.InstructionsVideoListActivity::class.java)
             startActivity(intent)
         }
     }
-
 }
 
 

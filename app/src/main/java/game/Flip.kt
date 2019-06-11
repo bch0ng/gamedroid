@@ -6,6 +6,7 @@ import android.util.Log
 
 
 class Flip : Game {
+
     override fun onPause() {
         //
     }
@@ -14,8 +15,10 @@ class Flip : Game {
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onStart() {
+    override fun onStart(name:String) {
         score = 0.0
+        this.name=name
+
         Log.v("test", "Listener Started")
         //this.linearAccelerometer = GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
@@ -80,6 +83,7 @@ class Flip : Game {
         if(valueSum<400){
             accTimeStarted=false
         }
+
         /*else if(accTimeStarted&&valueSum>800.1){
             Log.v("flip","Minor deacc detected started $valueSum")
             accTimeStarted=false

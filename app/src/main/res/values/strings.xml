@@ -1,4 +1,6 @@
 <resources>
+    <!-- DEBUG TAG -->
+    <string name="debug_tag">INFO_448_DEBUG</string>
     <string name="app_name">Info448 Project</string>
     <string name="txtWelcome">Welcome</string>
     <string name="txtName">Please enter your name:</string>
@@ -17,6 +19,7 @@
     <string name="no_sensor_affirmative">Alright...😔</string>
     <string name="hello_blank_fragment">🍆🍆🍆🍆🍆🍆🍆</string>
     <string name="instructions_header">Instruction videos</string>
+
     <!-- TODO: Flip Strings -->
     <string name="restart_button">Restart</string>
     <string name="end_game_button">End Game</string>
@@ -26,5 +29,6 @@
     <string name="safety_message_header">Warning:</string>
     <string name="safety_message_confirmation">I shall comply</string>
     <string name="safety_message">Please use protective wrapping to secure device from kinetic damage.</string>
-    <string name="safety_message_shirt">Take off your shirt and wrap your phone within it. Secure with a tight knot.</string>
+    <string name="safety_message_shirt">Take off your shirt and wrap your phone within it. Secure with a tight knot.
+    </string>
 </resources>

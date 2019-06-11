@@ -197,12 +197,6 @@ class NearbyConnection private constructor(context: Context)
                     } else {
                         sendMessageAll("addPlayer:$username")
                     }
-                    /*
-                    val intent = Intent()
-                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "openTestActivity")
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-                        */
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.d("INFO_448_DEBUG", "Connection rejected")
@@ -216,6 +210,12 @@ class NearbyConnection private constructor(context: Context)
 
         override fun onDisconnected(endpointID: String)
         {
+            if (!isHosting) {
+                val intent = Intent()
+                    intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                    intent.putExtra("closeRoom", "true")
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            }
             Log.d("INFO_448_DEBUG", "Disconnected")
         }
     }
@@ -293,6 +293,18 @@ class NearbyConnection private constructor(context: Context)
                 message = String(receivedBytes, Charsets.UTF_8)
 
                 when {
+                    /**
+                     * Tells the currently displayed activity to open the game list
+                     * activity (if it hasn't already).
+                     *
+                     * @note Only the non-host players will receive these messages.
+                     */
+                    message.startsWith("openGameList:") -> {
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("openGameList", "true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
                     /**
                      * Tells the currently displayed activity to open the game lobby
                      * activity (if it hasn't already) and display the passed room code.
@@ -439,11 +451,13 @@ class NearbyConnection private constructor(context: Context)
     fun disconnectEndpointsAndStop() {
         Log.d("INFO_448_DEBUG", "Remove player in disconnect")
         if (!isHosting) {
+            Log.d("INFO_448_DEBUG", "Player not hosting, so sending remove request")
             sendMessageAll("removePlayer:$username")
         }
         players.clear()
         val nearby = Nearby.getConnectionsClient(context)
         nearby.stopAdvertising()
+        nearby.stopDiscovery()
         nearby.stopAllEndpoints()
         for (id in endpointIDUsernameScoreMap.keys.toList()) {
             nearby.disconnectFromEndpoint(id)

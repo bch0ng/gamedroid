@@ -53,6 +53,7 @@ class PlayModeFragment : Fragment() {
             multibtn.isEnabled = false
             playmode = "Single"
             val intent = Intent(activity, GameActivity::class.java)
+            intent.putExtra("USERNAME",username)
             intent.putExtra("IDENTITY", "Host")
             intent.putExtra("GAMEMODE","Single")
             startActivity(intent)
