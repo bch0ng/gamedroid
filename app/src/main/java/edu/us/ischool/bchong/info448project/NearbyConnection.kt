@@ -422,7 +422,6 @@ class NearbyConnection private constructor(context: Context)
                         val intent = Intent()
                         intent.putExtra("GAME_CHOICE", message.substring(12))
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     else -> {}
