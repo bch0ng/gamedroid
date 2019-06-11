@@ -53,7 +53,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .beginTransaction()
             .replace(R.id.framegame, gameFragment!!, "game_fragment")
             .commit()
-        game.onStart()
+        game.onStart(getString(R.string.default_player_name))
     }
 
     fun onGameResult(username: String, useridentity: String, gamechoice: String, userscore: String, playmode: String) {
@@ -63,6 +63,10 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
+    fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
+        onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
+    }
+
 
     override fun onEndCycle() {
         game.onEnd()
