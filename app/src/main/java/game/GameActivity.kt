@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.R
+import edu.us.ischool.bchong.info448project.Telephone
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
     ScoreBoardFragment.OnScoreboardInteractionListener {
@@ -42,8 +43,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         }*/
         if(gamechoice == "Shake the Soda"){
             game = SodaShake(this)
-        }else if (gamechoice == "Flip the Phone"){
-            game = Flip()
+        } else if (gamechoice == "Flip the Phone"){
+            game = Telephone(this) // Change back to flip
         }
 
         var gameFragment = game.gameFragment as Fragment
