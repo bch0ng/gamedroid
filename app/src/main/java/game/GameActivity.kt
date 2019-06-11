@@ -1,10 +1,7 @@
-package Game
+package game
 
-import android.app.Activity
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.R

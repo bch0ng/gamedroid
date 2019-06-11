@@ -1,4 +1,4 @@
-package Game
+package game
 
 import android.content.Context
 import android.hardware.Sensor
@@ -57,7 +57,7 @@ class SodaShake : Game {
             }
         })
 
-        shakeCapacity = (300..2000).random()
+        shakeCapacity = (50..500).random()
         numOfShakes = 0
         Log.i("TEST", "Shake capacity: $shakeCapacity")
     }
