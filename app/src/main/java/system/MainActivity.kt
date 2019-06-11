@@ -11,13 +11,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.app.AlertDialog
 import android.content.Intent
+import android.util.Log
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity(){
-    //Permission check based on version
+    // Permission check based on version
     private lateinit var startGameButton: Button
     private lateinit var enterName: EditText
     private lateinit var userName: String
@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity(){
                 .setMessage(R.string.no_sensor_text)
                 .setPositiveButton(R.string.no_sensor_affirmative,{
                     dialogInterface, i ->
-
                 })
                 .create()
             dialog.show()
@@ -80,21 +79,22 @@ class MainActivity : AppCompatActivity(){
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
 
-        val welcomePage = WelcomeFragment.newInstance()
-        transaction.replace(R.id.fragmentmain, welcomePage)
-        transaction.commit()
+        if (intent.getStringExtra("MODE") == "GAME_MENU") {
+            val username = intent.getStringExtra("USERNAME")
+            val gameMenu = PlayModeFragment.newInstance(username)
+            transaction.replace(R.id.fragmentmain, gameMenu)
+            transaction.commit()
+        } else {
+            val welcomePage = WelcomeFragment.newInstance()
+            transaction.replace(R.id.fragmentmain, welcomePage)
+            transaction.commit()
+        }
 
         instructions_videos_page_button.setOnClickListener {
             val intent = Intent(this, InstructionsVideoListActivity::class.java)
             startActivity(intent)
         }
     }
-
-
-
-
-    //override fun onPlaymodeInteraction(){}
-
 
 }
 

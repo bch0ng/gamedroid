@@ -57,16 +57,16 @@ class SodaShake : Game {
             }
         })
 
-        shakeCapacity = (50..500).random()
+        shakeCapacity = (50..250).random()
         numOfShakes = 0
         Log.i("TEST", "Shake capacity: $shakeCapacity")
     }
 
     fun explodeSoda() {
+        (gameFragment as SodaShakeFragment).endGame()
         val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
         @Suppress("DEPRECATION")
-        vibrator?.vibrate(1500)
-        (gameFragment as SodaShakeFragment).endGame()
+        vibrator?.vibrate(2000)
         onEnd()
     }
 
