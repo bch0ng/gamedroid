@@ -330,10 +330,6 @@ class NearbyConnection private constructor(context: Context)
                             players[players.indexOf(username)] = players[1]
                             players[1] = username
                         }
-                        if (!isHosting) {
-                            players[0] = players[0] + " (Host)"
-                            players[1] = players[1] + " (You)"
-                        }
                         Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
                         val intent = Intent()
                             intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"

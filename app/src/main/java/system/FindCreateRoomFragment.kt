@@ -105,6 +105,7 @@ class FindCreateRoomFragment : Fragment()
                 roomCodeField.isEnabled = false
                 discoverButton.isEnabled = false
                 discoverButton.text = "SEARCHING..."
+                stopButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_close_white_48, 0)
             } else {
                 discoverButton.isEnabled = false
 
@@ -135,6 +136,7 @@ class FindCreateRoomFragment : Fragment()
                 roomCodeField.isEnabled = true
                 discoverButton.text = "GO"
                 nearby.stopDiscovery()
+                stopButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_rotate_left_white_48, 0)
             }
 
             if (mode == "hosting" || mode == "entering_room_code") {
