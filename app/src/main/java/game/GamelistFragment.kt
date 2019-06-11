@@ -25,7 +25,6 @@ class GamelistFragment : Fragment() {
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
 
-    private lateinit var nearby: NearbyConnection
     private var isBroadcastListenerActive: Boolean = false
 
     private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
@@ -36,20 +35,7 @@ class GamelistFragment : Fragment() {
     private lateinit var nearby: NearbyConnection
 
     private lateinit var gameHost: GameHost
-    val broadCastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(contxt: Context?, intent: Intent?) {
-            if(intent!!.getStringExtra(":dice")!=null){
-                (activity as GamelistFragment.OnGameInteractionListener).onGameStart("Roll the Dice")
-            }
-        }
-    }
-    override fun onResume()
-    {
-        super.onResume()
-        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
-            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
-        )
-    }
+
 
     override fun onPause()
     {
@@ -137,6 +123,9 @@ class GamelistFragment : Fragment() {
                     intent.putExtra("key_response", "closed")
                 activity?.setResult(RESULT_OK, intent)
                 activity?.finish()
+            }
+            if(intent!!.getStringExtra(":dice")!=null){
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart("Roll the Dice")
             }
         }
     }
