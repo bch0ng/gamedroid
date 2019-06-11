@@ -11,6 +11,10 @@ import android.widget.TextView
 
 
 class TelephoneFragment : Fragment(), GameFragment {
+    override fun setNetworkPlayers(thisPlayers: ArrayList<Pair<String, String>>) {
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun setNetworkListener(networkListener: NetworkListener) {
        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.getSystemService
 import android.util.Log
 import android.view.View
+import com.google.android.gms.nearby.Nearby
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.schedule
@@ -20,12 +21,16 @@ import kotlin.concurrent.schedule
 //Game controller for roll the dice
 //WARNING: Use newInstance to set this phone's local gameclient
 class RollTheDiceHost : GameHost {
-    lateinit var players: Array<Pair<String, String>>       //ID and name
+    lateinit var players: ArrayList<Pair<String, String>>       //ID and name
     private lateinit var nearby: NearbyConnection
     private lateinit var context:Context
     //Sets the players
-    override fun setPlayers(playerData: ArrayList<Pair<String, String>>) {
-        players = (playerData.toArray() as Array<Pair<String, String>>)
+    override fun setNetworkPlayers(playerData: ArrayList<String>) {
+        //players = (playerData.toArray() as Array<Pair<String, String>>)
+        players=ArrayList<Pair<String,String>>()
+        playerData.map {
+            players.add(Pair(it, it))
+        }
     }
 
     override fun kickPlayer(id: String) {
@@ -147,10 +152,14 @@ class RollTheDiceHost : GameHost {
         this.localClient.gameFragment!!.setNetworkListener(this)
     }
 
-
+    fun setNearby(nearby:NearbyConnection){
+        this.nearby=nearby
+    }
     //When everything is initialized
     //TODO Remember to call this method from the activity or fragment!!!!!!!!!!!!!!!!!!!!!!!!!!!
     override fun onStart() {
+        Log.v("dice","Dice's on start called")
+        setNetworkPlayers(nearby.getCurrPlayers())
         Timer("endPregame", false).schedule(pregameDuration) {
             gameState = gameStates.INGAME
             nextTurn()
