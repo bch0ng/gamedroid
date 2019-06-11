@@ -1,13 +1,18 @@
 package game
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 
 private const val PLAYMODE = "PLAYMODE"
@@ -20,12 +25,36 @@ class GamelistFragment : Fragment() {
     private lateinit var startgamebtn: Button
 
     private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
-    private var multiPlayerGameNames = arrayOf("Answer the Phone", "Roll the Dice")
+    private var multiPlayerGameNames = arrayOf("Answer the Phone","RollTheDiceHost", "Roll the Dice")
+
     private var listener: OnGameInteractionListener? = null
 
+    private lateinit var nearby: NearbyConnection
 
+    private lateinit var gameHost: GameHost
+    val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            if(intent!!.getStringExtra(":dice")!=null){
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart("Roll the Dice")
+            }
+        }
+    }
+    override fun onResume()
+    {
+        super.onResume()
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
+    }
+
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        nearby = NearbyConnection.instance
         arguments?.let {
             mode = it.getString(PLAYMODE)
             useridentity = it.getString(IDENTITY)
@@ -90,7 +119,9 @@ class GamelistFragment : Fragment() {
     }
 
     interface OnGameInteractionListener {
-        fun onGameStart(gamechoice: String) {}
+        fun onGameStart(gamechoice: String) {
+
+        }
     }
 
     companion object {

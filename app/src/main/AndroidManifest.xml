@@ -29,7 +29,9 @@
         <activity android:name=".GameSelectionActivity"></activity>
         <activity android:name="system.ScoreboardActivity"></activity>
         <activity android:name="game.Gametemple"></activity>
-        <activity android:name="game.GameActivity"></activity>
+        <activity android:name="game.GameActivity"
+                  android:screenOrientation="portrait"
+        ></activity>
         <activity android:name="system.InstructionsVideoListActivity"></activity>
     </application>
 </manifest>

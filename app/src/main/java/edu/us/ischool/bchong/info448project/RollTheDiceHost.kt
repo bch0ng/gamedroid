@@ -21,6 +21,7 @@ import kotlin.concurrent.schedule
 //WARNING: Use newInstance to set this phone's local gameclient
 class RollTheDiceHost : GameHost {
     lateinit var players: Array<Pair<String, String>>       //ID and name
+    private lateinit var nearby: NearbyConnection
 
     //Sets the players
     override fun setPlayers(playerData: ArrayList<Pair<String, String>>) {
@@ -136,13 +137,14 @@ class RollTheDiceHost : GameHost {
     }
 
     override fun sendMessage(message: Bundle) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        nearby.sendMessageAll(message.toString())
     }
 
-    constructor(frag: DiceFragment) {
+    constructor() {
         //TODO: add check if gamefragment is set correctly
+
         this.localClient = RollTheDiceClient()
-        localClient.gameFragment = frag
+        this.localClient.gameFragment!!.setNetworkListener(this)
     }
 
 

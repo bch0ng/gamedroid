@@ -6,9 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import edu.us.ischool.bchong.info448project.NetworkListener
 import edu.us.ischool.bchong.info448project.R
 
 class SodaShakeFragment : Fragment(), GameFragment {
+    override fun setNetworkListener(networkListener: NetworkListener) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     var gameObj: Game? = null
     var sodaImage: ImageView? = null
 

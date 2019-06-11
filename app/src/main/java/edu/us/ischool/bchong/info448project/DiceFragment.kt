@@ -3,7 +3,10 @@ package edu.us.ischool.bchong.info448project
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Network
@@ -18,30 +21,37 @@ import kotlinx.android.synthetic.main.dice.*
 import kotlinx.android.synthetic.main.flip.*
 import kotlinx.android.synthetic.main.postgame_buttons.*
 import android.os.Build
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.content.res.AppCompatResources
 import android.text.Layout
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
+import android.widget.Toast
 import game.Game
 import game.GameApp
 import game.GameFragment
 import kotlinx.android.synthetic.main.activity_main.view.*
+import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 
 class DiceFragment : Fragment(), GameFragment {
+    override fun setNetworkListener(networkListener: NetworkListener) {
+        this.localHost=networkListener as RollTheDiceHost
+    }
 
     override fun newInstance(game: Game): GameFragment {
-        gameObj = game
+        gameObj = game as NetworkGame
         return this
     }
 
-    // TODO: Rename and change types of parameters
+    private lateinit var nearby: NearbyConnection
     private var listener: OnFragmentInteractionListener? = null
-    var gameObj: Game? = null
+    lateinit var gameObj: NetworkGame
     lateinit var gyroscope: Sensor
     lateinit var accelerometer: Sensor
     //lateinit var linearAccelerometer:SensorManager
@@ -54,7 +64,7 @@ class DiceFragment : Fragment(), GameFragment {
     val PLAYERS_KEY = "players"
     val ID_SUFFIX = "Dice"
     lateinit var player: Pair<String, String>
-    lateinit var players: Array<Pair<String, String>>
+    lateinit var players: ArrayList<Pair<String, String>>
     private lateinit var playerDiceVisual: ImageView
 
     //Animation variables
@@ -62,7 +72,7 @@ class DiceFragment : Fragment(), GameFragment {
     var baseWidth = 100
     lateinit var dimensionAnimators: HashMap<String, ValueAnimator>
     lateinit var playerDiceDimAnimator: ValueAnimator
-
+    private var localHost:RollTheDiceHost?=null
     //Shows the name of the player who won
     fun showWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
@@ -72,7 +82,7 @@ class DiceFragment : Fragment(), GameFragment {
     }
 
     //When the starting message is received from the server
-    fun StartGame(myId: Pair<String, String>, allPlayers: Array<Pair<String, String>>) {
+    fun StartGame(myId: Pair<String, String>, allPlayers: ArrayList<Pair<String, String>>) {
         randomCharSet=arrayOf<String>("$","?","@","ß","∫")
         Log.v("dice", "Start game called by server")
         players = allPlayers
@@ -108,7 +118,7 @@ class DiceFragment : Fragment(), GameFragment {
         val playerNameTag: TextView = player_dice.findViewWithTag("player_name") as TextView
         //val inflater=context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (savedInstanceState.containsKey(PLAYERS_KEY)) {
-            players = savedInstanceState.get(PLAYERS_KEY) as Array<Pair<String, String>>
+            players = savedInstanceState.get(PLAYERS_KEY) as ArrayList<Pair<String, String>>
             redrawPlayers()
         }
         if (savedInstanceState.containsKey(PLAYER_KEY)) {
@@ -155,6 +165,12 @@ class DiceFragment : Fragment(), GameFragment {
             postgame_buttons.visibility = View.GONE
             activity!!.finish()
         }
+
+        nearby = NearbyConnection.instance
+        if (nearby.isHosting()) {
+        } else {
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -162,7 +178,19 @@ class DiceFragment : Fragment(), GameFragment {
         arguments?.let {
         }
     }
-
+    fun sendMessage(bundle: Bundle){
+        val keyset=bundle.keySet()
+        var jsonObj = JSONObject()
+        keyset.map {
+            try {
+                // json.put(key, bundle.get(key)); see edit below
+                jsonObj.put(it, JSONObject.wrap(bundle.get(it)));
+            } catch (ex:java.lang.Exception) {
+                //Handle exception here
+            }
+        }
+      nearby.sendMessageAll("dice:${jsonObj.toString()}")
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -313,6 +341,9 @@ class DiceFragment : Fragment(), GameFragment {
     //Reregisters the motion sensors
     override fun onResume() {
         super.onResume()
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
         this.motionSensorController =
             GameApp.applicationContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         motionSensorController.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.let {
@@ -331,12 +362,25 @@ class DiceFragment : Fragment(), GameFragment {
 
     override fun onPause() {
         super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
         cancelAllVisualTimers()
         gameObj!!.onPause()
         this.motionSensorController.unregisterListener(gameObj)
     }
 
+    val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            gameObj.newMessage(intent!!.extras)
+            if(localHost!=null){
+                localHost!!.sendMessage(intent!!.extras)
+            }
+        }
+    }
     companion object : GameFragment {
+        override fun setNetworkListener(networkListener: NetworkListener) {
+            //Doesn't do anything ATM
+        }
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -347,7 +391,7 @@ class DiceFragment : Fragment(), GameFragment {
         @JvmStatic
         override fun newInstance(game: Game): DiceFragment =
             DiceFragment().apply {
-                gameObj = game
+                gameObj = game as NetworkGame
             }
     }
 }

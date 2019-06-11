@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.R
+import edu.us.ischool.bchong.info448project.RollTheDiceClient
+import edu.us.ischool.bchong.info448project.RollTheDiceHost
 import edu.us.ischool.bchong.info448project.Telephone
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
@@ -42,8 +44,11 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
+            "RollTheDiceHost"-> game=RollTheDiceHost().localClient
+            "Roll the Dice"-> game=RollTheDiceClient()
             //TODO "Answer the Phone" and " Roll the Dice"
         }
+
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
@@ -59,9 +64,9 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
-    fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
-        onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
-    }
+    //fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
+      //  onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
+    //}
 
 
     override fun onEndCycle() {
