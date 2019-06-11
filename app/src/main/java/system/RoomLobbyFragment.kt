@@ -1,5 +1,7 @@
 package system
 
+import android.app.Activity.RESULT_OK
+import android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import game.GameActivity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -34,6 +36,8 @@ class RoomLobbyFragment : Fragment()
     private lateinit var playersList: TextView
     private lateinit var closeButton: Button
     private lateinit var startButton: Button
+    private var isBroadcastListenerActive: Boolean = false
+    private var isAlreadyLoaded: Boolean = false
 
     private lateinit var nearby: NearbyConnection
 
@@ -43,12 +47,7 @@ class RoomLobbyFragment : Fragment()
         arguments?.let {
             roomCode = it.getString(ARG_ROOM_CODE)
         }
-
         nearby = NearbyConnection.instance
-
-        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
-            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
-        )
     }
 
     override fun onCreateView(
@@ -72,7 +71,6 @@ class RoomLobbyFragment : Fragment()
         roomCodeShow = view.findViewById(R.id.room_code_show)
         playersList = view.findViewById(R.id.players_list)
         startButton = view.findViewById(R.id.start_button)
-        //closeButton = view.findViewById(R.id.close_button)
 
         roomCodeShow.text = roomCode
 
@@ -93,12 +91,17 @@ class RoomLobbyFragment : Fragment()
                 intent.putExtra("GAMEMODE","Multi")
             startActivity(intent)
         }
+    }
 
-        /*
-        closeButton.setOnClickListener {
-            fragmentManager?.popBackStack()
+    override fun onResume() {
+        super.onResume()
+        if (!isBroadcastListenerActive) {
+            LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(
+                broadCastReceiver,
+                IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+            )
+            isBroadcastListenerActive = true
         }
-        */
     }
 
     /**
@@ -131,6 +134,7 @@ class RoomLobbyFragment : Fragment()
                         startButton.visibility = View.GONE
                     }
                 }
+
                 Toast.makeText(context, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
             } else if (intent.hasExtra("roomCode")) {
                 Log.d("INFO_448_DEBUG", "Broadcast message received: ${intent?.getStringExtra("roomCode")}")
@@ -140,14 +144,43 @@ class RoomLobbyFragment : Fragment()
                 }
             } else if (intent.hasExtra("openGameList")) {
                 LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
-                val intent = Intent(activity, GameActivity::class.java)
+                isBroadcastListenerActive = false
+                val intent = Intent(context, GameActivity::class.java)
                     intent.putExtra("IDENTITY", "Guest")
                     intent.putExtra("GAMEMODE","Multi")
-                startActivity(intent)
+                startActivityForResult(intent, 0)
             } else if (intent.hasExtra("closeRoom")) {
-                fragmentManager?.popBackStack()
+                closeRoomLobbyFragment()
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent)
+    {
+        // Check which request we're responding to
+        Log.d("INFO_448_DEBUG", "RETURNED FROM GAME LIST")
+        if (requestCode == 0) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                if (data.hasExtra("key_response")) {
+                    if (data.getStringExtra("key_response") == "closed") {
+                        closeRoomLobbyFragment()
+                    }
+                }
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            }
+        }
+    }
+
+    fun closeRoomLobbyFragment()
+    {
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+        isBroadcastListenerActive = false
+        fragmentManager!!.popBackStack()
+        Toast.makeText(activity, "Host closed the room.", Toast.LENGTH_SHORT).show()
     }
 
     companion object

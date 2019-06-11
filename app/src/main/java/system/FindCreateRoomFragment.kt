@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 

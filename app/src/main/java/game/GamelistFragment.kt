@@ -1,8 +1,14 @@
 package game
 
+import android.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +16,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
+import system.FindCreateRoomFragment
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+
 
 private const val PLAYMODE = "PLAYMODE"
 private const val IDENTITY = "IDENTITY"
@@ -19,6 +29,9 @@ class GamelistFragment : Fragment() {
     private var useridentity: String? = null
     private lateinit var gamechoice: String
     private lateinit var startgamebtn: Button
+
+    private lateinit var nearby: NearbyConnection
+    private var isBroadcastListenerActive: Boolean = false
 
     private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
     private var multiPlayerGameNames = arrayOf("Answer the Phone", "Roll the Dice")
@@ -30,8 +43,8 @@ class GamelistFragment : Fragment() {
         arguments?.let {
             mode = it.getString(PLAYMODE)
             useridentity = it.getString(IDENTITY)
-
         }
+        nearby = NearbyConnection.instance
     }
 
     override fun onCreateView(
@@ -85,6 +98,36 @@ class GamelistFragment : Fragment() {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+        }
+    }
+
+    /**
+     * Listens to any broadcast messages.
+     *
+     * @note: If it receives a room code message, it will open the room lobby fragment.
+     */
+    private val broadCastReceiver = object : BroadcastReceiver()
+    {
+        override fun onReceive(contxt: Context?, intent: Intent?)
+        {
+            if (intent?.hasExtra("closeRoom")!!) {
+                LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
+                isBroadcastListenerActive = false
+                val intent = Intent()
+                    intent.putExtra("key_response", "closed")
+                activity?.setResult(RESULT_OK, intent)
+                activity?.finish()
+            }
+        }
+    }
+
+    override fun onResume()
+    {
+        super.onResume()
+        if (!isBroadcastListenerActive) {
+            LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+                IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+            )
         }
     }
 
