@@ -44,7 +44,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         if(gamechoice == "Shake the Soda"){
             game = SodaShake(this)
         } else if (gamechoice == "Flip the Phone"){
-            game = Telephone(this) // Change back to flip
+            game = Flip() 
         }
 
         var gameFragment = game.gameFragment as Fragment

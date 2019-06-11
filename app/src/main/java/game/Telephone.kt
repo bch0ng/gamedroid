@@ -78,6 +78,7 @@ class Telephone: Game, Service {
                                 audioPlayer?.stop()
                                 // TODO: Show win or lose text depending on who wins or loses
                                 (gameFragment as TelephoneFragment).showWinText()
+                                onEnd()
                             }
 
                         } else if (gz < 0) {
