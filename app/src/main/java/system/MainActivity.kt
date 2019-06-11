@@ -14,6 +14,7 @@ import android.content.Intent
 import android.util.Log
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
+import game.GameApp
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(){
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        GameApp()
         setContentView(R.layout.activity_main)
 
         NearbyConnection.initialize(this)
