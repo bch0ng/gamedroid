@@ -57,7 +57,7 @@ class SodaShake : Game {
             }
         })
 
-        shakeCapacity = (300..2000).random()
+        shakeCapacity = (50..500).random()
         numOfShakes = 0
         Log.i("TEST", "Shake capacity: $shakeCapacity")
     }
