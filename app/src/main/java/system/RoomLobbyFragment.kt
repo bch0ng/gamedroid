@@ -179,6 +179,7 @@ class RoomLobbyFragment : Fragment()
                 if (roomCodeShow.text.toString().isBlank()) {
                     val message = intent?.getStringExtra("roomCode")
                     roomCodeShow.text = message
+
                 }
             } else if (intent.hasExtra("openGameList")) {
                 if (!isGameListOpen) {
@@ -188,7 +189,7 @@ class RoomLobbyFragment : Fragment()
                     intent.putExtra("IDENTITY", "Guest")
                     intent.putExtra("GAMEMODE", "Multi")
                     startActivityForResult(intent, 0)
-                    activity?.overridePendingTransition(R.anim.pop_in_fade, R.anim.pop_out_fade)
+                    activity?.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left)
                     isGameListOpen = true
                 }
             } else if (intent.hasExtra("closeRoom")) {
