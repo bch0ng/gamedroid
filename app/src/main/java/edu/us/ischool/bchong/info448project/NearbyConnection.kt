@@ -1,27 +1,35 @@
 package edu.us.ischool.bchong.info448project
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import java.util.concurrent.atomic.AtomicBoolean
 
-const val USER_NICKNAME: String = "info448project"
-const val SERVICE_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
-const val ROOM_CODE_LENGTH: Int = 4
+private const val ROOM_ID_BASE: String = "edu.us.ischool.bchong.info448project_"
+private const val ROOM_CODE_LENGTH: Int = 4
+private const val USERNAME_NOT_SET_STRING: String = "username_not_set"
+private const val ROOM_CODE_NOT_SET_STRING: String = "room_code_not_set"
+private val CONNECTION_STRATEGY: Strategy = Strategy.P2P_STAR
 
+/**
+ * A wrapper class for Google's Nearby Connections API
+ * that takes a context to call the Nearby Connections client.
+ *
+ * @param context   context to call Nearby Connections client
+ */
 class NearbyConnection private constructor(context: Context)
 {
-    private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private var endpointIDUsernameScoreMap: MutableMap<String, Pair<String, String?>>
+            = HashMap() // Key: EndpointID, Value: <Username, Score>
+    private val context: Context = context
+    private var isHosting: Boolean = false
+    private var username: String = USERNAME_NOT_SET_STRING
+    private var roomCode: String = ROOM_CODE_NOT_SET_STRING
 
-    private var endpointIDList: ArrayList<String> = ArrayList()
-    private var endpointIDUsernameScoreMap: MutableMap<String, Pair<String, String?>> = HashMap()
-    private var broadcastMessage: String = ""
-    private val context = context
+    private var players: ArrayList<String> = ArrayList() // [0] is host, [1] is curr player if not host
 
     companion object {
         private lateinit var INSTANCE: NearbyConnection
@@ -36,123 +44,144 @@ class NearbyConnection private constructor(context: Context)
         }
     }
 
+    /**
+     * Returns the current user's name
+     *
+     * @return username string
+     */
+    fun getMyUsername(): String
+    {
+        return username
+    }
+
+    /**
+     * Returns whether the current user is the host of the game lobby.
+     *
+     * @return true if advertising,
+     *         false otherwise
+     */
+    fun isHosting(): Boolean
+    {
+        return isHosting
+    }
+
+    /**
+     * Returns the context the connection is based off of.
+     *
+     * @return context
+     */
     fun getContext(): Context
     {
         return context
     }
 
+    /**
+     * Returns the Nearby Connections client
+     *
+     * @return connection client
+     */
     fun getClient(): ConnectionsClient
     {
         return Nearby.getConnectionsClient(context)
     }
 
+    /**
+     * Sets the current user's name
+     *
+     * @param newUsername   user's new name
+     */
+    fun setUsername(newUsername: String)
+    {
+        username = newUsername
+    }
+
+    /**
+     * Creates a room and advertises it to all nearby players and sets the current
+     * user as the host. Then returns the generated room code to enter.
+     *
+     * @return room code
+     */
     fun startAdvertising(): String
     {
-        val advertisingOptions = AdvertisingOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
-
-        val roomCode = (1..ROOM_CODE_LENGTH)
-            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-            .map(charPool::get)
+        players.add(username)
+        isHosting = true
+        val advertisingOptions =
+                AdvertisingOptions.Builder().setStrategy(CONNECTION_STRATEGY).build()
+        roomCode = (1..ROOM_CODE_LENGTH)
+            .map { kotlin.random.Random.nextInt(0, 9) }
             .joinToString("")
         Log.d("INFO_448_DEBUG", roomCode)
-
         Nearby.getConnectionsClient(context)
             .startAdvertising(
-                USER_NICKNAME, SERVICE_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
+                username, ROOM_ID_BASE + roomCode, connectionLifecycleCallback, advertisingOptions
             )
             .addOnSuccessListener { unused: Void? ->
-                // We're advertising!
                 Log.d("INFO_448_DEBUG", "Advertising!")
             }
             .addOnFailureListener { e: Exception ->
-                // We were unable to start advertising.
                 Log.d("INFO_448_DEBUG", "Not Advertising\n" + e.message)
             }
         return roomCode
     }
 
-    fun stopAdvertising()
-    {
-        Nearby.getConnectionsClient(context).stopAdvertising()
-        Log.d("INFO_448_DEBUG", "Stopped Advertising")
-    }
-
+    /**
+     * Searches for all nearby room with given room code.
+     *
+     * @param roomCode  room code to enter room
+     */
     fun startDiscovery(roomCode: String)
     {
         Log.d("INFO_448_DEBUG", roomCode)
-        val discoveryOptions = DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build()
+        val discoveryOptions =
+                DiscoveryOptions.Builder().setStrategy(CONNECTION_STRATEGY).build()
         Nearby.getConnectionsClient(context)
-            .startDiscovery(SERVICE_ID_BASE + roomCode, endpointDiscoveryCallback, discoveryOptions)
+            .startDiscovery(ROOM_ID_BASE + roomCode, endpointDiscoveryCallback, discoveryOptions)
             .addOnSuccessListener {
-                // We're discovering!
                 Log.d("INFO_448_DEBUG", "Discovering")
             }
             .addOnFailureListener { e: Exception ->
-                // We're unable to start discovering.
                 Log.d("INFO_448_DEBUG", "Not Discovering\n" + e.message)
             }
     }
 
-    fun stopDiscovery()
-    {
-        Nearby.getConnectionsClient(context).stopDiscovery()
-        Log.d("INFO_448_DEBUG", "Stopped Discovering")
-    }
-
-    fun sendMessage(endpointID: String, message: String)
-    {
-        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
-        Nearby.getConnectionsClient(context).sendPayload(endpointID, bytesPayload)
-    }
-
-    fun sendMessageAll(message: String)
-    {
-        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
-        Nearby.getConnectionsClient(context).sendPayload(endpointIDList, bytesPayload)
-    }
-
-    fun disconnectEndpoints() {
-        val nearby = Nearby.getConnectionsClient(context)
-        nearby.stopAdvertising()
-        nearby.stopAllEndpoints()
-        for (id in endpointIDList) {
-            nearby.disconnectFromEndpoint(id)
-        }
-    }
-
+    /**
+     * Called after discovering a room with the room code.
+     *
+     * @note: Only for discovering users.
+     */
     private val endpointDiscoveryCallback = object : EndpointDiscoveryCallback()
     {
         override fun onEndpointFound(endpointID: String, info: DiscoveredEndpointInfo)
         {
-            // An endpoint was found. We request a connection to it.
             Log.d("INFO_448_DEBUG", "Endpoint Found")
             Nearby.getConnectionsClient(context)
-                .requestConnection(USER_NICKNAME, endpointID, connectionLifecycleCallback)
+                .requestConnection(username, endpointID, connectionLifecycleCallback)
                 .addOnSuccessListener {
-                    // We successfully requested a connection. Now both sides
-                    // must accept before the connection is established.
-                    endpointIDList.add(endpointID)
                     stopDiscovery()
+                    players.add(username)
                     Log.d("INFO_448_DEBUG", "Connection success (join)")
                 }
                 .addOnFailureListener { e: Exception ->
-                    // Nearby Connections failed to request the connection.
                     Log.d("INFO_448_DEBUG", "Connection Failed\n" + e.message)
                 }
         }
 
         override fun onEndpointLost(endpointID: String)
         {
-            // A previously discovered endpoint has gone away.
             Log.d("INFO_448_DEBUG", "Endpoint Lost")
         }
     }
 
+    /**
+     * Called after successfully connecting to a player or room.
+     *
+     * @note: For both advertising and discovering users.
+     */
     private val connectionLifecycleCallback = object : ConnectionLifecycleCallback()
     {
-        override fun onConnectionInitiated(endpointID: String, connectionInfo: ConnectionInfo)
+        override fun onConnectionInitiated(endpointID: String,
+                                           connectionInfo: ConnectionInfo)
         {
-            // Automatically accept the connection on both sides.
             Nearby.getConnectionsClient(context)
                 .acceptConnection(endpointID, receivePayloadCallback)
         }
@@ -161,12 +190,19 @@ class NearbyConnection private constructor(context: Context)
         {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
-                    endpointIDList.add(endpointID)
                     Log.d("INFO_448_DEBUG", "Connection success")
+                    endpointIDUsernameScoreMap[endpointID] = Pair(endpointID, null)
+                    if (isHosting) {
+                        sendMessageAll("roomCode:$roomCode")
+                    } else {
+                        sendMessageAll("addPlayer:$username")
+                    }
+                    /*
                     val intent = Intent()
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "HELLO WORLD")
+                        intent.putExtra("message", "openTestActivity")
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        */
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.d("INFO_448_DEBUG", "Connection rejected")
@@ -174,66 +210,243 @@ class NearbyConnection private constructor(context: Context)
                 ConnectionsStatusCodes.STATUS_ERROR -> {
                     Log.d("INFO_448_DEBUG", "Error")
                 }
-            }// We're connected! Can now start sending and receiving data.
-            // The connection was rejected by one or both sides.
-            // The connection broke before it was able to be accepted.
-            // Unknown status code
+            }
             Log.d("INFO_448_DEBUG", "Connected")
         }
 
         override fun onDisconnected(endpointID: String)
         {
-            // We've been disconnected from this endpoint. No more data can be
-            // sent or received.
             Log.d("INFO_448_DEBUG", "Disconnected")
         }
     }
 
+    /**
+     * Stops advertising the room to other players.
+     */
+    fun stopAdvertising()
+    {
+        Nearby.getConnectionsClient(context).stopAdvertising()
+        isHosting = false
+        Log.d("INFO_448_DEBUG", "Stopped Advertising")
+    }
+
+    /**
+     * Stop searching for a nearby room.
+     */
+    fun stopDiscovery()
+    {
+        Nearby.getConnectionsClient(context).stopDiscovery()
+        Log.d("INFO_448_DEBUG", "Stopped Discovering")
+    }
+
+    /**
+     * Returns a list of all current players in the game room.
+     *
+     * @return  list of all current players
+     */
+    fun getCurrPlayers(): ArrayList<String>
+    {
+        return players
+    }
+
+    /**
+     * Send a message to a specific connected user using their endpointID.
+     *
+     * @param endpointID    other user to send a message
+     * @param message       message string
+     */
+    fun sendMessage(endpointID: String, message: String)
+    {
+        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
+        Nearby.getConnectionsClient(context).sendPayload(endpointID, bytesPayload)
+    }
+
+    /**
+     * Send a message to all connected users using their endpointID.
+     *
+     * @param message   message string
+     */
+    fun sendMessageAll(message: String)
+    {
+        val bytesPayload = Payload.fromBytes(message.toByteArray(Charsets.UTF_8))
+        Nearby.getConnectionsClient(context)
+                .sendPayload(endpointIDUsernameScoreMap.keys.toList(), bytesPayload)
+    }
+
+    /**
+     * Called after receiving a message from a user through sendMessage()
+     * or sendMessageAll().
+     */
     val receivePayloadCallback = object : PayloadCallback()
     {
+        /**
+         * Message received.
+         *
+         * @param endpointID    user who sent the message
+         * @param payload       message payload
+         */
         override fun onPayloadReceived(endpointID: String, payload: Payload)
         {
-            // This always gets the full data of the payload. Will be null if it's not a BYTES
-            // payload. You can check the payload type with payload.getType().
             val receivedBytes = payload.asBytes()
             var message = ""
-            Log.d("INFO_448_DEBUG", (receivedBytes != null).toString())
             if (receivedBytes != null) {
                 message = String(receivedBytes, Charsets.UTF_8)
 
                 when {
-                    message.startsWith("username:") -> {
-                        Log.d("INFO_448_DEBUG", "Message starts with 'username:'")
-                        endpointIDUsernameScoreMap[endpointID] = Pair(message.substring(9, message.length), null)
+                    /**
+                     * Tells the currently displayed activity to open the game lobby
+                     * activity (if it hasn't already) and display the passed room code.
+                     *
+                     * @note Only the non-host players will receive these messages.
+                     */
+                    message.startsWith("roomCode:") -> {
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("roomCode", message.substring(9))
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
+                    /**
+                     * Tells the currently displayed activity to update
+                     * their room information.
+                     *
+                     * @note Only the non-host players will receive these messages.
+                     */
+                    message.startsWith("updateRoom:") -> {
+                        players = ArrayList(message.substring(11)
+                            .split(",").toList())
+                        if (players[1] != username) {
+                            players[players.indexOf(username)] = players[1]
+                            players[1] = username
+                        }
+                        if (!isHosting) {
+                            players[0] = players[0] + " (Host)"
+                            players[1] = players[1] + " (You)"
+                        }
+                        Log.d("INFO_448_DEBUG", "UPDATE ROOM: $message")
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    /**
+                     * Adds a player's username to the players list and tells the
+                     * currently displayed activity to update their room information
+                     *
+                     * @note: Only the host will receive these messages.
+                     */
+                    message.startsWith("addPlayer:") -> {
+                        var playerUsername = message.substring(10)
+                        Log.d("INFO_448_DEBUG", "Message to ADD PLAYER")
+                        players.add(playerUsername)
+                        if (isHosting) {
+                            sendMessageAll("updateRoom:${players.joinToString(separator = ",") { it }}")
+                        }
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("message", "updateRoom:true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    /**
+                     * Removes a player from the players list and tells the currently
+                     * displayed activity to update their room information
+                     *
+                     * @note: Only the host will receive these messages.
+                     */
+                    message.startsWith("removePlayer:") -> {
+                        val playerUsername = message.substring(13)
+                        Log.d("INFO_448_DEBUG", "REMOVING PLAYER: $playerUsername")
+                        Log.d("INFO_448_DEBUG", players.toString())
+                        Log.d("INFO_448_DEBUG", players.contains(playerUsername).toString())
+                        if (players.contains(playerUsername)) {
+                            players.remove(playerUsername)
+                            val intent = Intent()
+                                intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                                intent.putExtra("message", "updateRoom:true")
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        }
+                    }
+                    /**
+                     * TODO?
+                     */
+                    message.startsWith("room:") -> {
+                        /*
+                            room: {
+                                host: {
+                                    endpoint: ?
+                                    username: ?
+                                    score: ?
+                                },
+                                players: [
+                                    {
+                                        endpoint: ?
+                                        username: ?
+                                        score: ?
+                                    },
+                                    {
+                                        endpoint: ?
+                                        username: ?
+                                        score: ?
+                                    }
+                                ]
+                            }
+                         */
+                    }
+                    /**
+                     * TODO?
+                     */
                     message.startsWith("score:") -> {
                         Log.d("INFO_448_DEBUG", "Message starts with 'score:'")
                         val value: Pair<String, String?>? = endpointIDUsernameScoreMap[endpointID]
-                        endpointIDUsernameScoreMap[endpointID] = Pair(value!!.first, message.substring(6, message.length))
+                        endpointIDUsernameScoreMap[endpointID] =
+                            Pair(value!!.first,message.substring(6))
                     }
+                    /**
+                     * @note: JUST FOR TESTING; PLEASE REMOVE FOR PRODUCTION
+                     */
                     message.startsWith("test:") -> {
                         Log.d("INFO_448_DEBUG", "Message starts with 'test:'")
                         val intent = Intent()
-                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                            intent.putExtra("message", "HELLO MARS")
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                        intent.putExtra("message", "HELLO MARS")
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     else -> {}
                 }
             }
             Log.d("INFO_448_DEBUG", "Payload Received: $message")
-            //Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
         }
 
+        /**
+         * Checks the status of receiving of a message.
+         *
+         * @note: Bytes payloads are sent as a single chunk, so you'll receive a
+         *        SUCCESS update immediately after the call to onPayloadReceived().
+         *
+         * @param endpointID    user who sent the message
+         * @param update        status of receiving
+         */
         override fun onPayloadTransferUpdate(endpointID: String, update: PayloadTransferUpdate)
         {
-            // Bytes payloads are sent as a single chunk, so you'll receive a SUCCESS update immediately
-            // after the call to onPayloadReceived().
             if (update.status == PayloadTransferUpdate.Status.SUCCESS) {
                 Log.d("INFO_448_DEBUG", "Payload successfully sent")
             }
         }
     }
 
-
+    /**
+     * Disconnect from all connected users and stop advertising/discovering.
+     */
+    fun disconnectEndpointsAndStop() {
+        Log.d("INFO_448_DEBUG", "Remove player in disconnect")
+        if (!isHosting) {
+            sendMessageAll("removePlayer:$username")
+        }
+        players.clear()
+        val nearby = Nearby.getConnectionsClient(context)
+        nearby.stopAdvertising()
+        nearby.stopAllEndpoints()
+        for (id in endpointIDUsernameScoreMap.keys.toList()) {
+            nearby.disconnectFromEndpoint(id)
+        }
+    }
 }

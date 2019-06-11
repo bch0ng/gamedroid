@@ -1,62 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="match_parent"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="128dp"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="128dp" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
-            android:id="@+id/linearLayout4">
-        <Button
-                android:text="Host"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonHost"
-                android:gravity="center"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFC107"
-                android:textSize="18sp"/>
-        <Button
-                android:text="Guest1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonGuest1"
-                android:gravity="center"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFEB3B"/>
-        <Button
-                android:text="Guest2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonGuest2"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFEB3B"/>
-        <Button
-                android:text="Guest3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonGuest3"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFEB3B"/>
-        <Button
-                android:text="Guest4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonGuest4"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFEB3B"/>
-        <Button
-                android:text="Guest5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonGuest5"
-                android:layout_weight="1" android:layout_gravity="center" android:background="#FFEB3B"/>
-    </LinearLayout>
-    <Button
-            android:text="Start"
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:tools="http://schemas.android.com/tools"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         xmlns:app="http://schemas.android.com/apk/res-auto"
+         tools:context="System.GameroomActivity">
+    <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/buttonStartGame"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" android:background="#03A9F4"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" android:textSize="18sp"/>
+            android:layout_height="0dp" android:id="@+id/fragment_find_create_room"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp">
 
-
+    </FrameLayout>
 </android.support.constraint.ConstraintLayout>
