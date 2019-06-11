@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 import edu.us.ischool.bchong.info448project.Telephone
 
@@ -20,8 +21,12 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         identity = intent.getStringExtra("IDENTITY")
-        username = intent.getStringExtra("USERNAME")
         mode = intent.getStringExtra("GAMEMODE")
+        if (mode == "Single") {
+            username = intent.getStringExtra("USERNAME")
+        } else if (mode == "Multi") {
+            username = NearbyConnection.instance.getMyUsername()
+        }
         Log.e("game", "The mode is" + mode)
         onGameSelect(mode, identity)
     }
@@ -60,7 +65,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .commit()
     }
     fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
-        onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
+        onGameResult("0")
     }
 
 
