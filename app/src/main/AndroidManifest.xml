@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-permission android:name="android.permission.VIBRATE"/>
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,19 +17,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name="System.MainActivity" >
+        <activity android:name="system.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".PlayModeActivity"></activity>
-        <activity android:name="System.GameroomActivity"></activity>
-        <activity android:name=".GameSelectionActivity"></activity>
-        <activity android:name="System.ScoreboardActivity"></activity>
-        <activity android:name="Game.Gametemple"></activity>
-        <activity android:name="Game.GameActivity"></activity>
-        <activity android:name="System.InstructionsVideoListActivity"></activity>
+        <activity android:name="system.GameroomActivity"></activity>
+        <activity android:name="game.GameActivity"></activity>
+        <activity android:name="system.InstructionsVideoListActivity"></activity>
+
+        <service
+                android:enabled="true"
+                android:name="system.MultiRoomService"
+                android:exported="false"
+                android:stopWithTask="false" />
     </application>
 </manifest>

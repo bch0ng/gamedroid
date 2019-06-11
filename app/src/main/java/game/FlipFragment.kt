@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import edu.us.ischool.bchong.info448project.R
 import kotlinx.android.synthetic.main.fragment_flip.*
+import kotlinx.android.synthetic.main.fragment_score_board.*
 
 
 /**
@@ -36,7 +37,7 @@ class FlipFragment : Fragment(),GameFragment {
     }
 
     private var listener: OnFragmentInteractionListener? = null
-    var gameObj:Game?=null
+    lateinit var gameObj:Game
     lateinit var gyroscope:Sensor
     lateinit var accelerometer:Sensor
     //lateinit var linearAccelerometer:SensorManager
@@ -49,12 +50,22 @@ class FlipFragment : Fragment(),GameFragment {
     var colorB=50
     var colorGMax=102
     var colorBMax=132
-
+    val name="?????"
+    override fun onStop() {
+        super.onStop()
+        if(gameObj!=null){
+            val gameActivity=activity as GameActivity
+           // gameActivity.showScoreBoard(name,"Flip",gameObj.onEnd())
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
     }
+    //fun onBackPressed() {
+       // onStop()
+    //}
 
     //Set the buttons
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,5 +1,6 @@
 package system
 
+import game.GameActivity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -32,6 +33,7 @@ class RoomLobbyFragment : Fragment()
     private lateinit var roomCodeShow: TextView
     private lateinit var playersList: TextView
     private lateinit var closeButton: Button
+    private lateinit var startButton: Button
 
     private lateinit var nearby: NearbyConnection
 
@@ -41,6 +43,12 @@ class RoomLobbyFragment : Fragment()
         arguments?.let {
             roomCode = it.getString(ARG_ROOM_CODE)
         }
+
+        nearby = NearbyConnection.instance
+
+        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
     }
 
     override fun onCreateView(
@@ -61,11 +69,10 @@ class RoomLobbyFragment : Fragment()
      */
     private fun handleView(view: View)
     {
-        nearby = NearbyConnection.instance
-
         roomCodeShow = view.findViewById(R.id.room_code_show)
         playersList = view.findViewById(R.id.players_list)
-        closeButton = view.findViewById(R.id.close_button)
+        startButton = view.findViewById(R.id.start_button)
+        //closeButton = view.findViewById(R.id.close_button)
 
         roomCodeShow.text = roomCode
 
@@ -79,9 +86,19 @@ class RoomLobbyFragment : Fragment()
             }
         }
 
+        startButton.setOnClickListener {
+            nearby.sendMessageAll("openGameList:true")
+            val intent = Intent(activity, GameActivity::class.java)
+                intent.putExtra("IDENTITY", "Host")
+                intent.putExtra("GAMEMODE","Multi")
+            startActivity(intent)
+        }
+
+        /*
         closeButton.setOnClickListener {
             fragmentManager?.popBackStack()
         }
+        */
     }
 
     /**
@@ -106,6 +123,13 @@ class RoomLobbyFragment : Fragment()
                             playersList.text = playersList.text.toString() + "\n" + player
                         }
                     }
+                    if (nearby.isHosting() && nearby.getCurrPlayers().size > 1 && !startButton.isEnabled) {
+                        startButton.isEnabled = true
+                        startButton.visibility = View.VISIBLE
+                    } else if (!nearby.isHosting()) {
+                        startButton.isEnabled = false
+                        startButton.visibility = View.GONE
+                    }
                 }
                 Toast.makeText(context, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
             } else if (intent.hasExtra("roomCode")) {
@@ -114,24 +138,14 @@ class RoomLobbyFragment : Fragment()
                     val message = intent?.getStringExtra("roomCode")
                     roomCodeShow.text = message
                 }
+            } else if (intent.hasExtra("openGameList")) {
+                LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
+                val intent = Intent(activity, GameActivity::class.java)
+                    intent.putExtra("IDENTITY", "Player")
+                    intent.putExtra("GAMEMODE","Multi")
+                startActivity(intent)
             }
         }
-    }
-
-    override fun onResume()
-    {
-        super.onResume()
-        LocalBroadcastManager.getInstance(nearby.getContext()).registerReceiver(broadCastReceiver,
-            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
-        )
-    }
-
-    override fun onPause()
-    {
-        super.onPause()
-        nearby.stopDiscovery()
-        nearby.stopAdvertising()
-        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
 
     companion object

@@ -85,17 +85,10 @@ class MainActivity : AppCompatActivity(){
         transaction.commit()
 
         instructions_videos_page_button.setOnClickListener {
-            val intent = Intent(this, System.InstructionsVideoListActivity::class.java)
+            val intent = Intent(this, system.InstructionsVideoListActivity::class.java)
             startActivity(intent)
         }
     }
-
-
-
-
-    //override fun onPlaymodeInteraction(){}
-
-
 }
 
 
