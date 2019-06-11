@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.R
+import edu.us.ischool.bchong.info448project.Telephone
 
 class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionListener,
     ScoreBoardFragment.OnScoreboardInteractionListener {
