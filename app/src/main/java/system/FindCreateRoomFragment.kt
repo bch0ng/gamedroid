@@ -43,6 +43,8 @@ class FindCreateRoomFragment : Fragment()
     private lateinit var stopButton: Button
     private lateinit var roomCodeField: EditText
 
+    private var roomLobbyFragment: RoomLobbyFragment? = null
+
     private lateinit var nearby: NearbyConnection
 
     override fun onCreateView(
@@ -67,6 +69,9 @@ class FindCreateRoomFragment : Fragment()
         nearby = NearbyConnection.instance
 
         // Stops advertising or discovering if coming back from room lobby fragment.
+        if (roomLobbyFragment != null) {
+            fragmentManager!!.beginTransaction().remove(roomLobbyFragment!!).commit()
+        }
         if (nearby.getCurrPlayers().size > 1) {
             nearby.disconnectEndpointsAndStop()
         } else {
@@ -202,10 +207,10 @@ class FindCreateRoomFragment : Fragment()
      */
     fun openRoomLobbyFragment(roomCode: String)
     {
-        val roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
+        roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
         val transaction = fragmentManager!!.beginTransaction()
-            //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
-            transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment)
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
+            transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment!!)
             transaction.addToBackStack(null)
             transaction.commit()
     }
