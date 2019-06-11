@@ -22,7 +22,7 @@ class Telephone: Game, Service {
     var timer: Timer? = null
     var audioPlayer: MediaPlayer? = null
     var didGameStart = false
-
+    lateinit var name:String
     private var mGZ = 0f//gravity acceleration along the z axis
     private var mEventCountSinceGZChanged = 0
     private val MAX_COUNT_GZ_CHANGE = 10
@@ -33,7 +33,8 @@ class Telephone: Game, Service {
         gameFragment = TelephoneFragment().newInstance(this)
     }
 
-    override fun onStart() {
+    override fun onStart(name:String) {
+        this.name=name
         mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
 
         mSensorManager?.registerListener(this,

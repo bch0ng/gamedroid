@@ -17,6 +17,8 @@ import android.support.v4.content.ContextCompat.getSystemService
 
 
 class SodaShake : Game {
+
+    lateinit var name:String
     override var gameFragment: GameFragment? = null
     private var shakeCapacity: Int = 0
     private var numOfShakes: Int = 0
@@ -53,7 +55,8 @@ class SodaShake : Game {
     }
 
 
-    override fun onStart() {
+    override fun onStart(name:String) {
+        this.name=name
         vibrator=context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         mSensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mAccelerometer = mSensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
