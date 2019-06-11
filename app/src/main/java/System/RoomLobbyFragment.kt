@@ -1,5 +1,6 @@
 package System
 
+import Game.GameActivity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -34,6 +35,7 @@ class RoomLobbyFragment : Fragment()
     private lateinit var roomCodeShow: TextView
     private lateinit var playersList: TextView
     private lateinit var closeButton: Button
+    private lateinit var startButton: Button
 
     private lateinit var nearby: NearbyConnection
 
@@ -67,7 +69,8 @@ class RoomLobbyFragment : Fragment()
 
         roomCodeShow = view.findViewById(R.id.room_code_show)
         playersList = view.findViewById(R.id.players_list)
-        closeButton = view.findViewById(R.id.close_button)
+        startButton = view.findViewById(R.id.start_button)
+        //closeButton = view.findViewById(R.id.close_button)
 
         roomCodeShow.text = roomCode
 
@@ -81,9 +84,19 @@ class RoomLobbyFragment : Fragment()
             }
         }
 
+        startButton.setOnClickListener {
+            nearby.sendMessageAll("openGameList:true")
+            val intent = Intent(activity, GameActivity::class.java)
+                intent.putExtra("IDENTITY", "Host")
+                intent.putExtra("GAMEMODE","Multi")
+            startActivity(intent)
+        }
+
+        /*
         closeButton.setOnClickListener {
             fragmentManager?.popBackStack()
         }
+        */
     }
 
     /**
@@ -108,6 +121,13 @@ class RoomLobbyFragment : Fragment()
                             playersList.text = playersList.text.toString() + "\n" + player
                         }
                     }
+                    if (nearby.isHosting() && !startButton.isEnabled && nearby.getCurrPlayers().size > 1) {
+                        startButton.isEnabled = true
+                        startButton.visibility = View.VISIBLE
+                    } else {
+                        startButton.isEnabled = false
+                        startButton.visibility = View.GONE
+                    }
                 }
                 Toast.makeText(context, intent?.getStringExtra("message"), Toast.LENGTH_SHORT).show()
             } else if (intent.hasExtra("roomCode")) {
@@ -116,6 +136,11 @@ class RoomLobbyFragment : Fragment()
                     val message = intent?.getStringExtra("roomCode")
                     roomCodeShow.text = message
                 }
+            } else if (intent.hasExtra("openGameList")) {
+                val intent = Intent(activity, GameActivity::class.java)
+                    intent.putExtra("IDENTITY", "Player")
+                    intent.putExtra("GAMEMODE","Multi")
+                startActivity(intent)
             }
         }
     }

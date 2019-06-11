@@ -294,6 +294,18 @@ class NearbyConnection private constructor(context: Context)
 
                 when {
                     /**
+                     * Tells the currently displayed activity to open the game list
+                     * activity (if it hasn't already).
+                     *
+                     * @note Only the non-host players will receive these messages.
+                     */
+                    message.startsWith("openGameList:") -> {
+                        val intent = Intent()
+                            intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                            intent.putExtra("openGameList", "true")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    /**
                      * Tells the currently displayed activity to open the game lobby
                      * activity (if it hasn't already) and display the passed room code.
                      *
