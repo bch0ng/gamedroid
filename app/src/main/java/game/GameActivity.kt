@@ -58,7 +58,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
 
-
             "RollTheDiceHost" -> game = RollTheDiceHost(this).localClient
             "Roll the Dice" -> game = RollTheDiceClient(this)
             "Answer the Phone" -> game = Telephone(this)
@@ -100,7 +99,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
-
     fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
         onGameResult("0")
     }

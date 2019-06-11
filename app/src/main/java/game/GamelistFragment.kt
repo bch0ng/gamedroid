@@ -94,7 +94,9 @@ class GamelistFragment : Fragment() {
                 game2sbtn.setTextColor(Color.parseColor("#ffffff"))
                 startgamebtn.isEnabled = true
                 startgamebtn.setTextColor(Color.parseColor("#001c63"))
-                var instruct = game1sbtn.text
+                //var instruct = game1sbtn.text
+                var instruct = instructiondata.getString(gamechoice)
+
                 instruction.setText(instruct)
             }
             game2sbtn.setOnClickListener() {
@@ -103,7 +105,8 @@ class GamelistFragment : Fragment() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
                 startgamebtn.setTextColor(Color.parseColor("#001c63"))
-                var instruct = game2sbtn.text
+//                var instruct = game2sbtn.text
+                var instruct = instructiondata.getString(gamechoice)
                 instruction.setText(instruct)
             }
             startgamebtn.setOnClickListener() {
