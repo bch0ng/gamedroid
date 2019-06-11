@@ -34,7 +34,7 @@ class Telephone: Game, Service {
     }
 
     override fun onStart(name:String) {
-        this.name=name
+        this.name = name
         mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
 
         mSensorManager?.registerListener(this,
@@ -54,12 +54,13 @@ class Telephone: Game, Service {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
     override fun onFragmentStart() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onPause() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
     override fun onSensorChanged(event: SensorEvent?) {
         val type = event?.sensor?.type
@@ -115,6 +116,7 @@ class Telephone: Game, Service {
             (context as Activity).runOnUiThread(object: Runnable {
                 override fun run() {
                     audioPlayer.start()
+                    Log.i("TEST", "Timer ended")
                     timer.cancel()
                     timer.purge()
                 }
