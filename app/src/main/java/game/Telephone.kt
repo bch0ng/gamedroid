@@ -54,6 +54,7 @@ class Telephone: Game, Service {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
     override fun onFragmentStart() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -64,6 +64,12 @@ class RoomLobbyFragment : Fragment()
         return view
     }
 
+    override fun onPause()
+    {
+        super.onPause()
+        LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
+    }
+
     private fun addPlayerToPlayersContainer(view: View, playerName: String, identity: String)
     {
         val playerLinearLayout: LinearLayout = mInflator?.inflate(R.layout.gameroom_player, null) as LinearLayout

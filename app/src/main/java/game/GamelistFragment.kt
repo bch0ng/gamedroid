@@ -42,6 +42,7 @@ class GamelistFragment : Fragment() {
         super.onPause()
         LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(broadCastReceiver)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         nearby = NearbyConnection.instance
@@ -51,6 +52,8 @@ class GamelistFragment : Fragment() {
         }
         nearby = NearbyConnection.instance
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -116,6 +119,7 @@ class GamelistFragment : Fragment() {
     {
         override fun onReceive(contxt: Context?, intent: Intent?)
         {
+            Log.i("TEST", intent?.getStringExtra("GAME_CHOICE"))
             if (intent?.hasExtra("closeRoom")!!) {
                 LocalBroadcastManager.getInstance(nearby.getContext()).unregisterReceiver(this)
                 isBroadcastListenerActive = false

@@ -1,8 +1,12 @@
 package game
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import edu.us.ischool.bchong.info448project.NearbyConnection
@@ -58,13 +62,20 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     }
 
     override fun onGameStart(gamechoice: String) {
+
+        if (NearbyConnection.instance.isHosting()) {
+            Log.i("TEST", "sending message: $gamechoice")
+            NearbyConnection.instance.sendMessageAll("gamechoice: $gamechoice")
+        }
+
         this.gamechoice = gamechoice
         Log.i("TEST", "gamechoice: $gamechoice")
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
-            "RollTheDiceHost"-> game=RollTheDiceHost(this).localClient
-            "Roll the Dice"-> game=RollTheDiceClient(this)
+            "RollTheDiceHost" -> game = RollTheDiceHost(this).localClient
+            "Roll the Dice" -> game = RollTheDiceClient(this)
+            "Answer the Phone" -> game = Telephone(this)
             //TODO "Answer the Phone" and " Roll the Dice"
         }
 
@@ -75,6 +86,24 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .commit()
         game.onStart(getString(R.string.default_player_name))
     }
+
+    /*private val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.i("TEST", intent?.getStringExtra("GAME_CHOICE"))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(NearbyConnection.instance.getContext()).registerReceiver(broadCastReceiver,
+            IntentFilter("edu.us.ischool.bchong.info448project.ACTION_SEND")
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(NearbyConnection.instance.getContext()).unregisterReceiver(broadCastReceiver)
+    }*/
 
     fun onGameResult(userscore: String) {
         val scoreBoardFragment = ScoreBoardFragment.newInstance(username, identity, gamechoice, userscore, mode)
