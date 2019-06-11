@@ -14,6 +14,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private lateinit var identity: String
     private lateinit var mode: String
     private lateinit var username: String
+    private lateinit var gamechoice:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +37,13 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     }
 
     override fun onGameStart(gamechoice: String) {
+        this.gamechoice = gamechoice
         Log.i("TEST", "gamechoice: $gamechoice")
-        /*when(gamechoice){
+        when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
             //TODO "Answer the Phone" and " Roll the Dice"
-        }*/
-        if (gamechoice == "Shake the Soda") {
-            game = SodaShake(this)
-        } else if (gamechoice == "Flip the Phone") {
-            game = Flip()
         }
-
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
@@ -56,8 +52,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         game.onStart()
     }
 
-    fun onGameResult(username: String, useridentity: String, gamechoice: String, userscore: String, playmode: String) {
-        val scoreBoardFragment = ScoreBoardFragment.newInstance(username, useridentity, gamechoice, userscore, playmode)
+    fun onGameResult(userscore: String) {
+        val scoreBoardFragment = ScoreBoardFragment.newInstance(username, identity, gamechoice, userscore, mode)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
@@ -66,10 +62,5 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
 
     override fun onEndCycle() {
         game.onEnd()
-        onDestroy()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
