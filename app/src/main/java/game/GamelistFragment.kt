@@ -67,11 +67,15 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
 
+            startgamebtn.visibility = View.VISIBLE
+
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
+        } else {
+            startgamebtn.isEnabled = false
+            startgamebtn.visibility = View.GONE
         }
-
         return view
     }
 

@@ -197,12 +197,6 @@ class NearbyConnection private constructor(context: Context)
                     } else {
                         sendMessageAll("addPlayer:$username")
                     }
-                    /*
-                    val intent = Intent()
-                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
-                        intent.putExtra("message", "openTestActivity")
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-                        */
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.d("INFO_448_DEBUG", "Connection rejected")
@@ -216,6 +210,12 @@ class NearbyConnection private constructor(context: Context)
 
         override fun onDisconnected(endpointID: String)
         {
+            if (!isHosting) {
+                val intent = Intent()
+                    intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                    intent.putExtra("closeRoom", "true")
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+            }
             Log.d("INFO_448_DEBUG", "Disconnected")
         }
     }
@@ -420,6 +420,12 @@ class NearbyConnection private constructor(context: Context)
                         val intent = Intent()
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
                         intent.putExtra("message", "HELLO MARS")
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+
+                    message.startsWith("telephone: ") -> {
+                        val intent = Intent()
+                        intent.putExtra("TELEPHONE_RING", message)
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
                     else -> {}
