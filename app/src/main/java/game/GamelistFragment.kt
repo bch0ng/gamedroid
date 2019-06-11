@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 
 private const val PLAYMODE = "PLAYMODE"
@@ -69,9 +70,46 @@ class GamelistFragment : Fragment() {
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
+        } else {
+            view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
+
+            //val games = gamelistData.getJSONObject(mode).getJSONArray("GameName")
+            val games=multiPlayerGameNames
+            var game1btn = view.findViewById<Button>(R.id.buttongame1)
+            var game2btn = view.findViewById<Button>(R.id.buttongame2)
+            var game3btn = view.findViewById<Button>(R.id.buttongame3)
+            startgamebtn = view.findViewById<Button>(R.id.buttonmultistart)
+
+            startgamebtn.isEnabled = false
+            if (useridentity == "Player") {
+                startgamebtn.visibility = View.GONE
+            } else if (useridentity == "Host") {
+                startgamebtn.visibility = View.VISIBLE
+            }
+
+            game1btn.setText(games[0].toString())
+            game2btn.setText(games[1].toString())
+            game3btn.setText(games[2].toString())
+
+            game1btn.setOnClickListener() {
+                gamechoice = game1btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
+            game2btn.setOnClickListener() {
+                gamechoice = game2btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
+            game3btn.setOnClickListener() {
+                gamechoice = game3btn.text.toString()
+                startgamebtn.isEnabled = true
+            }
+
+
+            startgamebtn.setOnClickListener() { // Can only be pressed by Host
+                NearbyConnection.instance.sendMessageAll("startGame:$gamechoice")
+                (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
+            }
         }
-
-
         return view
     }
 
