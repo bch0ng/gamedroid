@@ -13,12 +13,14 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private lateinit var game: Game
     private lateinit var identity: String
     private lateinit var mode: String
+    private lateinit var username: String
+    private lateinit var gamechoice:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         identity = intent.getStringExtra("IDENTITY")
-
+        username = intent.getStringExtra("USERNAME")
         mode = intent.getStringExtra("GAMEMODE")
         Log.e("game", "The mode is" + mode)
         onGameSelect(mode, identity)
@@ -35,40 +37,35 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     }
 
     override fun onGameStart(gamechoice: String) {
+        this.gamechoice = gamechoice
         Log.i("TEST", "gamechoice: $gamechoice")
-        /*when(gamechoice){
+        when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
-            "Flip the Phone" -> game = Flip()
+            "Flip the Phone" -> game = Telephone(this)
             //TODO "Answer the Phone" and " Roll the Dice"
-        }*/
-        if (gamechoice == "Shake the Soda") {
-            game = SodaShake(this)
-        } else if (gamechoice == "Flip the Phone") {
-            game = Flip()
         }
-
         var gameFragment = game.gameFragment as Fragment
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.framegame, gameFragment!!, "game_fragment")
             .commit()
-        game.onStart()
+        game.onStart(getString(R.string.default_player_name))
     }
 
-    fun onGameResult(username: String, useridentity: String, gamechoice: String, userscore: String, playmode: String) {
-        val scoreBoardFragment = ScoreBoardFragment.newInstance(username, useridentity, gamechoice, userscore, playmode)
+    fun onGameResult(userscore: String) {
+        val scoreBoardFragment = ScoreBoardFragment.newInstance(username, identity, gamechoice, userscore, mode)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
 
+    /*fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
+        onGameResult(userscore.toString())
+    }*/
+
+
     override fun onEndCycle() {
         game.onEnd()
-        onDestroy()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }
