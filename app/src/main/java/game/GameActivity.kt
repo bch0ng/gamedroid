@@ -64,7 +64,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun onGameStart(gamechoice: String) {
 
         if (NearbyConnection.instance.isHosting()) {
-            Log.i("TEST", "sending message: $gamechoice")
             NearbyConnection.instance.sendMessageAll("gamechoice: $gamechoice")
         }
 
@@ -90,8 +89,9 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             var gameChoice = intent?.getStringExtra("GAME_CHOICE")
-            onGameStart(gameChoice!!)
-
+            if (gameChoice != null) {
+                onGameStart(gameChoice!!)
+            }
         }
     }
 

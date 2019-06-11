@@ -22,6 +22,10 @@ class Telephone: Game, Service {
     var timer: Timer? = null
     var audioPlayer: MediaPlayer? = null
     var didGameStart = false
+    var timeDelay: Long = 5000
+    var didPlayerWin: Boolean = false
+
+
     lateinit var name:String
     private var mGZ = 0f//gravity acceleration along the z axis
     private var mEventCountSinceGZChanged = 0
@@ -35,6 +39,13 @@ class Telephone: Game, Service {
 
     override fun onStart(name:String) {
         this.name = name
+
+        if (NearbyConnection.instance.isHosting()) {
+            timeDelay = (5000..15000).random().toLong()
+            Log.i("TEST", "sending message from telephone: $timeDelay")
+            NearbyConnection.instance.sendMessageAll("telephone_time: $timeDelay")
+        }
+
         mSensorManager = context?.getSystemService(SENSOR_SERVICE) as SensorManager
 
         mSensorManager?.registerListener(this,
@@ -62,6 +73,28 @@ class Telephone: Game, Service {
     override fun onPause() {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
+
+    fun setTime(delay: Long) {
+        timeDelay = delay
+        Log.i("TEST", "timeDelay in setTime: $timeDelay")
+    }
+
+    fun startGame() {
+        if (didGameStart == false) {
+            audioPlayer = MediaPlayer.create(context, R.raw.telephone_ring)
+            audioPlayer?.setOnPreparedListener {
+                timer = Timer("Timer")
+
+                var timerTask = Task(context!!, timer!!, audioPlayer!!)
+                Log.i("TEST", "Time: $timeDelay")
+
+                timer?.schedule(timerTask, timeDelay, timeDelay)
+            }
+            didGameStart = true
+        }
+    }
+
+
     override fun onSensorChanged(event: SensorEvent?) {
         val type = event?.sensor?.type
         if (type == Sensor.TYPE_ACCELEROMETER) {
@@ -79,25 +112,20 @@ class Telephone: Game, Service {
                             if (didGameStart == true) {
                                 audioPlayer?.stop()
                                 // TODO: Show win or lose text depending on who wins or loses
-                                (gameFragment as TelephoneFragment).showWinText()
+                                if (didPlayerWin) {
+                                    (gameFragment as TelephoneFragment).showWinText()
+                                    
+                                } else {
+                                    (gameFragment as TelephoneFragment).showLoseText()
+                                }
+
                                 onEnd()
                             }
 
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
-                            if (didGameStart == false) {
-                                audioPlayer = MediaPlayer.create(context, R.raw.telephone_ring)
-                                audioPlayer?.setOnPreparedListener {
-                                    timer = Timer("Timer")
-
-                                    var delay: Long = (5000..15000).random().toLong()
-                                    var timerTask = Task(context!!, timer!!, audioPlayer!!)
-                                    Log.i("TEST", "Time: $delay")
-
-                                    timer?.schedule(timerTask, delay, delay)
-                                }
-                                didGameStart = true
-                            }
+                            startGame()
+                            // Wait until all phones are faced down
                         }
                     }
                 } else {
