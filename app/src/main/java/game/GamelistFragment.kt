@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 
 private const val PLAYMODE = "PLAYMODE"
@@ -66,12 +67,15 @@ class GamelistFragment : Fragment() {
                 startgamebtn.isEnabled = true
             }
 
+            startgamebtn.visibility = View.VISIBLE
+
             startgamebtn.setOnClickListener() {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
+        } else {
+            startgamebtn.isEnabled = false
+            startgamebtn.visibility = View.GONE
         }
-
-
         return view
     }
 

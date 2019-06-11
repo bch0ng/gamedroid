@@ -42,7 +42,8 @@ class FindCreateRoomFragment : Fragment()
         ): View?
     {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_find_create_room, container, false)
+        val view = inflater.inflate(R.layout.fragment_find_create_room,
+                container, false)
         handleView(view)
         return view
     }
@@ -56,13 +57,21 @@ class FindCreateRoomFragment : Fragment()
     {
         nearby = NearbyConnection.instance
 
+        // Stops advertising or discovering if coming back from room lobby fragment.
+        if (nearby.getCurrPlayers().size > 0) {
+            nearby.disconnectEndpointsAndStop()
+        } else {
+            nearby.stopAdvertising()
+            nearby.stopDiscovery()
+        }
+        Log.d("INFO_448_DEBUG", "CONTEXT IN FIND CREATE ROOM: $context")
+
         hostButton = view.findViewById(R.id.host_button)
         discoverButton = view.findViewById(R.id.discover_button)
         stopButton = view.findViewById(R.id.stop_button)
         roomCodeField = view.findViewById(R.id.room_code_text)
 
         val separator: TextView = view.findViewById(R.id.seperator_word_or)
-
         var mode = "none"
         hostButton.setOnClickListener {
             mode = "hosting"
