@@ -59,9 +59,6 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .replace(R.id.framegame, scoreBoardFragment!!, "game_fragment")
             .commit()
     }
-    fun showScoreBoard(username: String,gamechoice: String,userscore: Int){
-        onGameResult(username,"???",gamechoice,userscore.toString(),"?!?!")
-    }
 
 
     override fun onEndCycle() {
