@@ -1,4 +1,4 @@
-package Game
+package game
 
 import android.app.Application
 
