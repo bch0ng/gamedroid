@@ -7,11 +7,11 @@ class GameApp: Application() {
         private var instance: GameApp? = null
 
         fun applicationContext(): GameApp {
-            return Companion.instance as GameApp
+            return instance as GameApp
         }
     }
     init{
-       Companion.instance =this
+        instance=this
     }
 
     override fun onCreate() {
