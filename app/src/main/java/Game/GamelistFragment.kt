@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 import org.json.JSONObject
 
@@ -62,7 +63,8 @@ class GamelistFragment : Fragment() {
                 gamechoice = game2sbtn.text.toString()
                 startgamebtn.isEnabled = true
             }
-            startgamebtn.setOnClickListener() {
+
+            startgamebtn.setOnClickListener {
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
 
@@ -76,7 +78,13 @@ class GamelistFragment : Fragment() {
             var game2btn = view.findViewById<Button>(R.id.buttongame2)
             var game3btn = view.findViewById<Button>(R.id.buttongame3)
             startgamebtn = view.findViewById<Button>(R.id.buttonmultistart)
+
             startgamebtn.isEnabled = false
+            if (useridentity == "Player") {
+                startgamebtn.visibility = View.GONE
+            } else if (useridentity == "Host") {
+                startgamebtn.visibility = View.VISIBLE
+            }
 
             game1btn.setText(games[0].toString())
             game2btn.setText(games[1].toString())
@@ -94,7 +102,10 @@ class GamelistFragment : Fragment() {
                 gamechoice = game3btn.text.toString()
                 startgamebtn.isEnabled = true
             }
-            startgamebtn.setOnClickListener() {
+
+
+            startgamebtn.setOnClickListener() { // Can only be pressed by Host
+                NearbyConnection.instance.sendMessageAll("startGame:$gamechoice")
                 (activity as GamelistFragment.OnGameInteractionListener).onGameStart(gamechoice)
             }
         }
