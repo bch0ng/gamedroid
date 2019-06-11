@@ -20,6 +20,10 @@
                 android:id="@+id/instructions_videos_page_button"
                 android:layout_gravity="bottom|end"
                 android:layout_marginRight="10dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#cdcdcd"
                 android:text="@string/instructions_header"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"/>
     </FrameLayout>
