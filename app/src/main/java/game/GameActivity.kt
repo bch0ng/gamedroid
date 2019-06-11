@@ -87,9 +87,11 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         game.onStart(getString(R.string.default_player_name))
     }
 
-    /*private val broadCastReceiver = object : BroadcastReceiver() {
+    private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.i("TEST", intent?.getStringExtra("GAME_CHOICE"))
+            var gameChoice = intent?.getStringExtra("GAME_CHOICE")
+            onGameStart(gameChoice!!)
+
         }
     }
 
@@ -103,7 +105,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(NearbyConnection.instance.getContext()).unregisterReceiver(broadCastReceiver)
-    }*/
+    }
 
     fun onGameResult(userscore: String) {
         val scoreBoardFragment = ScoreBoardFragment.newInstance(username, identity, gamechoice, userscore, mode)
