@@ -9,34 +9,75 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/singlelinearlayout" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="16dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp" app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="16dp">
+            android:id="@+id/singlelinearlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="30dp">
         <Button
                 android:text="game2s"
                 android:background="@drawable/rounded_button"
                 android:textColor="@color/common_google_signin_btn_text_dark_pressed"
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="60dp" android:id="@+id/buttongame1"/>
+
+                android:layout_height="wrap_content" android:id="@+id/buttongame1"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="#FFC107" android:textSize="18sp"
+                android:background="@drawable/rounded_button"
+                android:paddingRight="16dip"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:fontFamily="@font/lato_bold"/>
         <Button
                 android:text="game1s"
                 android:background="@drawable/rounded_button"
                 android:textColor="@color/common_google_signin_btn_text_dark_pressed"
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
-                android:layout_height="60dp" android:id="@+id/buttongame2"/>
+
+                android:layout_height="wrap_content" android:id="@+id/buttongame2"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/lato_bold"
+                android:backgroundTint="#FFC107"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_button"
+                android:paddingRight="16dip"
+                android:layout_height="60dp" 
+                android:textColor="@color/common_google_signin_btn_text_dark_default"/>
+
     </LinearLayout>
     <Button
             android:text="Start"
             android:layout_width="0dp"
-            android:backgroundTint="@android:color/holo_green_light"
-            android:drawableRight="@drawable/baseline_check_white_48"
-            android:paddingRight="16dip"
-            android:layout_height="60dp" android:id="@+id/buttonstart"
-            app:layout_constraintTop_toBottomOf="@+id/singlelinearlayout" android:layout_marginTop="72dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="32dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonstart"
+            android:fontFamily="@font/lato_bold"
+            app:layout_constraintTop_toBottomOf="@+id/singlelinearlayout"
+            android:layout_marginTop="72dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
-            app:layout_constraintHorizontal_bias="0.0" android:background="@drawable/rounded_button"/>
+            app:layout_constraintHorizontal_bias="0.0"
+            android:backgroundTint="#2196F3"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_button"
+            android:paddingRight="16dip"/>
+
+    <TextView
+            android:text=" "
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtInstruction"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/buttonstart"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp" android:textSize="18sp"
+            android:fontFamily="@font/lato_bold"/>
+
 </android.support.constraint.ConstraintLayout>

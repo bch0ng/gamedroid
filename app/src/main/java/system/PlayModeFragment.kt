@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import edu.us.ischool.bchong.info448project.NearbyConnection
 import edu.us.ischool.bchong.info448project.R
 
@@ -18,6 +19,7 @@ class PlayModeFragment : Fragment() {
     private lateinit var username: String
     private lateinit var singlebtn: Button
     private lateinit var multibtn: Button
+    private lateinit var playmodetextview:TextView
 
     companion object {
         fun newInstance(username: String): PlayModeFragment {
@@ -47,7 +49,8 @@ class PlayModeFragment : Fragment() {
         username = arguments!!.getString("USERNAME")
         singlebtn = view.findViewById(R.id.btnSingle)
         multibtn = view.findViewById(R.id.btnMulti)
-
+        playmodetextview = view.findViewById(R.id.textViewplaymode1)
+        playmodetextview.setText("Hi,$username!")
 
         singlebtn.setOnClickListener {
             playmode = "Single"
