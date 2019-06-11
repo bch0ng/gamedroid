@@ -197,6 +197,11 @@ class RoomLobbyFragment : Fragment()
         }
     }
 
+    override fun onStop()
+    {
+        super.onStop()
+    }
+
     /**
      * Closes the room lobby if returning from a finished game activity
      * (including game list fragment) since that means that the host has
@@ -230,6 +235,7 @@ class RoomLobbyFragment : Fragment()
         LocalBroadcastManager.getInstance(nearby.getContext())
                 .unregisterReceiver(broadCastReceiver)
         isBroadcastListenerActive = false
+        isGameListOpen = false
         fragmentManager!!.popBackStack()
         Toast.makeText(activity, "Host closed the room.", Toast.LENGTH_SHORT).show()
     }

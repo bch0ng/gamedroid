@@ -69,9 +69,6 @@ class FindCreateRoomFragment : Fragment()
         nearby = NearbyConnection.instance
 
         // Stops advertising or discovering if coming back from room lobby fragment.
-        if (roomLobbyFragment != null) {
-            fragmentManager!!.beginTransaction().remove(roomLobbyFragment!!).commit()
-        }
         if (nearby.getCurrPlayers().size > 1) {
             nearby.disconnectEndpointsAndStop()
         } else {
@@ -112,7 +109,7 @@ class FindCreateRoomFragment : Fragment()
                 discoverButton.text = "SEARCHING..."
                 stopButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_close_white_48, 0)
             } else {
-                discoverButton.isEnabled = false
+                discoverButton.isEnabled = (roomCodeField.text.toString().length == 4)
 
                 hostButton.isEnabled = false
                 hostButton.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_out_top))
