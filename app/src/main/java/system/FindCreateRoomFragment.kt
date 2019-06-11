@@ -67,7 +67,7 @@ class FindCreateRoomFragment : Fragment()
         nearby = NearbyConnection.instance
 
         // Stops advertising or discovering if coming back from room lobby fragment.
-        if (nearby.getCurrPlayers().size > 0) {
+        if (nearby.getCurrPlayers().size > 1) {
             nearby.disconnectEndpointsAndStop()
         } else {
             nearby.stopAdvertising()
@@ -204,7 +204,7 @@ class FindCreateRoomFragment : Fragment()
     {
         val roomLobbyFragment = RoomLobbyFragment.newInstance(roomCode)
         val transaction = fragmentManager!!.beginTransaction()
-            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
+            //transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
             transaction.replace(R.id.fragment_find_create_room, roomLobbyFragment)
             transaction.addToBackStack(null)
             transaction.commit()

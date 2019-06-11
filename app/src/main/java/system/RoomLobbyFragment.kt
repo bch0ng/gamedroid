@@ -38,6 +38,7 @@ class RoomLobbyFragment : Fragment()
     private var isGameListOpen: Boolean = false
     private lateinit var playersContainer: LinearLayout
     private var mView: View? = null
+    private var mInflator: LayoutInflater? = null
 
     private lateinit var nearby: NearbyConnection
 
@@ -58,13 +59,14 @@ class RoomLobbyFragment : Fragment()
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_room_lobby, container, false)
         mView = view
+        mInflator = inflater
         handleView(view)
         return view
     }
 
     private fun addPlayerToPlayersContainer(view: View, playerName: String, identity: String)
     {
-        val playerLinearLayout: LinearLayout = layoutInflater.inflate(R.layout.gameroom_player, null) as LinearLayout
+        val playerLinearLayout: LinearLayout = mInflator?.inflate(R.layout.gameroom_player, null) as LinearLayout
             playerLinearLayout.findViewById<TextView>(R.id.player_name_text_view).text = playerName
         if (identity == "Host+Me") {
             playerLinearLayout.findViewById<ImageView>(R.id.user_identity).visibility = View.VISIBLE
