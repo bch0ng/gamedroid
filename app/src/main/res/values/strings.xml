@@ -1,4 +1,6 @@
 <resources>
+    <!-- DEBUG TAG -->
+    <string name="debug_tag">INFO_448_DEBUG</string>
     <string name="app_name">Info448 Project</string>
     <string name="txtWelcome">Welcome</string>
     <string name="txtName">Please enter your name:</string>
