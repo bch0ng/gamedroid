@@ -24,7 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".PlayModeActivity"></activity>
         <activity android:name="system.GameroomActivity"></activity>
         <activity android:name=".GameSelectionActivity"></activity>
         <activity android:name="system.ScoreboardActivity"></activity>
@@ -33,5 +32,11 @@
                   android:screenOrientation="portrait"
         ></activity>
         <activity android:name="system.InstructionsVideoListActivity"></activity>
+
+        <service
+                android:enabled="true"
+                android:name="system.MultiRoomService"
+                android:exported="false"
+                android:stopWithTask="false" />
     </application>
 </manifest>

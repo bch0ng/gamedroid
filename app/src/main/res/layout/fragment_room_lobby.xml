@@ -25,11 +25,22 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/players_list"/>
         <Button
+                android:text="View Game List"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/start_button"
+                android:layout_margin="16dp"
+                android:enabled="false"
+                android:visibility="gone"
+                android:background="@android:color/holo_green_light"/>
+        <!--
+        <Button
                 android:text="Close"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:id="@+id/close_button"
                 android:layout_margin="16dp"
                 android:background="@android:color/holo_red_light"/>
+        -->
     </LinearLayout>
 </ScrollView>
