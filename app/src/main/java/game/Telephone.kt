@@ -13,7 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import java.util.*
 import android.media.MediaPlayer
-
+import game.Flip
 
 
 class Telephone: Game, Service {
@@ -24,6 +24,7 @@ class Telephone: Game, Service {
     var didGameStart = false
     var timeDelay: Long = 5000
     var didPlayerWin: Boolean = false
+    var didCountHost: Boolean = false
 
 
     lateinit var name:String
@@ -31,6 +32,7 @@ class Telephone: Game, Service {
     private var mEventCountSinceGZChanged = 0
     private val MAX_COUNT_GZ_CHANGE = 10
     private var mSensorManager: SensorManager? = null
+
 
     constructor(context: Context) {
         this.context = context
@@ -90,12 +92,29 @@ class Telephone: Game, Service {
             audioPlayer?.setOnPreparedListener {
                 timer = Timer("Timer")
 
-                var timerTask = Task(context!!, timer!!, audioPlayer!!)
+                var timerTask = Task(context!!, timer!!, audioPlayer!!,gameFragment!!)
                 Log.i("TEST", "Time: $timeDelay")
 
                 timer?.schedule(timerTask, timeDelay, timeDelay)
             }
             didGameStart = true
+        }
+    }
+
+    fun trackFlipDowns(isOwnFlip: Boolean) {
+        if (NearbyConnection.instance.isHosting() && !didCountHost && isOwnFlip) {
+            NearbyConnection.instance.flipDownCount++
+            Log.i("TEST", "flip increased from host")
+            didCountHost = true
+        }
+        if (!NearbyConnection.instance.isHosting()) {
+            NearbyConnection.instance.sendMessageAll("telephone:flippedDown")
+        }
+        Log.i("TEST", "flip down count ${NearbyConnection.instance.flipDownCount}")
+        Log.i("TEST", "curr players: ${NearbyConnection.instance.getCurrPlayers().size}")
+        if (NearbyConnection.instance.flipDownCount == NearbyConnection.instance.getCurrPlayers().size) {
+            NearbyConnection.instance.sendMessageAll("telephone: start")
+            startGame()
         }
     }
 
@@ -123,14 +142,12 @@ class Telephone: Game, Service {
                                 } else {
                                     (gameFragment as TelephoneFragment).showLoseText()
                                 }
-
                                 onEnd()
                             }
 
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
-                            startGame()
-                            // Wait until all phones are faced down
+                            trackFlipDowns(true)
                         }
                     }
                 } else {
@@ -143,13 +160,14 @@ class Telephone: Game, Service {
         }
     }
 
-    private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer): TimerTask() {
+    private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer, val gameFragment: GameFragment): TimerTask() {
 
         override fun run() {
             (context as Activity).runOnUiThread(object: Runnable {
                 override fun run() {
                     audioPlayer.start()
                     Log.i("TEST", "Timer ended")
+                    (gameFragment as TelephoneFragment).changeImage()
                     timer.cancel()
                     timer.purge()
                 }
