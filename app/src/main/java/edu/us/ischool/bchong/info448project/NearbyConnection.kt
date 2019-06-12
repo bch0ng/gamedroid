@@ -30,6 +30,7 @@ class NearbyConnection private constructor(context: Context)
     private var isHosting: Boolean = false
     private var username: String = USERNAME_NOT_SET_STRING
     private var roomCode: String = ROOM_CODE_NOT_SET_STRING
+    public var flipDownCount: Int = 0
 
     private var players: ArrayList<String> = ArrayList() // [0] is host, [1] is curr player if not host
 
@@ -439,6 +440,21 @@ class NearbyConnection private constructor(context: Context)
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                     }
+
+                    message.startsWith("telephone:flippedDown") -> {
+                        flipDownCount++
+                        val intent = Intent()
+                        intent.putExtra("TELEPHONE_FLIP_COUNT", message)
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+                    message.startsWith("telephone: start") -> {
+                        val intent = Intent()
+                        intent.putExtra("TELEPHONE_START", message)
+                        intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                    }
+
                     else -> {}
                 }
             }

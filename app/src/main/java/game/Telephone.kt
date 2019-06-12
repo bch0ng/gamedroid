@@ -24,6 +24,7 @@ class Telephone: Game, Service {
     var didGameStart = false
     var timeDelay: Long = 5000
     var didPlayerWin: Boolean = false
+    var didCountHost: Boolean = false
 
 
     lateinit var name:String
@@ -31,6 +32,7 @@ class Telephone: Game, Service {
     private var mEventCountSinceGZChanged = 0
     private val MAX_COUNT_GZ_CHANGE = 10
     private var mSensorManager: SensorManager? = null
+
 
     constructor(context: Context) {
         this.context = context
@@ -98,6 +100,23 @@ class Telephone: Game, Service {
         }
     }
 
+    fun trackFlipDowns() {
+        if (NearbyConnection.instance.isHosting() && !didCountHost) {
+            NearbyConnection.instance.flipDownCount++
+            Log.i("TEST", "track flipDowns")
+            didCountHost = true
+        }
+        if (!NearbyConnection.instance.isHosting()) {
+            NearbyConnection.instance.sendMessageAll("telephone:flippedDown")
+        }
+        Log.i("TEST", "flip down count ${NearbyConnection.instance.flipDownCount}")
+        Log.i("TEST", "curr players: ${NearbyConnection.instance.getCurrPlayers().size}")
+        if (NearbyConnection.instance.flipDownCount == NearbyConnection.instance.getCurrPlayers().size) {
+            NearbyConnection.instance.sendMessageAll("telephone: start")
+            startGame()
+        }
+    }
+
 
     override fun onSensorChanged(event: SensorEvent?) {
         val type = event?.sensor?.type
@@ -122,14 +141,12 @@ class Telephone: Game, Service {
                                 } else {
                                     (gameFragment as TelephoneFragment).showLoseText()
                                 }
-
                                 onEnd()
                             }
 
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
-                            startGame()
-                            // Wait until all phones are faced down
+                            trackFlipDowns()
                         }
                     }
                 } else {
