@@ -27,7 +27,7 @@ class RollTheDiceSinglePlayer : Game {
     private var postgameDuration:Long = 1000
 
     override var gameFragment: GameFragment? = null
-    private var frag: DiceFragment
+    private var frag: SinglePlayerDiceFragment
     private var accumulatedRollEnergy: Double = 0.0
 
     var score: Double = 0.0
@@ -98,8 +98,8 @@ class RollTheDiceSinglePlayer : Game {
     }
 
     constructor(thisContext:Context) {
-        gameFragment = DiceFragment().newInstance(this)
-        this.frag = gameFragment as DiceFragment
+        gameFragment = SinglePlayerDiceFragment().newInstance(this)
+        this.frag = gameFragment as SinglePlayerDiceFragment
         this.context=thisContext
     }
 
@@ -111,6 +111,7 @@ class RollTheDiceSinglePlayer : Game {
     //When the player attempts to roll
     private fun inGameRoll(event: SensorEvent) {
         val strength = accumulatedRollEnergy * (Random().nextDouble() + 0.5)
+        vibrator.vibrate((vibrationStrength*strength).toLong())
         frag.diceRoll(event.values[0], event.values[1], accumulatedRollEnergy, this.diceRollVisualDuration)
 
     }

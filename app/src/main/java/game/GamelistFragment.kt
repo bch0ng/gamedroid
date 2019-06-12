@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,8 +29,8 @@ class GamelistFragment : Fragment() {
 
     private var isBroadcastListenerActive: Boolean = false
 
-    private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone")
-    private var multiPlayerGameNames = arrayOf("Answer the Phone","RollTheDiceHost", "Roll the Dice")
+    private var singlePlayerGameNames = arrayOf("Shake the Soda", "Flip the Phone", "Roll the Dice")
+    private var multiPlayerGameNames = arrayOf("Answer the Phone")
 
     private var listener: OnGameInteractionListener? = null
 
@@ -39,12 +38,12 @@ class GamelistFragment : Fragment() {
 
     private lateinit var gameHost: GameHost
 
+
     private var instructiondata : JSONObject = JSONObject("""{
-        |"Shake the Soda" : "Shake the soda is a party game where players sit around in a circle and pass the phone around. When they get the phone, each player shakes it like a soda as many times as they want. If the soda explodes on you then you lose.",
-        |"Flip the Phone" : "Flip the phone is a single player game promoting physical activity and fun! Our scoring systems rewards players for any kind of tricks and moves they preform with their phone. Flip it in your hand or play catch with your friends. The possibilities are endless.
-",
-        |"Answer the Phone" : "Answer the phone is a multi-player game where each player places their phones face down in front of them. When the phones ring, the first player to flip their phone over wins.",
-        |"Roll the Dice" : "Roll the dice is a deception based party game for all your friends. Take turns rolling dice and making bets on who's the winner by feeling vibrations from your phone."
+        |"Shake the Soda" : "Instruction: \n 1. Players sit around in a circle and pass the phone around. \n 2. When get the phone, each player shakes it like a soda as many times as you want. \n 3. If the soda explodes on you, then you lose!",
+        |"Flip the Phone" : "Instruction: \n 1. Use protective wrapping to secure your phone. \n 2. Flip your phone in your hand or play catch with your friends. \n 3. Check your scores!",
+        |"Answer the Phone" : "Instruction: \n 1. Each player places your phone face down in front of you and wait for the phone to ring. \n 2. When the phones ring, the first player to flip the phone over wins!",
+        |"Roll the Dice" : "Instruction: \n 1. Players gather together with your phones. \n 2. Take turns rolling dice. \n 3. Make bets on who's the winner by feeling vibrations from your phone!"
         |}""".trimMargin())
 
     override fun onPause()
@@ -70,60 +69,106 @@ class GamelistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view: View? = null
-        view = inflater.inflate(R.layout.fragment_gamelist, container, false)
-        val instruction = view.findViewById<TextView>(R.id.txtInstruction)
         var games: Array<String>? = null
         if (mode == "Single") {
             games = singlePlayerGameNames
+            view = inflater.inflate(R.layout.fragment_singlegamelist, container, false)
+            val instruction = view.findViewById<TextView>(R.id.txtInstruction)
+            var game1sbtn: Button = view.findViewById(R.id.buttongame1)
+            var game2sbtn: Button = view.findViewById(R.id.buttongame2)
+            var game3sbtn: Button = view.findViewById(R.id.buttongame3)
+            //For both host and guests, the startgamebtn is default to invisible, while host has access to startgamebtn
+            startgamebtn = view.findViewById(R.id.buttonstart)
+            startgamebtn.isEnabled = false
+            startgamebtn.visibility = View.GONE
+            game1sbtn.setText(games[0])
+            game2sbtn.setText(games[1])
+            game3sbtn.setText(games[2])
+            if (useridentity == "Host") {
+                startgamebtn.visibility = View.VISIBLE
+                game1sbtn.setOnClickListener() {
+                    gamechoice = game1sbtn.text.toString()
+                    game1sbtn.setTextColor(Color.parseColor("#bc660b"))
+                    game2sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    game3sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    startgamebtn.isEnabled = true
+                    startgamebtn.setTextColor(Color.parseColor("#001c63"))
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                game2sbtn.setOnClickListener() {
+                    game1sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    game2sbtn.setTextColor(Color.parseColor("#bc660b"))
+                    game3sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    gamechoice = game2sbtn.text.toString()
+                    startgamebtn.isEnabled = true
+                    startgamebtn.setTextColor(Color.parseColor("#001c63"))
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                game3sbtn.setOnClickListener() {
+                    game1sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    game2sbtn.setTextColor(Color.parseColor("#ffffff"))
+                    game3sbtn.setTextColor(Color.parseColor("#bc660b"))
+                    gamechoice = game3sbtn.text.toString()
+                    startgamebtn.isEnabled = true
+                    startgamebtn.setTextColor(Color.parseColor("#001c63"))
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                startgamebtn.setOnClickListener() {
+                    (activity as OnGameInteractionListener).onGameStart(gamechoice)
+                }
+            } else {
+                game1sbtn.setOnClickListener() {
+                    gamechoice = game1sbtn.text.toString()
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                game2sbtn.setOnClickListener() {
+                    gamechoice = game2sbtn.text.toString()
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                game3sbtn.setOnClickListener() {
+                    gamechoice = game3sbtn.text.toString()
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+            }
+
         } else {
             games = multiPlayerGameNames
+            view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
+            val instruction = view.findViewById<TextView>(R.id.txtInstruction)
+            var game1mbtn: Button = view.findViewById(R.id.buttonMultiame1)
+            //For both host and guests, the startgamebtn is default to invisible, while host has access to startgamebtn
+            startgamebtn = view.findViewById(R.id.buttonstart)
+            startgamebtn.isEnabled = false
+            startgamebtn.visibility = View.GONE
+            game1mbtn.setText(games[0])
+            if (useridentity == "Host") {
+                startgamebtn.visibility = View.VISIBLE
+                game1mbtn.setOnClickListener() {
+                    gamechoice = game1mbtn.text.toString()
+                    game1mbtn.setTextColor(Color.parseColor("#bc660b"))
+                    startgamebtn.isEnabled = true
+                    startgamebtn.setTextColor(Color.parseColor("#001c63"))
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+                startgamebtn.setOnClickListener() {
+                    (activity as OnGameInteractionListener).onGameStart(gamechoice)
+                }
+            } else {
+                game1mbtn.setOnClickListener() {
+                    gamechoice = game1mbtn.text.toString()
+                    var instruct = instructiondata.getString(gamechoice)
+                    instruction.setText(instruct)
+                }
+            }
         }
-        var game1sbtn: Button = view.findViewById(R.id.buttongame1)
-        var game2sbtn: Button = view.findViewById(R.id.buttongame2)
-        //For both host and guests, the startgamebtn is default to invisible, while host has access to startgamebtn
-        startgamebtn = view.findViewById(R.id.buttonstart)
-        startgamebtn.isEnabled = false
-        startgamebtn.visibility = View.GONE
-        game1sbtn.setText(games[0])
-        game2sbtn.setText(games[1])
-        if (useridentity == "Host") {
-            startgamebtn.visibility = View.VISIBLE
-            game1sbtn.setOnClickListener() {
-                gamechoice = game1sbtn.text.toString()
-                game1sbtn.setTextColor(Color.parseColor("#bc660b"))
-                game2sbtn.setTextColor(Color.parseColor("#ffffff"))
-                startgamebtn.isEnabled = true
-                startgamebtn.setTextColor(Color.parseColor("#001c63"))
-                //var instruct = game1sbtn.text
-                var instruct = instructiondata.getString(gamechoice)
 
-                instruction.setText(instruct)
-            }
-            game2sbtn.setOnClickListener() {
-                game1sbtn.setTextColor(Color.parseColor("#ffffff"))
-                game2sbtn.setTextColor(Color.parseColor("#bc660b"))
-                gamechoice = game2sbtn.text.toString()
-                startgamebtn.isEnabled = true
-                startgamebtn.setTextColor(Color.parseColor("#001c63"))
-//                var instruct = game2sbtn.text
-                var instruct = instructiondata.getString(gamechoice)
-                instruction.setText(instruct)
-            }
-            startgamebtn.setOnClickListener() {
-                (activity as OnGameInteractionListener).onGameStart(gamechoice)
-            }
-        } else {
-            game1sbtn.setOnClickListener() {
-                gamechoice = game1sbtn.text.toString()
-                var instruct = instructiondata.getString(gamechoice)
-                instruction.setText(instruct)
-            }
-            game2sbtn.setOnClickListener() {
-                gamechoice = game2sbtn.text.toString()
-                var instruct = instructiondata.getString(gamechoice)
-                instruction.setText(instruct)
-            }
-        }
         return view
     }
 

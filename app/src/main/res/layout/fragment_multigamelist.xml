@@ -17,31 +17,15 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="30dp">
         <Button
-                android:text="game2s"
-                android:layout_margin="16dp"
+                android:text="game1m"
                 android:layout_width="match_parent"
-
-                android:layout_height="wrap_content" android:id="@+id/buttongame1"
+                android:layout_height="wrap_content" android:id="@+id/buttonMultiame1"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="#FFC107" android:textSize="18sp"
                 android:background="@drawable/rounded_button"
                 android:paddingRight="16dip"
                 android:textColor="@color/common_google_signin_btn_text_dark_default"
                 android:fontFamily="@font/lato_bold"/>
-        <Button
-                android:text="game1s"
-                android:layout_margin="16dp"
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content" android:id="@+id/buttongame2"
-                android:layout_marginTop="30dp"
-                android:fontFamily="@font/lato_bold"
-                android:backgroundTint="#FFC107"
-                android:textSize="18sp"
-                android:background="@drawable/rounded_button"
-                android:paddingRight="16dip"
-
-                android:textColor="@color/common_google_signin_btn_text_dark_default"/>
 
     </LinearLayout>
     <Button
