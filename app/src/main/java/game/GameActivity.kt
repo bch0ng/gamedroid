@@ -38,7 +38,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun goBackToMenu() {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("MODE", "GAME_MENU")
-        intent.putExtra("USERNAME", "TEST")
+        intent.putExtra("USERNAME", username)
         startActivity(intent)
     }
 
