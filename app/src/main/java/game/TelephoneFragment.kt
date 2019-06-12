@@ -72,6 +72,18 @@ class TelephoneFragment : Fragment(), GameFragment {
                 }
                 (gameObj as Telephone).updatePlayerWin()
             }
+
+            var flipMessage = intent?.getStringExtra("TELEPHONE_FLIP_COUNT")
+            if (flipMessage != null) {
+                (gameObj as Telephone).trackFlipDowns(false)
+            }
+
+            var startMessage = intent?.getStringExtra("TELEPHONE_START")
+            if (startMessage != null) {
+                (gameObj as Telephone).startGame()
+            }
+
+
         }
     }
 
