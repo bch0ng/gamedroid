@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/bchOng/info448-project.svg?branch=master)](https://travis-ci.com/bchOng/info448-project)
 # GameDroid
 
 GameDroid is an Android app for mini motion games. In this app, we have 4 games in total and 2 for each play mode. "Flip the Phone" and "Shake the Soda" for single phone play mods, and "Answer the Phone" and "Roll the Dice" for multiple phone play mode. For our multiple phone play mode games, we support maximum of 6 players(phones) in total.
@@ -13,19 +14,21 @@ Games require's the phone to have a gyroscope and accelerometer to run.
 ## Nearby Connection
 
 # User Guide
-Welcome Page:[ScreenShot]
+Welcome Page:
+![](samplescreenshots/welcome.png)
 Welcome to our mini games. Please enter your name and hit the LET'S GAME Button.
 
-Playmode Selection Page:[ScreenShot]
+Playmode Selection Page:
+![](samplescreenshots/playmode.png)
 Please select your play mode. Your can choose either Single Player or Multiple players.
 
-Find/Create Room Page:[ScreenShot]
+Find/Create Room Page:
+![](samplescreenshots/guest_host.png)
 Please select host or enter your room code if you are a guest.
 
-Game Lobby Page:[ScreenShot]
-Welcome to the game lobby. The game will start when everyone is seated.
 
-Game Selection Page:[ScreenShot]
+Game Selection Page:
+![](singlegamelist.png)
 Please choose your favoured game and hit START!
 
 Game Instruction Page:[ScreenShot]
