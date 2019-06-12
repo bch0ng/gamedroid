@@ -89,7 +89,7 @@ class Telephone: Game, Service {
             audioPlayer?.setOnPreparedListener {
                 timer = Timer("Timer")
 
-                var timerTask = Task(context!!, timer!!, audioPlayer!!)
+                var timerTask = Task(context!!, timer!!, audioPlayer!!,gameFragment!!)
                 Log.i("TEST", "Time: $timeDelay")
 
                 timer?.schedule(timerTask, timeDelay, timeDelay)
@@ -142,13 +142,14 @@ class Telephone: Game, Service {
         }
     }
 
-    private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer): TimerTask() {
+    private class Task(val context: Context, val timer: Timer, val audioPlayer: MediaPlayer, val gameFragment: GameFragment): TimerTask() {
 
         override fun run() {
             (context as Activity).runOnUiThread(object: Runnable {
                 override fun run() {
                     audioPlayer.start()
                     Log.i("TEST", "Timer ended")
+                    (gameFragment as TelephoneFragment).changeImage()
                     timer.cancel()
                     timer.purge()
                 }
