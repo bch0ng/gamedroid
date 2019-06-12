@@ -38,6 +38,18 @@
                 android:paddingRight="16dip"
                 android:textColor="@color/common_google_signin_btn_text_dark_default"/>
 
+        <Button
+                android:text="game3s"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/buttongame3"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/lato_bold"
+                android:backgroundTint="#FFC107"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_button"
+                android:paddingRight="16dip"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"/>
+
     </LinearLayout>
     <Button
             android:text="Start"

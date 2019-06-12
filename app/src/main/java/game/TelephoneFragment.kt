@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import game.GameActivity
@@ -29,6 +30,7 @@ class TelephoneFragment : Fragment(), GameFragment {
 
     var gameObj: Game? = null
     var gameMessage: TextView? = null
+    private lateinit var telephoneImage : ImageView
 
     override fun newInstance(game: Game): GameFragment {
         gameObj = game
@@ -43,6 +45,9 @@ class TelephoneFragment : Fragment(), GameFragment {
         gameMessage?.setText("You lose!")
     }
 
+    fun changeImage(){
+        telephoneImage?.setImageResource(R.drawable.telephone_ring)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,7 +55,7 @@ class TelephoneFragment : Fragment(), GameFragment {
         val view = inflater.inflate(R.layout.fragment_telephone, container, false)
 
         gameMessage = view.findViewById(R.id.telephone_message)
-
+        telephoneImage = view.findViewById(R.id.imageViewTelephone)
         return view
     }
 
