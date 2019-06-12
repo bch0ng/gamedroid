@@ -446,7 +446,6 @@ class NearbyConnection private constructor(context: Context)
 
                     message.startsWith("telephone:flippedDown") -> {
                         flipDownCount++
-                        Log.i("TEST", "Flip increased from nearby")
                         val intent = Intent()
                         intent.putExtra("TELEPHONE_FLIP_COUNT", message)
                         intent.action = "edu.us.ischool.bchong.info448project.ACTION_SEND"
