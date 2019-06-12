@@ -14,8 +14,7 @@ Games require's the phone to have a gyroscope and accelerometer to run.
 ## Nearby Connection
 
 # User Guide
-Welcome Page:
-![](samplescreenshots/welcome.png)
+![Welcome Page](master/samplescreenshots/welcome.png)
 Welcome to our mini games. Please enter your name and hit the LET'S GAME Button.
 
 Playmode Selection Page:
