@@ -19,7 +19,7 @@
         <Button
                 android:text="game1m"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/buttonMultiame1"
+                android:layout_height="wrap_content" android:id="@+id/buttonMultiGame1"
                 android:layout_marginTop="30dp"
                 android:backgroundTint="#FFC107" android:textSize="18sp"
                 android:background="@drawable/rounded_button"
