@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/bchOng/info448-project.svg?branch=master)](https://travis-ci.com/bchOng/info448-project)
+[![Build Status](https://travis-ci.com/bch0ng/info448-project.svg?branch=master)](https://travis-ci.com/bch0ng/info448-project)
 # GameDroid
 
 GameDroid is an Android app for mini motion games. In this app, we have 4 games in total and 2 for each play mode. "Flip the Phone" and "Shake the Soda" for single phone play mods, and "Answer the Phone" and "Roll the Dice" for multiple phone play mode. For our multiple phone play mode games, we support maximum of 6 players(phones) in total.
