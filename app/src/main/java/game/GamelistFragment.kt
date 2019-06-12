@@ -141,7 +141,7 @@ class GamelistFragment : Fragment() {
             games = multiPlayerGameNames
             view = inflater.inflate(R.layout.fragment_multigamelist, container, false)
             val instruction = view.findViewById<TextView>(R.id.txtInstruction)
-            var game1mbtn: Button = view.findViewById(R.id.buttonMultiGame1)
+            var game1mbtn: Button = view.findViewById(R.id.buttonMultiame1)
             //For both host and guests, the startgamebtn is default to invisible, while host has access to startgamebtn
             startgamebtn = view.findViewById(R.id.buttonstart)
             startgamebtn.isEnabled = false

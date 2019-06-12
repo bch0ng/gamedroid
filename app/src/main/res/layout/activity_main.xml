@@ -18,15 +18,15 @@
             android:layout_marginBottom="8dp">
         <Button
                 android:id="@+id/instructions_videos_page_button"
-                android:layout_gravity="bottom|end"
-                android:layout_marginRight="10dp"
+                android:layout_gravity="bottom|center|end"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:background="@android:color/transparent"
                 android:backgroundTint="@android:color/transparent"
                 android:text="@string/instructions_main"
-                android:layout_width="373dp" android:layout_height="wrap_content" android:foregroundGravity="center"
+                android:layout_width="368dp" android:layout_height="wrap_content" android:foregroundGravity="center"
                 android:gravity="center" android:shadowColor="@android:color/transparent"
-                android:textColorHint="@android:color/transparent" android:textSize="12sp"/>
+                android:textColorHint="@android:color/transparent" android:textSize="12sp"
+                android:layout_margin="10dp"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

@@ -31,7 +31,8 @@
                 android:enabled="true"
                 android:name="system.MultiRoomService"
                 android:exported="false"
-                android:stopWithTask="false"/>
+                android:stopWithTask="false" />
+
         <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts"/>
     </application>
 </manifest>

@@ -59,6 +59,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     override fun onGameStart(gamechoice: String) {
 
         if (NearbyConnection.instance.isHosting()) {
+            Log.i("TEST", "sending message: $gamechoice")
+
             NearbyConnection.instance.sendMessageAll("gamechoice: $gamechoice")
         }
 
@@ -67,9 +69,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
-
             "RollTheDiceHost" -> game = RollTheDiceHost(this).localClient
-            "Roll the Dice" -> game = RollTheDiceClient(this)
+            "Roll the Dice" -> game = RollTheDiceSinglePlayer(this)
             "Answer the Phone" -> game = Telephone(this)
         }
         var gameFragment = game.gameFragment as Fragment
@@ -83,6 +84,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
     private val broadCastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             var gameChoice = intent?.getStringExtra("GAME_CHOICE")
+
             if (gameChoice != null) {
                 onGameStart(gameChoice!!)
             }
