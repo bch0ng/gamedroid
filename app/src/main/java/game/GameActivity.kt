@@ -78,7 +78,7 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
             .beginTransaction()
             .replace(R.id.framegame, gameFragment!!, "game_fragment")
             .commit()
-        game.onStart(getString(R.string.default_player_name))
+        game.onStart(username)
     }
 
     private val broadCastReceiver = object : BroadcastReceiver() {
