@@ -74,6 +74,7 @@ class Telephone: Game, Service {
 
     override fun onPause() {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+
     }
 
     fun setTime(delay: Long) {

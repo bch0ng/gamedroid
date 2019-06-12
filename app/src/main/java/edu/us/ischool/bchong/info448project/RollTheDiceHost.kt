@@ -109,8 +109,10 @@ class RollTheDiceHost : GameHost {
 
     private fun nextTurn() {
         if (turnIndex > players.size) {
+            Log.v("dice","Gameover")
             gameOver()
         } else {
+            Log.v("dice","It is now $turnIndex's turn")
             var newTurnBundle=Bundle()
             newTurnBundle.putString("type",DiceNetworkMessages.NEW_TURN.code)
             newTurnBundle.putString("id",players[turnIndex].first)
@@ -158,10 +160,11 @@ class RollTheDiceHost : GameHost {
     //When everything is initialized
     //TODO Remember to call this method from the activity or fragment!!!!!!!!!!!!!!!!!!!!!!!!!!!
     override fun onStart() {
-        Log.v("dice","Dice's on start called")
+        Log.v("dice","Dice hosts on start called")
         setNetworkPlayers(nearby.getCurrPlayers())
+        gameState=gameStates.INGAME
         Timer("endPregame", false).schedule(pregameDuration) {
-            gameState = gameStates.INGAME
+            //gameState = gameStates.INGAME
             nextTurn()
             endPregame()
         }
