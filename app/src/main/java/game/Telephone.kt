@@ -13,7 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import java.util.*
 import android.media.MediaPlayer
-
+import game.Flip
 
 
 class Telephone: Game, Service {
@@ -100,10 +100,10 @@ class Telephone: Game, Service {
         }
     }
 
-    fun trackFlipDowns() {
-        if (NearbyConnection.instance.isHosting() && !didCountHost) {
+    fun trackFlipDowns(isOwnFlip: Boolean) {
+        if (NearbyConnection.instance.isHosting() && !didCountHost && isOwnFlip) {
             NearbyConnection.instance.flipDownCount++
-            Log.i("TEST", "track flipDowns")
+            Log.i("TEST", "flip increased from host")
             didCountHost = true
         }
         if (!NearbyConnection.instance.isHosting()) {
@@ -146,7 +146,7 @@ class Telephone: Game, Service {
 
                         } else if (gz < 0) {
                             Log.i("TEST", "now screen is facing down.")
-                            trackFlipDowns()
+                            trackFlipDowns(true)
                         }
                     }
                 } else {

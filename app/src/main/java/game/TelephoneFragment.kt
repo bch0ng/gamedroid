@@ -70,7 +70,7 @@ class TelephoneFragment : Fragment(), GameFragment {
 
             var flipMessage = intent?.getStringExtra("TELEPHONE_FLIP_COUNT")
             if (flipMessage != null) {
-                (gameObj as Telephone).trackFlipDowns()
+                (gameObj as Telephone).trackFlipDowns(false)
             }
 
             var startMessage = intent?.getStringExtra("TELEPHONE_START")
