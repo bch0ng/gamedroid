@@ -123,7 +123,7 @@ class RollTheDiceClient : NetworkGame {
     private fun newTurn(id: String){
         players.map {
             if(it.first==id){
-                frag.displayNewTurn(it.second)
+               // frag.displayNewTurn(it.second)
             }
         }
     }
@@ -158,7 +158,7 @@ class RollTheDiceClient : NetworkGame {
         Log.v("dice", "Vibrator strength $strength")
 
         vibrator.vibrate((vibrationStrength*strength).toLong())
-        frag.opponentRolled(id, strength, diceRollVisualDuration)
+        //frag.opponentRolled(id, strength, diceRollVisualDuration)
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

@@ -40,19 +40,23 @@ import kotlin.math.roundToInt
 
 
 class SinglePlayerDiceFragment : Fragment(), GameFragment {
+    override fun setNetworkPlayers(thisPlayers: ArrayList<Pair<String, String>>) {
+      //  TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun setNetworkListener(networkListener: NetworkListener) {
         this.localHost=networkListener as RollTheDiceHost
     }
 
     override fun newInstance(game: Game): GameFragment {
-        gameObj = game as NetworkGame
+        gameObj = game as Game
         return this
     }
 
 
     private lateinit var nearby: NearbyConnection
     private var listener: OnFragmentInteractionListener? = null
-    lateinit var gameObj: NetworkGame
+    lateinit var gameObj: Game
     lateinit var gyroscope: Sensor
     lateinit var accelerometer: Sensor
     //lateinit var linearAccelerometer:SensorManager
@@ -65,7 +69,6 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
     val PLAYERS_KEY = "players"
     val ID_SUFFIX = "Dice"
     lateinit var player: Pair<String, String>
-    lateinit var players: ArrayList<Pair<String, String>>
     private lateinit var playerDiceVisual: ImageView
 
     //Animation variables
@@ -75,58 +78,27 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
     lateinit var playerDiceDimAnimator: ValueAnimator
     private var localHost:RollTheDiceHost?=null
 
-    override fun setNetworkPlayers(thisPlayers:ArrayList<Pair<String,String>>){
-        this.players=thisPlayers
-        this.gameObj.setNetworkPlayers(thisPlayers)
-    }
 
     //Shows the name of the player who won
     fun showWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
-        turn_text_view.text=scoreString
-        turn_text_view.visibility=View.VISIBLE
+        //turn_text_view.text=scoreString
+        //turn_text_view.visibility=View.VISIBLE
         Log.v("dice", scoreString)
     }
 
-    //When the starting message is received from the server
-    fun StartGame(myId: Pair<String, String>, allPlayers: ArrayList<Pair<String, String>>) {
-        randomCharSet=arrayOf<String>("$","?","@","ß","∫")
-        Log.v("dice", "Start game called by server")
-        players = allPlayers
-        dimensionAnimators = hashMapOf<String, ValueAnimator>()
-        player = myId
-        val fragMananager = fragmentManager
-        val fragTransaction = fragMananager!!.beginTransaction()
-        if (opponent_dice.childCount > 0) {
-            opponent_dice.removeAllViews()
-        }
-        redrawPlayers()
-        fragTransaction.commit()
-    }
 
     //Returns the id string used in view id's
     private fun getIdString(id: String): String {
         return "$id$ID_SUFFIX"
     }
 
-    //Redraws all the players in their list in scrollview
-    private fun redrawPlayers() {
-        players.map { thisPlayer: Pair<String, String> ->
-            val newDiceObj = LayoutInflater.from(context).inflate(R.layout.dice_opponent, null)
-            newDiceObj.tag = getIdString(thisPlayer.first)
-            newDiceObj.findViewWithTag<TextView>("player_name").setText(thisPlayer.second)
-            opponent_dice.addView(newDiceObj)
-        }
-    }
 
     //Draws all the players in the scrollview
     private fun drawPlayers(savedInstanceState: Bundle) {
         val playerNameTag: TextView = player_dice.findViewWithTag("player_name") as TextView
         //val inflater=context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        if (savedInstanceState.containsKey(PLAYERS_KEY)) {
-            players = savedInstanceState.get(PLAYERS_KEY) as ArrayList<Pair<String, String>>
-            redrawPlayers()
-        }
+
         if (savedInstanceState.containsKey(PLAYER_KEY)) {
             player = savedInstanceState.get(PLAYER_KEY) as Pair<String, String>
             playerNameTag.text = player.second
@@ -139,9 +111,6 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
     //Saves the current players
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (players != null) {
-            outState.putSerializable("players", players)
-        }
         if (player != null) {
             outState.putSerializable("player", player)
         }
@@ -155,6 +124,14 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
             localHost!!.onStart()
         }
         this.gameObj!!.onFragmentStart()
+        randomCharSet=arrayOf<String>("$","?","@","ß","∫")
+        dimensionAnimators = hashMapOf<String, ValueAnimator>()
+        val fragMananager = fragmentManager
+        val fragTransaction = fragMananager!!.beginTransaction()
+        /*if (opponent_dice.childCount > 0) {
+            opponent_dice.removeAllViews()
+        }*/
+        fragTransaction.commit()
     }
 
     //When the view is created
@@ -269,16 +246,16 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
         // TODO:
         try {
             Log.v("diceSet", "Opponent Rolled Fragment listener started")
-            val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
-            val element: View = elementGroup.findViewWithTag("opponent_dice_box")
+                //val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
+            //val element: View = elementGroup.findViewWithTag("opponent_dice_box")
             if (dimensionAnimators.containsKey(id)) {
                 val dimensionAnimator = dimensionAnimators.get(id)
                 if(!dimensionAnimator!!.isRunning){
-                    dimensionAnimators.put(id, setDimAnimator(element, duration))
+                    //dimensionAnimators.put(id, setDimAnimator(element, duration))
                 }
             } else {
                 //val element: View = opponent_dice.findViewWithTag(getIdString(id))
-                dimensionAnimators.put(id, setDimAnimator(element, duration))
+                //dimensionAnimators.put(id, setDimAnimator(element, duration))
             }
         } catch (err: Exception) {
             Log.e("dice", "Error finding opponent roll view")
@@ -293,8 +270,8 @@ class SinglePlayerDiceFragment : Fragment(), GameFragment {
         playerDiceDimAnimator.cancel()
     }
     fun displayNewTurn(playerName:String){
-        turn_text_view.visibility=View.VISIBLE
-        turn_text_view.text="$playerName's turn"
+        //turn_text_view.visibility=View.VISIBLE
+        //turn_text_view.text="$playerName's turn"
     }
 
     //Converts px values to dp units

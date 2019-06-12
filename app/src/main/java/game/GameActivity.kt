@@ -57,9 +57,8 @@ class GameActivity : AppCompatActivity(), GamelistFragment.OnGameInteractionList
         when(gamechoice){
             "Shake the Soda" -> game = SodaShake(this)
             "Flip the Phone" -> game = Flip()
-
             "RollTheDiceHost" -> game = RollTheDiceHost(this).localClient
-            "Roll the Dice" -> game = RollTheDiceClient(this)
+            "Roll the Dice" -> game = RollTheDiceSinglePlayer(this)
             "Answer the Phone" -> game = Telephone(this)
         }
         var gameFragment = game.gameFragment as Fragment

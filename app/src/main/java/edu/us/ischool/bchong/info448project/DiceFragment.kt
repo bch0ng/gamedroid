@@ -83,8 +83,7 @@ class DiceFragment : Fragment(), GameFragment {
     //Shows the name of the player who won
     fun showWinner(winner: Pair<String, Int>) {
         val scoreString = "${winner.first} won with ${winner.second}"
-        turn_text_view.text=scoreString
-        turn_text_view.visibility=View.VISIBLE
+
         Log.v("dice", scoreString)
     }
 
@@ -97,9 +96,7 @@ class DiceFragment : Fragment(), GameFragment {
         player = myId
         val fragMananager = fragmentManager
         val fragTransaction = fragMananager!!.beginTransaction()
-        if (opponent_dice.childCount > 0) {
-            opponent_dice.removeAllViews()
-        }
+
         redrawPlayers()
         fragTransaction.commit()
     }
@@ -115,7 +112,6 @@ class DiceFragment : Fragment(), GameFragment {
             val newDiceObj = LayoutInflater.from(context).inflate(R.layout.dice_opponent, null)
             newDiceObj.tag = getIdString(thisPlayer.first)
             newDiceObj.findViewWithTag<TextView>("player_name").setText(thisPlayer.second)
-            opponent_dice.addView(newDiceObj)
         }
     }
 
@@ -263,26 +259,7 @@ class DiceFragment : Fragment(), GameFragment {
         parentElement.findViewWithTag<TextView>("dice_text").text = "$rollValue"
     }
 
-    //Do the visuals for when a opponents dice is rolled
-    fun opponentRolled(id: String, strength: Double, duration: Long) {
-        // TODO:
-        try {
-            Log.v("diceSet", "Opponent Rolled Fragment listener started")
-            val elementGroup: ViewGroup = opponent_dice.findViewWithTag(getIdString(id)) as ViewGroup
-            val element: View = elementGroup.findViewWithTag("opponent_dice_box")
-            if (dimensionAnimators.containsKey(id)) {
-                val dimensionAnimator = dimensionAnimators.get(id)
-                if(!dimensionAnimator!!.isRunning){
-                    dimensionAnimators.put(id, setDimAnimator(element, duration))
-                }
-            } else {
-                //val element: View = opponent_dice.findViewWithTag(getIdString(id))
-                dimensionAnimators.put(id, setDimAnimator(element, duration))
-            }
-        } catch (err: Exception) {
-            Log.e("dice", "Error finding opponent roll view")
-        }
-    }
+
 
     //Turns off all timers animating the player and opponents dice
     private fun cancelAllVisualTimers() {
@@ -290,10 +267,6 @@ class DiceFragment : Fragment(), GameFragment {
             it.value.cancel()
         }
         playerDiceDimAnimator.cancel()
-    }
-    fun displayNewTurn(playerName:String){
-        turn_text_view.visibility=View.VISIBLE
-        turn_text_view.text="$playerName's turn"
     }
 
     //Converts px values to dp units

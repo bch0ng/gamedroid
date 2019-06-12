@@ -110,10 +110,15 @@ class RollTheDiceSinglePlayer : Game {
 
     //When the player attempts to roll
     private fun inGameRoll(event: SensorEvent) {
-        val strength = accumulatedRollEnergy * (Random().nextDouble() + 0.5)
-        vibrator.vibrate((vibrationStrength*strength).toLong())
-        frag.diceRoll(event.values[0], event.values[1], accumulatedRollEnergy, this.diceRollVisualDuration)
+        val values=event.values
 
+        val eventMass=values[0]+values[1]+values[2]
+        if(eventMass>15) {
+            Log.v("dice","ingameroll")
+            val strength = accumulatedRollEnergy * (Random().nextDouble() + 0.5)
+            vibrator.vibrate(140)
+            frag.diceRoll(event.values[0]*.005f, event.values[1]*.005f, accumulatedRollEnergy*.005, this.diceRollVisualDuration)
+        }
     }
     //When the player attempts to roll after the game is completed
     private fun postGameRoll() {
