@@ -50,7 +50,7 @@ class PlayModeFragment : Fragment() {
         singlebtn = view.findViewById(R.id.btnSingle)
         multibtn = view.findViewById(R.id.btnMulti)
         playmodetextview = view.findViewById(R.id.textViewplaymode1)
-        playmodetextview.setText("Hi,$username!")
+        playmodetextview.setText("Hi, $username!")
 
         singlebtn.setOnClickListener {
             playmode = "Single"
